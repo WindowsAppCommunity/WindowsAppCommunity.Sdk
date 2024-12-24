@@ -6,7 +6,7 @@ namespace WinAppCommunity.Sdk.Models;
 /// <summary>
 /// Represents a content publisher.
 /// </summary>
-public record Publisher : IName
+public record Publisher : IEntity, ILinkCollection, IUserRoleCollection, IConnections, IAccentColor
 {
     /// <summary>
     /// The name of the publisher.
@@ -34,9 +34,14 @@ public record Publisher : IName
     public Link[] Links { get; set; } = [];
 
     /// <summary>
+    /// Represents images that demonstrate this publisher.
+    /// </summary>
+    public Image[] Images { get; set; } = [];
+
+    /// <summary>
     /// Users who are registered to participate in this publisher, along with their roles.
     /// </summary>
-    public Dictionary<DagCid, Role> Users { get; set; } = new();
+    public Dictionary<DagCid, Role> Users { get; set; } = [];
 
     /// <summary>
     /// A list of other publishers who are managed under this publisher.
@@ -51,7 +56,7 @@ public record Publisher : IName
     /// <summary>
     /// Holds information about publisher assets that have been published for consumption by an end user, such as a Microsoft Store app, a package on nuget.org, a git repo, etc.
     /// </summary>
-    public Dictionary<string, DagCid> Connections { get; set; } = new();
+    public Dictionary<string, DagCid> Connections { get; set; } = [];
 
     /// <summary>
     /// A flag that indicates whether the profile has requested to be forgotten.

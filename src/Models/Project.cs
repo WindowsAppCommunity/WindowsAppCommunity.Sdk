@@ -6,10 +6,10 @@ namespace WinAppCommunity.Sdk.Models;
 /// <summary>
 /// Represents a project.
 /// </summary>
-public record Project : IName
+public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectRoleCollection
 {
     /// <summary>
-    /// The publisher for this project.
+    /// The canonical publisher for this project.
     /// </summary>
     public required DagCid Publisher { get; set; }
 
@@ -29,9 +29,9 @@ public record Project : IName
     public required string ExtendedDescription { get; set; }
 
     /// <summary>
-    /// A list of <see cref="DagCid"/>s that point to images demonstrating this project.
+    /// A list of <see cref="Image"/>s demonstrating this project.
     /// </summary>
-    public DagCid[] Images { get; set; } = [];
+    public Image[] Images { get; set; } = [];
 
     /// <summary>
     /// A list of features provided by this project.
@@ -49,14 +49,14 @@ public record Project : IName
     public required string Category { get; set; }
 
     /// <summary>
-    /// Other projects which this project may depend on.
+    /// Other projects which this project may depend on for various reasons.
     /// </summary>
-    public DagCid[] Dependencies { get; set; } = [];
+    public Dictionary<DagCid, Role> Projects { get; set; } = [];
 
     /// <summary>
     /// The <see cref="User"/>s who collaborate on this project, and their corresponding roles.
     /// </summary>
-    public Dictionary<DagCid, Role> Collaborators { get; set; } = new();
+    public Dictionary<DagCid, Role> Users { get; set; } = [];
 
     /// <summary>
     /// Represents links to external profiles or resources added by the user.
