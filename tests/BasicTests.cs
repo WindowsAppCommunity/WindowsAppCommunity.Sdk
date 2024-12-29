@@ -1,6 +1,6 @@
 ﻿using Ipfs;
 
-namespace WinAppCommunity.Sdk.Tests;
+namespace WindowsAppCommunity.Sdk.Tests;
 
 [TestClass]
 public partial class BasicTests

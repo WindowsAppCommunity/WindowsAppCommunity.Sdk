@@ -1,4 +1,4 @@
-namespace WinAppCommunity.Sdk;
+namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents the data for a link.

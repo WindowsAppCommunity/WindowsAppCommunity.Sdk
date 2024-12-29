@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Ipfs;
 
-namespace WinAppCommunity.Sdk.Models;
+namespace WindowsAppCommunity.Sdk.Models;
 
 /// <summary>
 /// Represents a list of registered users along with the role on each.

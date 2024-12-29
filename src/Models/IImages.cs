@@ -1,6 +1,6 @@
 using Ipfs;
 
-namespace WinAppCommunity.Sdk.Models;
+namespace WindowsAppCommunity.Sdk.Models;
 
 /// <summary>
 /// Represents a published collection of images.

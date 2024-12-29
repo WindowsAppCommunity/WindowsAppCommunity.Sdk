@@ -1,6 +1,6 @@
 ﻿using Ipfs;
 
-namespace WinAppCommunity.Sdk.Models;
+namespace WindowsAppCommunity.Sdk.Models;
 
 /// <summary>
 /// Used to set property values, set an item in a bag or collection, or set the value for a key. 

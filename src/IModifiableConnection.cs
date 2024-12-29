@@ -1,4 +1,4 @@
-namespace WinAppCommunity.Sdk;
+namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a modifiable connection with a key and a value.

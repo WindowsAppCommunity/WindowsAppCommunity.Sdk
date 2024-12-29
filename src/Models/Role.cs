@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using OwlCore.Storage;
 
-namespace WinAppCommunity.Sdk.Models;
+namespace WindowsAppCommunity.Sdk.Models;
 
 /// <summary>
 /// Represents the role of a user.

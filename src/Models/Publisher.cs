@@ -1,7 +1,7 @@
 using Ipfs;
 using System.Collections.Generic;
 
-namespace WinAppCommunity.Sdk.Models;
+namespace WindowsAppCommunity.Sdk.Models;
 
 /// <summary>
 /// Represents a content publisher.

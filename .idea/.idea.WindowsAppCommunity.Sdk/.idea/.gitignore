@@ -2,7 +2,7 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
-/.idea.WinAppCommunity.Sdk.iml
+/.idea.WindowsAppCommunity.Sdk.iml
 /contentModel.xml
 /projectSettingsUpdater.xml
 /modules.xml

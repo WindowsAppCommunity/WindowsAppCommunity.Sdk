@@ -1,3 +1,3 @@
 global using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace WinAppCommunity.Sdk.Tests;
+namespace WindowsAppCommunity.Sdk.Tests;

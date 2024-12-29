@@ -1,6 +1,6 @@
 using OwlCore.Storage;
 
-namespace WinAppCommunity.Sdk.Models;
+namespace WindowsAppCommunity.Sdk.Models;
 
 /// <summary>
 /// Represents the data for a link.

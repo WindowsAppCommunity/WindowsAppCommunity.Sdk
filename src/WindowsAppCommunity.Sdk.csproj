@@ -15,14 +15,14 @@
 
 		<Author>Arlo Godfrey</Author>
 		<Version>0.0.0</Version>
-		<Product>WinAppCommunity</Product>
+		<Product>WindowsAppCommunity</Product>
 		<Description></Description>
 		<PackageIcon>logo.png</PackageIcon>
-		<PackageProjectUrl>https://github.com/UWPCommunity/WinAppCommunity.Sdk</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/UWPCommunity/WindowsAppCommunity.Sdk</PackageProjectUrl>
 		<PackageReleaseNotes>
 --- 0.0.0 ---
 [New]
-Initial release of WinAppCommunity.Sdk.
+Initial release of WindowsAppCommunity.Sdk.
 		</PackageReleaseNotes>
 		<DebugType>embedded</DebugType>
 		<NeutralLanguage>en</NeutralLanguage>

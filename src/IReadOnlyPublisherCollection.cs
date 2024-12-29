@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace WinAppCommunity.Sdk;
+namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a collection of publishers that can be read but not modified.

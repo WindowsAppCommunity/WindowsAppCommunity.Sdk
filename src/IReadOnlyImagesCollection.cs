@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using OwlCore.Storage;
 
-namespace WinAppCommunity.Sdk;
+namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a collection of images.

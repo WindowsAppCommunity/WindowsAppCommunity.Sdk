@@ -1,4 +1,4 @@
-﻿namespace WinAppCommunity.Sdk;
+﻿namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a content publisher that can be modified.

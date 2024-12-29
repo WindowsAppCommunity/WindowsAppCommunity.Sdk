@@ -1,4 +1,4 @@
-namespace WinAppCommunity.Sdk;
+namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents an accent color that cannot be updatd.

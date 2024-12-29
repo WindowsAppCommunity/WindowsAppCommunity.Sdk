@@ -1,4 +1,4 @@
-namespace WinAppCommunity.Sdk;
+namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents role data for a user, project or publisher.
