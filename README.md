@@ -39,7 +39,7 @@ PM> Install-Package WindowsAppCommunity.Sdk
 Or using the [dotnet](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet) CLI
 
 ```ps1
-> dotnet add package WinAppCommunity.Sdk
+> dotnet add package WindowsAppCommunity.Sdk
 ```
 
 > [!NOTE]
