@@ -7,7 +7,7 @@
 
 <p align="center">
   <a style="text-decoration:none" href="https://windowsappcommunity.com/">
-    <img src="https://img.shields.io/badge/Community-Website-teal" alt="WinAppCommunity Website" /></a>
+    <img src="https://img.shields.io/badge/Community-Website-teal" alt="WindowsAppCommunity Website" /></a>
   <a style="text-decoration:none" href="https://www.nuget.org/packages/WinAppCommunity.Sdk">
     <img src="https://img.shields.io/nuget/v/WinAppCommunity.Sdk.svg" alt="Version" /></a>
   <a style="text-decoration:none" href="https://dsc.gg/uwpc">
