@@ -15,7 +15,7 @@
 </p>
 
 Introducing the **Windows App Community SDK**, a library that enables you to manage your membership, projects and publisher data in the Windows App Community.
-The `WinAppCommunity.Sdk` library was created to supersede the original [`uwpcommunity-backend`](https://github.com/WindowsAppCommunity/uwpcommunity-backend) (known to many as **Server Companion**) that has served the community for over 5 years.
+The `WindowsAppCommunity.Sdk` library was created to supersede the original [`uwpcommunity-backend`](https://github.com/WindowsAppCommunity/uwpcommunity-backend) (known to many as **Server Companion**) that has served the community for over 5 years.
 The "new infra" as this library is often referred to by many members of the community, has been in the works for ages and we're pleased to announce that it's in rapid development.
 
 Built using the **Inter-Planetary File System**, the new community infra boasts powerful features such as <!-- sorry got cut off while writing this -->
