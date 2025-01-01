@@ -32,7 +32,7 @@ Built using the **Inter-Planetary File System**, the new community infra boasts 
 
 ### Installing the SDK
 
-Published releases are available on [NuGet](https://www.nuget.org/packages/WinAppCommunity.Sdk). To install, run the following command in the [Package Manager Console](https://docs.nuget.org/docs/start-here/using-the-package-manager-console):
+Published releases are available on [NuGet](https://www.nuget.org/packages/WindowsAppCommunity.Sdk). To install, run the following command in the [Package Manager Console](https://docs.nuget.org/docs/start-here/using-the-package-manager-console):
 ```ps1
 PM> Install-Package WinAppCommunity.Sdk
 ``` 
