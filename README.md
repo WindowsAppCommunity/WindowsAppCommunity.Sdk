@@ -34,7 +34,7 @@ Built using the content-addressing capabilities of [`ipfs`](https://ipfs.tech/),
 
 Published releases are available on [NuGet](https://www.nuget.org/packages/WindowsAppCommunity.Sdk). To install, run the following command in the [Package Manager Console](https://docs.nuget.org/docs/start-here/using-the-package-manager-console):
 ```ps1
-PM> Install-Package WinAppCommunity.Sdk
+PM> Install-Package WindowsAppCommunity.Sdk
 ``` 
 Or using the [dotnet](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet) CLI
 
