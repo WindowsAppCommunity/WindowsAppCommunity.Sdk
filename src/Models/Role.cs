@@ -1,12 +1,18 @@
 using Newtonsoft.Json;
+using OwlCore.Storage;
 
-namespace WinAppCommunity.Sdk.Models;
+namespace WindowsAppCommunity.Sdk.Models;
 
 /// <summary>
 /// Represents the role of a user.
 /// </summary>
-public record Role : IName
+public record Role : IStorable
 {
+    /// <summary>
+    /// A unique identifier for this Role.
+    /// </summary>
+    public required string Id { get; init; }
+    
     /// <summary>
     /// The name of the role.
     /// </summary>

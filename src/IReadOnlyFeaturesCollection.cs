@@ -1,4 +1,4 @@
-namespace WinAppCommunity.Sdk;
+namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a collection of features that can be read but not modified.

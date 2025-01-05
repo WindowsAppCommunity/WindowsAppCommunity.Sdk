@@ -1,4 +1,4 @@
-﻿namespace WinAppCommunity.Sdk;
+﻿namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a publisher, a collection of projects and collaborators who publish content to users.

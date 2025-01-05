@@ -21,5 +21,5 @@ jobs:
     - name: Build
       run: dotnet build --no-restore -p:Configuration=Release
     - name: Publish to NuGet
-      run: dotnet nuget push "/home/runner/work/WinAppCommunity.Sdk/WinAppCommunity.Sdk/src/bin/Release/WinAppCommunity.Sdk.*.*.*.nupkg" --skip-duplicate --api-key ${{secrets.NUGET_KEY}} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push "/home/runner/work/WindowsAppCommunity.Sdk/WindowsAppCommunity.Sdk/src/bin/Release/WindowsAppCommunity.Sdk.*.*.*.nupkg" --skip-duplicate --api-key ${{secrets.NUGET_KEY}} --source https://api.nuget.org/v3/index.json
       
