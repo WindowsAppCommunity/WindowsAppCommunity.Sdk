@@ -27,6 +27,7 @@ Initial release of WindowsAppCommunity.Sdk.
 		<DebugType>embedded</DebugType>
 		<NeutralLanguage>en</NeutralLanguage>
 		<Authors>Arlo Godfrey</Authors>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 
@@ -45,6 +46,13 @@ Initial release of WindowsAppCommunity.Sdk.
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 		<Deterministic>true</Deterministic>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
