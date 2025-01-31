@@ -6,7 +6,7 @@ namespace WindowsAppCommunity.Sdk.Models;
 /// <summary>
 /// Represents a content publisher.
 /// </summary>
-public record Publisher : IEntity, ILinkCollection, IUserRoleCollection, IConnections, IAccentColor
+public record Publisher : IEntity, ILinkCollection, IProjectRoleCollection, IUserRoleCollection, IConnections, IAccentColor
 {
     /// <summary>
     /// The name of the publisher.
@@ -42,6 +42,11 @@ public record Publisher : IEntity, ILinkCollection, IUserRoleCollection, IConnec
     /// Users who are registered to participate in this publisher, along with their roles.
     /// </summary>
     public Dictionary<DagCid, Role> Users { get; set; } = [];
+
+    /// <summary>
+    /// Projects who are registered to participate in this publisher, along with their roles.
+    /// </summary>
+    public Dictionary<DagCid, Role> Projects { get; set; } = [];
 
     /// <summary>
     /// A list of other publishers who are managed under this publisher.

@@ -76,16 +76,4 @@ namespace WindowsAppCommunity.Sdk.Models;
 /// <para/>
 /// In the scenario set up here, the hyperedge picked (positional --- non-positional) was enough information to understand how to flatten it down to a single record type that other types build on top on without changing, while being stored in a time-ordered event stream.
 /// </remarks>
-public record ValueUpdateEvent(string TargetId, DagCid? Value, DagCid? Key, bool Unset);
-
-
-
-
-
-
-
-
-
-
-
-
+public record ValueUpdateEvent(string TargetId, string EventId, DagCid? Key, DagCid? Value, bool Unset);

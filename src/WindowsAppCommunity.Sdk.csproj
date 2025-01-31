@@ -65,8 +65,4 @@ Initial release of WindowsAppCommunity.Sdk.
 	    <PackagePath>\</PackagePath>
 	  </None>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Nomad\" />
-	</ItemGroup>
 </Project>
