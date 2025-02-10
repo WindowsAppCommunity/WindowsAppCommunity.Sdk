@@ -14,7 +14,7 @@ public record Image : IStorable
     public required string Id { get; init; }
 
     /// <summary>
-    /// A display name for this image.
+    /// A display name for this image, with the file extension.
     /// </summary>
     public required string Name { get; set; }
     
