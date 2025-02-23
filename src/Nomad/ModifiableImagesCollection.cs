@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Diagnostics;
 using Ipfs;
@@ -50,9 +50,23 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
     }
 
     /// <inheritdoc />
-    public Task RemoveImageAsync(IFile imageFile, CancellationToken cancellationToken)
+    public async Task RemoveImageAsync(IFile imageFile, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var image = Inner.Inner.Images.FirstOrDefault(img => img.Id == imageFile.Id);
+        if (image == null)
+        {
+            throw new ArgumentException("Image not found in the collection.", nameof(imageFile));
+        }
+
+        var keyCid = await Client.Dag.PutAsync(image.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+        var valueCid = await Client.Dag.PutAsync(image, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+
+        var updateEvent = new ValueUpdateEvent(Id, nameof(RemoveImageAsync), (DagCid)keyCid, (DagCid)valueCid, true);
+
+        await ApplyEntryUpdateAsync(updateEvent, image, cancellationToken);
+        var appendedEntry = await AppendNewEntryAsync(updateEvent, cancellationToken);
+
+        EventStreamPosition = appendedEntry;
     }
 
     /// <inheritdoc />
