@@ -16,7 +16,7 @@ public class ReadOnlyAccentColor : IReadOnlyAccentColor, IDelegable<IAccentColor
     public required IAccentColor Inner { get; init; }
     
     /// <inheritdoc />
-    public string? AccentColor { get; init; }
+    public string? AccentColor => Inner.AccentColor;
     
     /// <inheritdoc />
     public event EventHandler<string?>? AccentColorUpdated;
