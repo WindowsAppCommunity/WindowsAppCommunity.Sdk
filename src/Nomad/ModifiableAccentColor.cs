@@ -18,25 +18,26 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
     /// <inheritdoc />
     public required ReadOnlyAccentColor Inner { get; init; }
 
+    /// <summary>
+    /// A unique identifier for this instance, persistent across machines and reruns.
+    /// </summary>
+    public required string Id { get; init; }
+
     /// <inheritdoc />
-    public string? AccentColor { get; init;  }
+    public string? AccentColor => Inner.AccentColor;
     
     /// <inheritdoc />
     public event EventHandler<string?>? AccentColorUpdated;
-
-    /// <summary>
-    /// Applies an event stream update event and raises the relevant events.
-    /// </summary>
-    /// <remarks>
-    /// This method will call <see cref="ReadOnlyAccentColor.GetAsync(string, CancellationToken)"/> and create a new instance to pass to the event handlers.
-    /// <para/>
-    /// If already have a resolved instance of <see cref="Image"/>, you should call <see cref="ApplyEntryUpdateAsync(ValueUpdateEvent, Image, CancellationToken)"/> instead.
-    /// </remarks>
-    /// <param name="updateEvent">The update event to apply.</param>
-    /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
-    public override Task ApplyEntryUpdateAsync(ValueUpdateEvent updateEvent, CancellationToken cancellationToken)
+    
+    /// <inheritdoc />
+    public override async Task ApplyEntryUpdateAsync(ValueUpdateEvent updateEvent, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (updateEvent.TargetId != Id)
+            return;
+
+        Inner.AccentColor = updateEvent.Value;
     }
 
     /// <inheritdoc />
