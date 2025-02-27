@@ -44,9 +44,6 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
         var appendedEntry = await AppendNewEntryAsync(updateEvent, cancellationToken);
 
         EventStreamPosition = appendedEntry;
-
-        // Append entry to event stream
-        // TODO
     }
 
     /// <inheritdoc />
