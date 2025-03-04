@@ -36,7 +36,7 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
         
         if (updateEvent is { Unset: false, Value: not null })
         {
-            (accentColor, _) = await Client.ResolveDagCidAsync<string>(updateEvent.Value!,  nocache: !KuboOptions.UseCache, cancellationToken);
+            (accentColor, _) = await Client.ResolveDagCidAsync<string>(updateEvent.Value,  nocache: !KuboOptions.UseCache, cancellationToken);
         }
         
         await ApplyEntryUpdateAsync(updateEvent, accentColor, cancellationToken);
@@ -64,7 +64,6 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
     /// <inheritdoc cref="INomadKuboEventStreamHandler{TEventEntryContent}.AppendNewEntryAsync" />
     public override async Task<EventStreamEntry<Cid>> AppendNewEntryAsync(ValueUpdateEvent updateEvent, CancellationToken cancellationToken = default)
     {
-        // Use extension method for code deduplication (can't use inheritance).
         var localUpdateEventCid = await Client.Dag.PutAsync(updateEvent, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
         var newEntry = await this.AppendEventStreamEntryAsync(localUpdateEventCid, updateEvent.EventId, updateEvent.TargetId, cancellationToken);
         return newEntry;
@@ -82,16 +81,14 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
     /// <inheritdoc />
     public async Task UpdateAccentColorAsync(string? accentColor, CancellationToken cancellationToken)
     {
-        bool unset = accentColor is null;
-
         DagCid? valueCid = null;
-        if (!unset)
+        if (accentColor is not null)
         {
-            Cid cid = await Client.Dag.PutAsync(accentColor!, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+            Cid cid = await Client.Dag.PutAsync(accentColor, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
             valueCid = (DagCid)cid;
         }
 
-        var updateEvent = new ValueUpdateEvent(Id, nameof(UpdateAccentColorAsync), null, valueCid, unset);
+        var updateEvent = new ValueUpdateEvent(Id, nameof(UpdateAccentColorAsync), null, valueCid, accentColor is null);
 
         await ApplyEntryUpdateAsync(updateEvent, accentColor, cancellationToken);
         var appendedEntry = await AppendNewEntryAsync(updateEvent, cancellationToken);
