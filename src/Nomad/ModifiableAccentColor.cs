@@ -3,7 +3,7 @@ using OwlCore.ComponentModel;
 using OwlCore.Kubo;
 using OwlCore.Nomad;
 using OwlCore.Nomad.Kubo;
-using WindowsAppCommunity.Sdk.Models;
+using OwlCore.Nomad.Kubo.Events;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
 
@@ -25,11 +25,11 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
     public event EventHandler<string?>? AccentColorUpdated;
     
     /// <inheritdoc />
-    public override async Task ApplyEntryUpdateAsync(ValueUpdateEvent updateEvent, CancellationToken cancellationToken)
+    public override async Task ApplyEntryUpdateAsync(EventStreamEntry<DagCid> eventStreamEntry, ValueUpdateEvent updateEvent, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (updateEvent.TargetId != Id)
+        if (eventStreamEntry.TargetId != Id)
             return;
 
         string? accentColor = null;
@@ -39,34 +39,27 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
             (accentColor, _) = await Client.ResolveDagCidAsync<string>(updateEvent.Value,  nocache: !KuboOptions.UseCache, cancellationToken);
         }
         
-        await ApplyEntryUpdateAsync(updateEvent, accentColor, cancellationToken);
+        await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, accentColor, cancellationToken);
     }
     
     /// <summary>
     /// Applies an event stream update event and raises the relevant events.
     /// </summary>
+    /// <param name="eventStreamEntry">The event stream entry to apply.</param>
     /// <param name="updateEvent">The update event to apply.</param>
     /// <param name="accentColor">The resolved accent color data for this event.</param>
     /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
-    public Task ApplyEntryUpdateAsync(ValueUpdateEvent updateEvent, string? accentColor, CancellationToken cancellationToken)
+    public Task ApplyEntryUpdateAsync(EventStreamEntry<DagCid> eventStreamEntry, ValueUpdateEvent updateEvent, string? accentColor, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (updateEvent.EventId is not nameof(UpdateAccentColorAsync))
+        if (eventStreamEntry.EventId is not nameof(UpdateAccentColorAsync))
             return Task.CompletedTask;
         
         Inner.Inner.AccentColor = accentColor;
         AccentColorUpdated?.Invoke(this, accentColor);
         
         return Task.CompletedTask;
-    }
-
-    /// <inheritdoc cref="INomadKuboEventStreamHandler{TEventEntryContent}.AppendNewEntryAsync" />
-    public override async Task<EventStreamEntry<Cid>> AppendNewEntryAsync(ValueUpdateEvent updateEvent, CancellationToken cancellationToken = default)
-    {
-        var localUpdateEventCid = await Client.Dag.PutAsync(updateEvent, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        var newEntry = await this.AppendEventStreamEntryAsync(localUpdateEventCid, updateEvent.EventId, updateEvent.TargetId, cancellationToken);
-        return newEntry;
     }
 
     /// <inheritdoc />
@@ -88,10 +81,10 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
             valueCid = (DagCid)cid;
         }
 
-        var updateEvent = new ValueUpdateEvent(Id, nameof(UpdateAccentColorAsync), null, valueCid, accentColor is null);
+        var updateEvent = new ValueUpdateEvent(null, valueCid, accentColor is null);
 
-        await ApplyEntryUpdateAsync(updateEvent, accentColor, cancellationToken);
-        var appendedEntry = await AppendNewEntryAsync(updateEvent, cancellationToken);
+        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(UpdateAccentColorAsync), updateEvent, DateTime.UtcNow, cancellationToken);
+        await ApplyEntryUpdateAsync(appendedEntry, updateEvent, accentColor, cancellationToken);
 
         EventStreamPosition = appendedEntry;
     }
