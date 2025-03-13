@@ -45,7 +45,7 @@ public class ReadOnlyEntity : IDelegable<IEntity>, IReadOnlyEntity
     public Link[] Links => InnerLinks.Links;
 
     /// <inheritdoc />
-    IReadOnlyConnection[] IReadOnlyConnectionsCollection.Connections => InnerConnections.Connections;
+    public IReadOnlyConnection[] Connections => InnerConnections.Connections;
 
     /// <inheritdoc />
     public event EventHandler<string>? NameUpdated;
