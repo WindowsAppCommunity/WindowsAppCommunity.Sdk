@@ -49,7 +49,7 @@ public interface IReadOnlyEntity : IReadOnlyConnectionsCollection, IReadOnlyLink
     /// Raised when <see cref="ForgetMe"/> is updated.
     /// </summary>
     event EventHandler<bool?>? ForgetMeUpdated;
-    
+
     /// <summary>
     /// Raised when <see cref="IsUnlisted"/> is updated.
     /// </summary>

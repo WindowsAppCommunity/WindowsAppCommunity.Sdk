@@ -18,7 +18,7 @@ public class IdOverriddenIpfsFile : IpfsFile
     {
         Id = id;
     }
-    
+
     /// <inheritdoc />
     public override string Id { get; }
 }

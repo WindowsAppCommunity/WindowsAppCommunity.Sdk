@@ -37,7 +37,7 @@ public class ReadOnlyUser : IReadOnlyUser, IDelegable<User>
     public string Description => InnerEntity.Description;
 
     /// <inheritdoc/>
-    public string ExtendedDescription =>InnerEntity.ExtendedDescription;
+    public string ExtendedDescription => InnerEntity.ExtendedDescription;
 
     /// <inheritdoc/>
     public bool? ForgetMe => InnerEntity.ForgetMe;

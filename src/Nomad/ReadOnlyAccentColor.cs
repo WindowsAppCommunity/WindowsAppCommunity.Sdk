@@ -11,13 +11,13 @@ public class ReadOnlyAccentColor : IReadOnlyAccentColor, IDelegable<IAccentColor
     /// The client to use for communicating with ipfs.
     /// </summary>
     public required ICoreApi Client { get; init; }
-    
+
     /// <inheritdoc />
     public required IAccentColor Inner { get; init; }
-    
+
     /// <inheritdoc />
     public string? AccentColor => Inner.AccentColor;
-    
+
     /// <inheritdoc />
     public event EventHandler<string?>? AccentColorUpdated;
 }

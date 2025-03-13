@@ -49,34 +49,34 @@ public class ReadOnlyEntity : IDelegable<IEntity>, IReadOnlyEntity
 
     /// <inheritdoc />
     public event EventHandler<string>? NameUpdated;
-    
+
     /// <inheritdoc />
     public event EventHandler<string>? DescriptionUpdated;
-    
+
     /// <inheritdoc />
     public event EventHandler<string>? ExtendedDescriptionUpdated;
-    
+
     /// <inheritdoc />
     public event EventHandler<bool?>? ForgetMeUpdated;
-    
+
     /// <inheritdoc />
     public event EventHandler<bool>? IsUnlistedUpdated;
-    
+
     /// <inheritdoc />
     public event EventHandler<IReadOnlyConnection[]>? ConnectionsAdded;
-    
+
     /// <inheritdoc />
     public event EventHandler<IReadOnlyConnection[]>? ConnectionsRemoved;
-    
+
     /// <inheritdoc />
     public event EventHandler<Link[]>? LinksUpdated;
-    
+
     /// <inheritdoc />
     public event EventHandler<IFile[]>? ImagesAdded;
-    
+
     /// <inheritdoc />
     public event EventHandler<IFile[]>? ImagesRemoved;
-    
+
     /// <inheritdoc />
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerImages.GetImageFilesAsync(cancellationToken);
 }

@@ -39,7 +39,7 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     public string Description => InnerEntity.Description;
 
     /// <inheritdoc/>
-    public string ExtendedDescription =>InnerEntity.ExtendedDescription;
+    public string ExtendedDescription => InnerEntity.ExtendedDescription;
 
     /// <inheritdoc/>
     public bool? ForgetMe => InnerEntity.ForgetMe;
@@ -136,7 +136,7 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
 
     /// <inheritdoc/>
     public Task UpdateDescriptionAsync(string description, CancellationToken cancellationToken) => InnerEntity.UpdateDescriptionAsync(description, cancellationToken);
-    
+
     /// <inheritdoc/>
     public Task UpdateExtendedDescriptionAsync(string extendedDescription, CancellationToken cancellationToken) => InnerEntity.UpdateExtendedDescriptionAsync(extendedDescription, cancellationToken);
 
@@ -212,7 +212,7 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     public override async Task ResetEventStreamPositionAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         // TODO: Reset inner virtual event stream handlers
         // Entity, PublisherRoles, ProjectRoles
         await InnerEntity.ResetEventStreamPositionAsync(cancellationToken);

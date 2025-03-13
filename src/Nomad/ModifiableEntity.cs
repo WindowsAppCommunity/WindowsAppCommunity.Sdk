@@ -110,79 +110,79 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
         switch (eventStreamEntry.EventId)
         {
             case nameof(AddImageAsync):
-            {
-                await InnerImages.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
-                break;
-            }
+                {
+                    await InnerImages.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
+                    break;
+                }
             case nameof(RemoveImageAsync):
-            {
-                await InnerImages.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
-                break;
-            }
+                {
+                    await InnerImages.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
+                    break;
+                }
             case nameof(AddConnectionAsync):
-            {
-                // TODO: Needs implementation, not interface
-                // await InnerConnections.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
-                break;
-            }
+                {
+                    // TODO: Needs implementation, not interface
+                    // await InnerConnections.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
+                    break;
+                }
             case nameof(RemoveConnectionAsync):
-            {
-                // TODO: Needs implementation, not interface
-                // await InnerConnections.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
-                break;
-            }
+                {
+                    // TODO: Needs implementation, not interface
+                    // await InnerConnections.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
+                    break;
+                }
             case nameof(AddLinkAsync):
-            {
-                // TODO: Needs implementation, not interface
-                // await InnerLinks.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
-                break;
-            }
+                {
+                    // TODO: Needs implementation, not interface
+                    // await InnerLinks.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
+                    break;
+                }
             case nameof(RemoveLinkAsync):
-            {
-                // TODO: Needs implementation, not interface
-                // await InnerLinks.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
-                break;
-            }
+                {
+                    // TODO: Needs implementation, not interface
+                    // await InnerLinks.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
+                    break;
+                }
             case nameof(UpdateNameAsync):
-            {
-                Guard.IsNotNull(updateEvent.Value);
+                {
+                    Guard.IsNotNull(updateEvent.Value);
 
-                var name = await Client.Dag.GetAsync<string>(updateEvent.Value, cancel: cancellationToken);
-                await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, new NameUpdateEvent(name), cancellationToken);
-                break;
-            }
+                    var name = await Client.Dag.GetAsync<string>(updateEvent.Value, cancel: cancellationToken);
+                    await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, new NameUpdateEvent(name), cancellationToken);
+                    break;
+                }
             case nameof(UpdateDescriptionAsync):
-            {
-                Guard.IsNotNull(updateEvent.Value);
+                {
+                    Guard.IsNotNull(updateEvent.Value);
 
-                var description = await Client.Dag.GetAsync<string>(updateEvent.Value, cancel: cancellationToken);
-                await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, new DescriptionUpdateEvent(description), cancellationToken);
-                break;
-            }
+                    var description = await Client.Dag.GetAsync<string>(updateEvent.Value, cancel: cancellationToken);
+                    await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, new DescriptionUpdateEvent(description), cancellationToken);
+                    break;
+                }
             case nameof(UpdateExtendedDescriptionAsync):
-            {
-                Guard.IsNotNull(updateEvent.Value);
+                {
+                    Guard.IsNotNull(updateEvent.Value);
 
-                var extendedDescription = await Client.Dag.GetAsync<string>(updateEvent.Value, cancel: cancellationToken);
-                await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, new ExtendedDescriptionUpdateEvent(extendedDescription), cancellationToken);
-                break;
-            }
+                    var extendedDescription = await Client.Dag.GetAsync<string>(updateEvent.Value, cancel: cancellationToken);
+                    await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, new ExtendedDescriptionUpdateEvent(extendedDescription), cancellationToken);
+                    break;
+                }
             case nameof(UpdateForgetMeStatusAsync):
-            {
-                Guard.IsNotNull(updateEvent.Value);
+                {
+                    Guard.IsNotNull(updateEvent.Value);
 
-                var forgetMe = await Client.Dag.GetAsync<bool?>(updateEvent.Value, cancel: cancellationToken);
-                await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, new ForgetMeUpdateEvent(forgetMe), cancellationToken);
-                break;
-            }
+                    var forgetMe = await Client.Dag.GetAsync<bool?>(updateEvent.Value, cancel: cancellationToken);
+                    await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, new ForgetMeUpdateEvent(forgetMe), cancellationToken);
+                    break;
+                }
             case nameof(UpdateUnlistedStateAsync):
-            {
-                Guard.IsNotNull(updateEvent.Value);
+                {
+                    Guard.IsNotNull(updateEvent.Value);
 
-                var isUnlisted = await Client.Dag.GetAsync<bool>(updateEvent.Value, cancel: cancellationToken);
-                await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, new IsUnlistedUpdateEvent(isUnlisted), cancellationToken);
-                break;
-            }
+                    var isUnlisted = await Client.Dag.GetAsync<bool>(updateEvent.Value, cancel: cancellationToken);
+                    await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, new IsUnlistedUpdateEvent(isUnlisted), cancellationToken);
+                    break;
+                }
         }
     }
 
@@ -204,7 +204,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
     public async Task UpdateDescriptionAsync(string description, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         var valueCid = await Client.Dag.PutAsync(description, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
         var updateEvent = new ValueUpdateEvent(null, (DagCid)valueCid, false);
 
@@ -218,7 +218,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
     public async Task UpdateExtendedDescriptionAsync(string extendedDescription, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         var valueCid = await Client.Dag.PutAsync(extendedDescription, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
         var updateEvent = new ValueUpdateEvent(null, (DagCid)valueCid, false);
 
@@ -232,7 +232,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
     public async Task UpdateForgetMeStatusAsync(bool? forgetMe, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         DagCid? valueCid = null;
         if (forgetMe is not null)
         {
@@ -252,7 +252,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
     public async Task UpdateUnlistedStateAsync(bool isUnlisted, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         var valueCid = await Client.Dag.PutAsync(isUnlisted, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
         var updateEvent = new ValueUpdateEvent(null, (DagCid)valueCid, false);
 
@@ -266,9 +266,9 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
     internal Task ApplyEntryUpdateAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, NameUpdateEvent nameUpdate, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         Guard.IsEqualTo(streamEntry.EventId, nameof(UpdateNameAsync));
-        
+
         Inner.Inner.Name = nameUpdate.Name;
         NameUpdated?.Invoke(this, nameUpdate.Name);
         return Task.CompletedTask;
@@ -280,7 +280,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
         cancellationToken.ThrowIfCancellationRequested();
         Guard.IsEqualTo(streamEntry.EventId, nameof(UpdateDescriptionAsync));
         var description = descriptionUpdate.Description;
-        
+
         Inner.Inner.Description = description;
         DescriptionUpdated?.Invoke(this, description);
         return Task.CompletedTask;
@@ -292,7 +292,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
         cancellationToken.ThrowIfCancellationRequested();
         Guard.IsEqualTo(streamEntry.EventId, nameof(UpdateExtendedDescriptionAsync));
         var extendedDescription = extendedDescriptionUpdate.ExtendedDescription;
-        
+
         Inner.Inner.ExtendedDescription = extendedDescription;
         ExtendedDescriptionUpdated?.Invoke(this, extendedDescription);
         return Task.CompletedTask;
@@ -304,7 +304,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
         cancellationToken.ThrowIfCancellationRequested();
         Guard.IsEqualTo(streamEntry.EventId, nameof(UpdateForgetMeStatusAsync));
         var forgetMe = forgetMeUpdate.ForgetMe;
-        
+
         Inner.Inner.ForgetMe = forgetMe;
         ForgetMeUpdated?.Invoke(this, forgetMe);
         return Task.CompletedTask;
@@ -316,7 +316,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
         cancellationToken.ThrowIfCancellationRequested();
         Guard.IsEqualTo(streamEntry.EventId, nameof(UpdateUnlistedStateAsync));
         var isUnlisted = isUnlistedUpdate.IsUnlisted;
-        
+
         Inner.Inner.IsUnlisted = isUnlisted;
         IsUnlistedUpdated?.Invoke(this, isUnlisted);
         return Task.CompletedTask;
@@ -326,7 +326,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
     public override async Task ResetEventStreamPositionAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
         // TODO: Reset inner virtual event stream handlers
         // Connections, Links, Images
         await InnerImages.ResetEventStreamPositionAsync(cancellationToken);
