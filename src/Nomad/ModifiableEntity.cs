@@ -12,6 +12,9 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <inheritdoc cref="IModifiableEntity" />
 public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, IDelegable<ReadOnlyEntity>, IModifiableEntity
 {
+    /// <inheritdoc/>
+    public required string Id { get; init; }
+
     /// <inheritdoc />
     public required ReadOnlyEntity Inner { get; init; }
 
@@ -73,7 +76,10 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
     public event EventHandler<IReadOnlyConnection[]>? ConnectionsRemoved;
 
     /// <inheritdoc />
-    public event EventHandler<Link[]>? LinksUpdated;
+    public event EventHandler<Link[]>? LinksAdded;
+
+    /// <inheritdoc />
+    public event EventHandler<Link[]>? LinksRemoved;
 
     /// <inheritdoc />
     public event EventHandler<IFile[]>? ImagesAdded;

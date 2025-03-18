@@ -1,39 +1,58 @@
 using System.Collections.Generic;
 using Ipfs;
+using OwlCore.ComponentModel;
 using OwlCore.Nomad;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
 using OwlCore.Storage;
-
-namespace WindowsAppCommunity.Sdk.Nomad;
+using WindowsAppCommunity.Sdk;
+using WindowsAppCommunity.Sdk.Models;
+using WindowsAppCommunity.Sdk.Nomad;
+using Link = WindowsAppCommunity.Sdk.Link;
 
 /// <summary>
-/// Represents a user that can be modified.
+/// A modifiable event stream handler for modifying roaming publisher data.
 /// </summary>
-public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IModifiableUser
+public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>, IDelegable<Project>, IModifiablePublisher
 {
     /// <inheritdoc/>
     public required string Id { get; init; }
-    
-    /// <summary>
-    /// The handler for reading user data.
-    /// </summary>
-    public required ReadOnlyUser InnerUser { get; init; }
 
     /// <summary>
-    /// The handler for modifying entity data on this user.
+    /// The read only handler for this project.
+    /// </summary>
+    public required ReadOnlyPublisher InnerPublisher { get; init; }
+
+    /// <summary>
+    /// The read only entity handler for this publisher.
     /// </summary>
     public required ModifiableEntity InnerEntity { get; init; }
 
     /// <summary>
-    /// The handler for modifying publisher roles on this user.
+    /// The read only accent color handler for this publisher.
     /// </summary>
-    public required IModifiablePublisherRoleCollection InnerPublisherRoles { get; init; }
+    public required ModifiableAccentColor InnerAccentColor { get; init; }
 
     /// <summary>
-    /// The handler for modifying project roles on this user.
+    /// The modifiable project collection handler for this publisher.
     /// </summary>
-    public required IModifiableProjectRoleCollection InnerProjectRoles { get; init; }
+    public required IModifiableProjectCollection<IReadOnlyProject> InnerProjectCollection { get; init; }
+
+    /// <summary>
+    /// The read only user role handler for this publisher.
+    /// </summary>
+    public required IModifiableUserRoleCollection InnerUserRoleCollection { get; init; }
+
+    /// <summary>
+    /// The roaming project data that this handler modifies.
+    /// </summary>
+    public required Project Inner { get; init; }
+
+    /// <inheritdoc/>
+    public required IModifiablePublisherCollection<IReadOnlyPublisher> ParentPublishers { get; init; }
+
+    /// <inheritdoc/>
+    public required IModifiablePublisherCollection<IReadOnlyPublisher> ChildPublishers { get; init; }
 
     /// <inheritdoc/>
     public string Name => InnerEntity.Name;
@@ -55,6 +74,9 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
 
     /// <inheritdoc/>
     public Link[] Links => InnerEntity.Links;
+
+    /// <inheritdoc/>
+    public string? AccentColor => InnerAccentColor.AccentColor;
 
     /// <inheritdoc/>
     public event EventHandler<string>? NameUpdated;
@@ -80,7 +102,7 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     /// <inheritdoc/>
     public event EventHandler<Link[]>? LinksAdded;
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public event EventHandler<Link[]>? LinksRemoved;
 
     /// <inheritdoc/>
@@ -90,16 +112,13 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     public event EventHandler<IFile[]>? ImagesRemoved;
 
     /// <inheritdoc/>
-    public event EventHandler<IReadOnlyPublisherRole[]>? PublishersAdded;
+    public event EventHandler<string?>? AccentColorUpdated;
+    
+    /// <inheritdoc/>
+    public event EventHandler<IReadOnlyProject[]>? ProjectsAdded;
 
     /// <inheritdoc/>
-    public event EventHandler<IReadOnlyPublisherRole[]>? PublishersRemoved;
-
-    /// <inheritdoc/>
-    public event EventHandler<IReadOnlyProjectRole[]>? ProjectsAdded;
-
-    /// <inheritdoc/>
-    public event EventHandler<IReadOnlyProjectRole[]>? ProjectsRemoved;
+    public event EventHandler<IReadOnlyProject[]>? ProjectsRemoved;
 
     /// <inheritdoc/>
     public Task AddConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken) => InnerEntity.AddConnectionAsync(connection, cancellationToken);
@@ -111,19 +130,16 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     public Task AddLinkAsync(Link link, CancellationToken cancellationToken) => InnerEntity.AddLinkAsync(link, cancellationToken);
 
     /// <inheritdoc/>
-    public Task AddProjectAsync(IReadOnlyProjectRole project, CancellationToken cancellationToken) => InnerProjectRoles.AddProjectAsync(project, cancellationToken);
-
-    /// <inheritdoc/>
-    public Task AddPublisherAsync(IReadOnlyPublisherRole publisher, CancellationToken cancellationToken) => InnerPublisherRoles.AddPublisherAsync(publisher, cancellationToken);
+    public Task AddUserAsync(IReadOnlyUserRole user, CancellationToken cancellationToken) => InnerUserRoleCollection.AddUserAsync(user, cancellationToken);
 
     /// <inheritdoc/>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerEntity.GetImageFilesAsync(cancellationToken);
 
     /// <inheritdoc/>
-    public IAsyncEnumerable<IReadOnlyProjectRole> GetProjectsAsync(CancellationToken cancellationToken) => InnerProjectRoles.GetProjectsAsync(cancellationToken);
+    public IAsyncEnumerable<IReadOnlyProject> GetProjectsAsync(CancellationToken cancellationToken) => InnerProjectCollection.GetProjectsAsync(cancellationToken);
 
     /// <inheritdoc/>
-    public IAsyncEnumerable<IReadOnlyPublisherRole> GetPublishersAsync(CancellationToken cancellationToken) => InnerPublisherRoles.GetPublishersAsync(cancellationToken);
+    public IAsyncEnumerable<IReadOnlyUserRole> GetUsersAsync(CancellationToken cancellationToken) => InnerUserRoleCollection.GetUsersAsync(cancellationToken);
 
     /// <inheritdoc/>
     public Task RemoveConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken) => InnerEntity.RemoveConnectionAsync(connection, cancellationToken);
@@ -135,10 +151,10 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     public Task RemoveLinkAsync(Link link, CancellationToken cancellationToken) => InnerEntity.RemoveLinkAsync(link, cancellationToken);
 
     /// <inheritdoc/>
-    public Task RemoveProjectAsync(IReadOnlyProjectRole project, CancellationToken cancellationToken) => InnerProjectRoles.RemoveProjectAsync(project, cancellationToken);
+    public Task RemoveUserAsync(IReadOnlyUserRole user, CancellationToken cancellationToken) => InnerUserRoleCollection.RemoveUserAsync(user, cancellationToken);
 
     /// <inheritdoc/>
-    public Task RemovePublisherAsync(IReadOnlyPublisherRole publisher, CancellationToken cancellationToken) => InnerPublisherRoles.RemovePublisherAsync(publisher, cancellationToken);
+    public Task UpdateAccentColorAsync(string? accentColor, CancellationToken cancellationToken) => InnerAccentColor.UpdateAccentColorAsync(accentColor, cancellationToken);
 
     /// <inheritdoc/>
     public Task UpdateDescriptionAsync(string description, CancellationToken cancellationToken) => InnerEntity.UpdateDescriptionAsync(description, cancellationToken);
@@ -155,7 +171,7 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     /// <inheritdoc/>
     public Task UpdateUnlistedStateAsync(bool isUnlisted, CancellationToken cancellationToken) => InnerEntity.UpdateUnlistedStateAsync(isUnlisted, cancellationToken);
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override async Task ApplyEntryUpdateAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, CancellationToken cancellationToken)
     {
         switch (streamEntry.EventId)
@@ -193,35 +209,48 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
             case nameof(RemoveImageAsync):
                 await InnerEntity.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
-            case nameof(AddPublisherAsync):
-                // TODO: Needs implementation, not interface
-                //await InnerPublisherRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+            case nameof(UpdateAccentColorAsync):
+                await InnerAccentColor.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
-            case nameof(RemovePublisherAsync):
-                // TODO: Needs implementation, not interface
-                //await InnerPublisherRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+            case nameof(AddUserAsync):
+                // TODO: Needs implementation instead of interface
+                // await InnerUserRoleCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
-            case nameof(AddProjectAsync):
-                // TODO: Needs implementation, not interface
-                //await InnerProjectRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+            case nameof(RemoveUserAsync):
+                // TODO: Needs implementation instead of interface
+                // await InnerUserRoleCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
-            case nameof(RemoveProjectAsync):
-                // TODO: Needs implementation, not interface
-                //await InnerProjectRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+            case $"{nameof(ParentPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.AddPublisherAsync)}":
+                // TODO: Needs implementation instead of interface
+                // await ParentPublishers.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                break;
+            case $"{nameof(ParentPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.RemovePublisherAsync)}":
+                // TODO: Needs implementation instead of interface
+                // await ParentPublishers.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                break;
+            case $"{nameof(ChildPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.AddPublisherAsync)}":
+                // TODO: Needs implementation instead of interface
+                // await ChildPublishers.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                break;
+            case $"{nameof(ChildPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.RemovePublisherAsync)}":
+                // TODO: Needs implementation instead of interface
+                // await ChildPublishers.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             default:
                 throw new NotImplementedException();
         }
+        ;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override async Task ResetEventStreamPositionAsync(CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        // TODO: Reset inner virtual event stream handlers
-        // Entity, PublisherRoles, ProjectRoles
+        EventStreamPosition = null;
         await InnerEntity.ResetEventStreamPositionAsync(cancellationToken);
-        throw new NotImplementedException();
+        await InnerAccentColor.ResetEventStreamPositionAsync(cancellationToken);
+
+        // TODO, needs implementation instead of interface.
+        // await InnerUserRoleCollection.ResetEventStreamPositionAsync(cancellationToken);
+        // await Dependencies.ResetEventStreamPositionAsync(cancellationToken);
     }
 }

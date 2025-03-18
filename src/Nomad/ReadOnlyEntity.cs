@@ -8,6 +8,9 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <inheritdoc cref="IReadOnlyEntity" />
 public class ReadOnlyEntity : IDelegable<IEntity>, IReadOnlyEntity
 {
+    /// <inheritdoc/>
+    public required string Id { get; init; }
+    
     /// <summary>
     /// Handles the connections for this entity.
     /// </summary>
@@ -69,7 +72,10 @@ public class ReadOnlyEntity : IDelegable<IEntity>, IReadOnlyEntity
     public event EventHandler<IReadOnlyConnection[]>? ConnectionsRemoved;
 
     /// <inheritdoc />
-    public event EventHandler<Link[]>? LinksUpdated;
+    public event EventHandler<Link[]>? LinksAdded;
+
+    /// <inheritdoc/>
+    public event EventHandler<Link[]>? LinksRemoved;
 
     /// <inheritdoc />
     public event EventHandler<IFile[]>? ImagesAdded;

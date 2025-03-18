@@ -6,32 +6,37 @@ using WindowsAppCommunity.Sdk.Models;
 namespace WindowsAppCommunity.Sdk.Nomad;
 
 /// <summary>
-/// Represents a user that cannot be modified.
+/// A read only handler for roaming project data.
 /// </summary>
-public class ReadOnlyUser : IReadOnlyUser, IDelegable<User>
+public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
 {
     /// <inheritdoc/>
     public required string Id { get; init; }
     
     /// <summary>
-    /// The roaming user data.
+    /// The roaming project data that this handler reads.
     /// </summary>
-    public required User Inner { get; init; }
+    public required Project Inner { get; init; }
 
     /// <summary>
-    /// The handler for reading entity data on this user.
+    /// The read only entity handler for this project.
     /// </summary>
     public required ReadOnlyEntity InnerEntity { get; init; }
 
     /// <summary>
-    /// The handler for reading publisher roles on this user.
+    /// The read only accent color handler for this project.
     /// </summary>
-    public required IReadOnlyPublisherRoleCollection InnerPublisherRoles { get; init; }
+    public required IReadOnlyAccentColor InnerAccentColor { get; init; }
 
     /// <summary>
-    /// The handler for reading project roles on this user.
+    /// The read only user role handler for this project.
     /// </summary>
-    public required IReadOnlyProjectRoleCollection InnerProjectRoles { get; init; }
+    public required IReadOnlyUserRoleCollection InnerUserRoleCollection { get; init; }
+
+    /// <summary>
+    /// The readonly dependency collection handler for this project.
+    /// </summary>
+    public required IReadOnlyProjectCollection Dependencies { get; init; }
 
     /// <inheritdoc/>
     public string Name => InnerEntity.Name;
@@ -53,6 +58,21 @@ public class ReadOnlyUser : IReadOnlyUser, IDelegable<User>
 
     /// <inheritdoc/>
     public Link[] Links => InnerEntity.Links;
+
+    /// <inheritdoc/>
+    public string? AccentColor => InnerAccentColor.AccentColor;
+
+    /// <inheritdoc/>
+    public string Category => Inner.Category;
+
+    /// <inheritdoc/>
+    public string[] Features => Inner.Features;
+
+    /// <inheritdoc/>
+    public event EventHandler<string>? CategoryUpdated;
+
+    /// <inheritdoc/>
+    public event EventHandler<IReadOnlyPublisher>? PublisherUpdated;
 
     /// <inheritdoc/>
     public event EventHandler<string>? NameUpdated;
@@ -88,23 +108,26 @@ public class ReadOnlyUser : IReadOnlyUser, IDelegable<User>
     public event EventHandler<IFile[]>? ImagesRemoved;
 
     /// <inheritdoc/>
-    public event EventHandler<IReadOnlyPublisherRole[]>? PublishersAdded;
+    public event EventHandler<string?>? AccentColorUpdated;
 
     /// <inheritdoc/>
-    public event EventHandler<IReadOnlyPublisherRole[]>? PublishersRemoved;
+    public event EventHandler<string[]>? FeaturesAdded;
 
     /// <inheritdoc/>
-    public event EventHandler<IReadOnlyProjectRole[]>? ProjectsAdded;
-
-    /// <inheritdoc/>
-    public event EventHandler<IReadOnlyProjectRole[]>? ProjectsRemoved;
+    public event EventHandler<string[]>? FeaturesRemoved;
 
     /// <inheritdoc/>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerEntity.GetImageFilesAsync(cancellationToken);
 
     /// <inheritdoc/>
-    public IAsyncEnumerable<IReadOnlyProjectRole> GetProjectsAsync(CancellationToken cancellationToken) => InnerProjectRoles.GetProjectsAsync(cancellationToken);
+    public Task<IReadOnlyPublisher> GetPublisherAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // TODO: Needs publisher nomad repository
+        throw new NotImplementedException();
+    }
 
     /// <inheritdoc/>
-    public IAsyncEnumerable<IReadOnlyPublisherRole> GetPublishersAsync(CancellationToken cancellationToken) => InnerPublisherRoles.GetPublishersAsync(cancellationToken);
+    public IAsyncEnumerable<IReadOnlyUserRole> GetUsersAsync(CancellationToken cancellationToken) => InnerUserRoleCollection.GetUsersAsync(cancellationToken);
 }

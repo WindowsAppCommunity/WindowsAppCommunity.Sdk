@@ -11,7 +11,7 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectRole
     /// <summary>
     /// The canonical publisher for this project.
     /// </summary>
-    public required DagCid Publisher { get; set; }
+    public required Cid Publisher { get; set; }
 
     /// <summary>
     /// The name of this project.

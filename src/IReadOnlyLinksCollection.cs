@@ -11,7 +11,12 @@ public interface IReadOnlyLinksCollection
     Link[] Links { get; }
 
     /// <summary>
-    /// Raised when <see cref="Links"/> is updated.
+    /// Raised when <see cref="Links"/> are added.
     /// </summary>
-    event EventHandler<Link[]>? LinksUpdated;  
+    event EventHandler<Link[]>? LinksAdded;  
+
+    /// <summary>
+    /// Raised when <see cref="Links"/> are removed.
+    /// </summary>
+    event EventHandler<Link[]>? LinksRemoved;  
 }

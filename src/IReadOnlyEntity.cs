@@ -1,3 +1,5 @@
+using OwlCore.ComponentModel;
+
 namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
@@ -5,6 +7,11 @@ namespace WindowsAppCommunity.Sdk;
 /// </summary>
 public interface IReadOnlyEntity : IReadOnlyConnectionsCollection, IReadOnlyLinksCollection, IReadOnlyImagesCollection
 {
+    /// <summary>
+    /// An Id corresponding to this object instance. This Id should be unique for the object, but identical across runs and environments.
+    /// </summary>
+    string Id { get; }
+
     /// <summary>
     /// The name of the entity.
     /// </summary>

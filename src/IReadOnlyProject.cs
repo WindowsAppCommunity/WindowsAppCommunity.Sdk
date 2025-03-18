@@ -11,7 +11,7 @@ public interface IReadOnlyProject : IReadOnlyProject<IReadOnlyProjectCollection>
 /// Represents a project.
 /// </summary>
 public interface IReadOnlyProject<out TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection
-    where TDependencyCollection : IReadOnlyProjectCollection
+    where TDependencyCollection : IReadOnlyProjectCollection<IReadOnlyProject>
 {
     /// <summary>
     /// The projects that this project depends on.
@@ -31,7 +31,7 @@ public interface IReadOnlyProject<out TDependencyCollection> : IReadOnlyEntity, 
     /// <summary>
     /// Raised when <see cref="Dependencies"/> are updated. 
     /// </summary>
-    public event EventHandler<IReadOnlyPublisher> PublisherUpdated;
+    public event EventHandler<IReadOnlyPublisher>? PublisherUpdated;
 
     /// <summary>
     /// Gets the publisher for this project.
