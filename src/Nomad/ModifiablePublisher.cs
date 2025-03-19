@@ -220,6 +220,14 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
                 // TODO: Needs implementation instead of interface
                 // await InnerUserRoleCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
+            case nameof(InnerProjectCollection.AddProjectAsync):
+                // TODO: Needs implementation instead of interface
+                // await InnerProjectCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                break;
+            case nameof(InnerProjectCollection.RemoveProjectAsync):
+                // TODO: Needs implementation instead of interface
+                // await InnerProjectCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                break;
             case $"{nameof(ParentPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.AddPublisherAsync)}":
                 // TODO: Needs implementation instead of interface
                 // await ParentPublishers.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
