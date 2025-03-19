@@ -5,13 +5,8 @@ namespace WindowsAppCommunity.Sdk;
 /// <summary>
 /// Represents a read-only entity with common properties and events.
 /// </summary>
-public interface IReadOnlyEntity : IReadOnlyConnectionsCollection, IReadOnlyLinksCollection, IReadOnlyImagesCollection
+public interface IReadOnlyEntity : IReadOnlyConnectionsCollection, IReadOnlyLinksCollection, IReadOnlyImagesCollection, IHasId
 {
-    /// <summary>
-    /// An Id corresponding to this object instance. This Id should be unique for the object, but identical across runs and environments.
-    /// </summary>
-    string Id { get; }
-
     /// <summary>
     /// The name of the entity.
     /// </summary>

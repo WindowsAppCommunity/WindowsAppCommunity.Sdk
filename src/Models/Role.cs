@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using OwlCore.Storage;
 
 namespace WindowsAppCommunity.Sdk.Models;

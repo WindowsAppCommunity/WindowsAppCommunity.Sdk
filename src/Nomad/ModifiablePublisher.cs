@@ -246,8 +246,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
                 break;
             default:
                 throw new NotImplementedException();
-        }
-        ;
+        };
     }
 
     /// <inheritdoc/>

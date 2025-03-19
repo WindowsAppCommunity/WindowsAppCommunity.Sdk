@@ -1,4 +1,6 @@
-﻿namespace WindowsAppCommunity.Sdk;
+﻿using OwlCore.ComponentModel;
+
+namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a publisher, a collection of projects and collaborators who publish content to users.
@@ -10,7 +12,7 @@ public interface IReadOnlyPublisher : IReadOnlyPublisher<IReadOnlyPublisherColle
 /// <summary>
 /// Represents a publisher, a collection of projects and collaborators who publish content to users.
 /// </summary>
-public interface IReadOnlyPublisher<TPublisherCollection> : IReadOnlyEntity, IReadOnlyAccentColor, IReadOnlyUserRoleCollection, IReadOnlyProjectCollection
+public interface IReadOnlyPublisher<TPublisherCollection> : IReadOnlyEntity, IReadOnlyAccentColor, IReadOnlyUserRoleCollection, IReadOnlyProjectCollection, IHasId
     where TPublisherCollection : IReadOnlyPublisherCollection<IReadOnlyPublisher>
 {
     /// <summary>

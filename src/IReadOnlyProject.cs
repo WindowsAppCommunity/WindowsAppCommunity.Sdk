@@ -1,4 +1,6 @@
-﻿namespace WindowsAppCommunity.Sdk;
+﻿using OwlCore.ComponentModel;
+
+namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a project.
@@ -10,7 +12,7 @@ public interface IReadOnlyProject : IReadOnlyProject<IReadOnlyProjectCollection>
 /// <summary>
 /// Represents a project.
 /// </summary>
-public interface IReadOnlyProject<out TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection
+public interface IReadOnlyProject<out TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection, IHasId
     where TDependencyCollection : IReadOnlyProjectCollection<IReadOnlyProject>
 {
     /// <summary>

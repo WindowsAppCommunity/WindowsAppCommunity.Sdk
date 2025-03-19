@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using OwlCore.ComponentModel;
 
 namespace WindowsAppCommunity.Sdk;
 
@@ -13,7 +14,7 @@ public interface IReadOnlyUserCollection : IReadOnlyUserCollection<IReadOnlyUser
 /// Represents a collection of users with a corresponding role that can be modified.
 /// </summary>
 /// <typeparam name="TUser">The type of user in this collection.</typeparam>
-public interface IReadOnlyUserCollection<out TUser>
+public interface IReadOnlyUserCollection<out TUser> : IHasId
     where TUser : IReadOnlyUser
 {
     /// <summary>

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using OwlCore.ComponentModel;
 
 namespace WindowsAppCommunity.Sdk;
 
@@ -12,7 +13,7 @@ public interface IReadOnlyProjectCollection : IReadOnlyProjectCollection<IReadOn
 /// <summary>
 /// Represents a collection of projects.
 /// </summary>
-public interface IReadOnlyProjectCollection<TProject>
+public interface IReadOnlyProjectCollection<TProject> : IHasId
     where TProject : IReadOnlyProject
 {
     /// <summary>
