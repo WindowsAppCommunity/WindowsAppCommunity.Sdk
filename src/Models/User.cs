@@ -41,12 +41,12 @@ public record User : IEntity, IConnections, ILinkCollection, IProjectRoleCollect
     /// <summary>
     /// A list of all the projects the user is registered with, along with their role on the project.
     /// </summary>
-    public Dictionary<DagCid, Role> Projects { get; set; } = [];
+    public (Cid, DagCid)[] Projects { get; set; } = [];
 
     /// <summary>
     /// Represents all publishers the user is registered with, along with their roles.
     /// </summary>
-    public Dictionary<DagCid, Role> Publishers { get; set; } = [];
+    public (Cid, DagCid)[] Publishers { get; set; } = [];
 
     /// <summary>
     /// A flag that indicates whether the profile has requested to be forgotten.

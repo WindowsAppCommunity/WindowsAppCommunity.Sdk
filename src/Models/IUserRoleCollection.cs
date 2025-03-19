@@ -11,5 +11,5 @@ public interface IUserRoleCollection
     /// <summary>
     /// Represents a list of registered users along with the role on each.
     /// </summary>
-    public Dictionary<DagCid, Role> Users { get; set; }
+    public (Cid, DagCid)[] Users { get; set; }
 }

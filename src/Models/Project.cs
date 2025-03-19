@@ -6,7 +6,7 @@ namespace WindowsAppCommunity.Sdk.Models;
 /// <summary>
 /// Represents a project.
 /// </summary>
-public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectRoleCollection
+public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectCollection
 {
     /// <summary>
     /// The canonical publisher for this project.
@@ -51,12 +51,12 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectRole
     /// <summary>
     /// Other projects which this project may depend on for various reasons.
     /// </summary>
-    public Dictionary<DagCid, Role> Projects { get; set; } = [];
+    public Cid[] Projects { get; set; } = [];
 
     /// <summary>
     /// The <see cref="User"/>s who collaborate on this project, and their corresponding roles.
     /// </summary>
-    public Dictionary<DagCid, Role> Users { get; set; } = [];
+    public (Cid, DagCid)[] Users { get; set; } = [];
 
     /// <summary>
     /// Represents links to external profiles or resources added by the user.

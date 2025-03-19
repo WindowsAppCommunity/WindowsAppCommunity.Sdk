@@ -6,7 +6,7 @@ namespace WindowsAppCommunity.Sdk.Models;
 /// <summary>
 /// Represents a content publisher.
 /// </summary>
-public record Publisher : IEntity, ILinkCollection, IProjectRoleCollection, IUserRoleCollection, IConnections, IAccentColor
+public record Publisher : IEntity, ILinkCollection, IProjectCollection, IUserRoleCollection, IConnections, IAccentColor
 {
     /// <summary>
     /// The name of the publisher.
@@ -41,22 +41,22 @@ public record Publisher : IEntity, ILinkCollection, IProjectRoleCollection, IUse
     /// <summary>
     /// Users who are registered to participate in this publisher, along with their roles.
     /// </summary>
-    public Dictionary<DagCid, Role> Users { get; set; } = [];
+    public (Cid, DagCid)[] Users { get; set; } = [];
 
     /// <summary>
-    /// Projects who are registered to participate in this publisher, along with their roles.
+    /// Projects who are registered under this publisher.
     /// </summary>
-    public Dictionary<DagCid, Role> Projects { get; set; } = [];
-
-    /// <summary>
-    /// A list of other publishers who are managed under this publisher.
-    /// </summary>
-    public DagCid[] ParentPublishers { get; set; } = [];
+    public Cid[] Projects { get; set; } = [];
 
     /// <summary>
     /// A list of other publishers who are managed under this publisher.
     /// </summary>
-    public DagCid[] ChildPublishers { get; set; } = [];
+    public Cid[] ParentPublishers { get; set; } = [];
+
+    /// <summary>
+    /// A list of other publishers who are managed under this publisher.
+    /// </summary>
+    public Cid[] ChildPublishers { get; set; } = [];
 
     /// <summary>
     /// Holds information about publisher assets that have been published for consumption by an end user, such as a Microsoft Store app, a package on nuget.org, a git repo, etc.
@@ -69,7 +69,7 @@ public record Publisher : IEntity, ILinkCollection, IProjectRoleCollection, IUse
     public bool? ForgetMe { get; set; }
 
     /// <summary>
-    /// A flag indicating whether this is a non-public project.
+    /// A flag indicating whether this is a non-public publisher.
     /// </summary>
     public bool IsUnlisted { get; set; }
 }
