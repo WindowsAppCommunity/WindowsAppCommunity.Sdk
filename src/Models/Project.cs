@@ -1,4 +1,5 @@
 using Ipfs;
+using OwlCore.ComponentModel;
 using System.Collections.Generic;
 
 namespace WindowsAppCommunity.Sdk.Models;
@@ -6,12 +7,12 @@ namespace WindowsAppCommunity.Sdk.Models;
 /// <summary>
 /// Represents a project.
 /// </summary>
-public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectRoleCollection
+public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectCollection, ISources<Cid>
 {
     /// <summary>
     /// The canonical publisher for this project.
     /// </summary>
-    public required DagCid Publisher { get; set; }
+    public required Cid Publisher { get; set; }
 
     /// <summary>
     /// The name of this project.
@@ -51,12 +52,12 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectRole
     /// <summary>
     /// Other projects which this project may depend on for various reasons.
     /// </summary>
-    public Dictionary<DagCid, Role> Projects { get; set; } = [];
+    public Cid[] Projects { get; set; } = [];
 
     /// <summary>
     /// The <see cref="User"/>s who collaborate on this project, and their corresponding roles.
     /// </summary>
-    public Dictionary<DagCid, Role> Users { get; set; } = [];
+    public (Cid, DagCid)[] Users { get; set; } = [];
 
     /// <summary>
     /// Represents links to external profiles or resources added by the user.
@@ -77,4 +78,8 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectRole
     /// A flag indicating whether this is a non-public project.
     /// </summary>
     public bool IsUnlisted { get; set; }
+
+    /// <summary>
+    /// The event stream sources for this project.
+    public required ICollection<Cid> Sources { get; init; }
 }

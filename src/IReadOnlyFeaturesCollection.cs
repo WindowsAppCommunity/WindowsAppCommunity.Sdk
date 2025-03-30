@@ -13,5 +13,10 @@ public interface IReadOnlyFeaturesCollection
     /// <summary>
     /// Raised when <see cref="Features"/> is updated.
     /// </summary>
-    public event EventHandler<string[]>? FeaturesUpdated;
+    public event EventHandler<string[]>? FeaturesAdded;
+    
+    /// <summary>
+    /// Raised when <see cref="Features"/> is updated.
+    /// </summary>
+    public event EventHandler<string[]>? FeaturesRemoved;
 }

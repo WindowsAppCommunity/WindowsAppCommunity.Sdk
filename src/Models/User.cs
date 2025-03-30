@@ -1,4 +1,5 @@
 using Ipfs;
+using OwlCore.ComponentModel;
 using System.Collections.Generic;
 
 namespace WindowsAppCommunity.Sdk.Models;
@@ -6,7 +7,7 @@ namespace WindowsAppCommunity.Sdk.Models;
 /// <summary>
 /// Represents a user.
 /// </summary>
-public record User : IEntity, IConnections, ILinkCollection, IProjectRoleCollection, IPublisherRoleCollection
+public record User : IEntity, IConnections, ILinkCollection, IProjectRoleCollection, IPublisherRoleCollection, ISources<Cid>
 {
     /// <summary>
     /// The name of the user.
@@ -41,12 +42,12 @@ public record User : IEntity, IConnections, ILinkCollection, IProjectRoleCollect
     /// <summary>
     /// A list of all the projects the user is registered with, along with their role on the project.
     /// </summary>
-    public Dictionary<DagCid, Role> Projects { get; set; } = [];
+    public (Cid, DagCid)[] Projects { get; set; } = [];
 
     /// <summary>
     /// Represents all publishers the user is registered with, along with their roles.
     /// </summary>
-    public Dictionary<DagCid, Role> Publishers { get; set; } = [];
+    public (Cid, DagCid)[] Publishers { get; set; } = [];
 
     /// <summary>
     /// A flag that indicates whether the profile has requested to be forgotten.
@@ -57,4 +58,8 @@ public record User : IEntity, IConnections, ILinkCollection, IProjectRoleCollect
     /// A flag indicating whether this is an unlisted project.
     /// </summary>
     public bool IsUnlisted { get; set; }
+
+    /// <summary>
+    /// The event stream handler sources for this user.
+    public required ICollection<Cid> Sources { get; init; }
 }

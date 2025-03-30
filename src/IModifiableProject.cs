@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a project that can be modified.
 /// </summary>
-public interface IModifiableProject : IReadOnlyProject, IModifiableEntity, IModifiableImagesCollection, IModifiableUserRoleCollection, IModifiableAccentColor, IModifiableFeaturesCollection
+public interface IModifiableProject : IReadOnlyProject, IReadOnlyProject<IModifiableProjectCollection<IReadOnlyProject>>, IModifiableEntity, IModifiableImagesCollection, IModifiableUserRoleCollection, IModifiableAccentColor, IModifiableFeaturesCollection
 {
     /// <summary>
     /// Updates the publisher for this project.

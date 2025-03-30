@@ -1,9 +1,11 @@
+using OwlCore.ComponentModel;
+
 namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a read-only entity with common properties and events.
 /// </summary>
-public interface IReadOnlyEntity : IReadOnlyConnectionsCollection, IReadOnlyLinksCollection, IReadOnlyImagesCollection
+public interface IReadOnlyEntity : IReadOnlyConnectionsCollection, IReadOnlyLinksCollection, IReadOnlyImagesCollection, IHasId
 {
     /// <summary>
     /// The name of the entity.
@@ -49,7 +51,7 @@ public interface IReadOnlyEntity : IReadOnlyConnectionsCollection, IReadOnlyLink
     /// Raised when <see cref="ForgetMe"/> is updated.
     /// </summary>
     event EventHandler<bool?>? ForgetMeUpdated;
-    
+
     /// <summary>
     /// Raised when <see cref="IsUnlisted"/> is updated.
     /// </summary>

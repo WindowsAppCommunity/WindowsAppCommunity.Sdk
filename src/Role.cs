@@ -6,6 +6,11 @@ namespace WindowsAppCommunity.Sdk;
 public class Role
 {
     /// <summary>
+    /// A unique identifier for this Role.
+    /// </summary>
+    public required string Id { get; init; }
+    
+    /// <summary>
     /// The name of the role.
     /// </summary>
     public required string Name { get; init; }

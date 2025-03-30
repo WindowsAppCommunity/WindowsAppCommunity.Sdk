@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using OwlCore.ComponentModel;
 
 namespace WindowsAppCommunity.Sdk;
 
@@ -12,7 +13,7 @@ public interface IReadOnlyPublisherCollection : IReadOnlyPublisherCollection<IRe
 /// <summary>
 /// Represents a collection of publishers that can be read but not modified.
 /// </summary>
-public interface IReadOnlyPublisherCollection<TPublisher>
+public interface IReadOnlyPublisherCollection<TPublisher> : IHasId
     where TPublisher : IReadOnlyPublisher
 {
     /// <summary>

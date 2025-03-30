@@ -1,4 +1,6 @@
-﻿namespace WindowsAppCommunity.Sdk;
+﻿using OwlCore.ComponentModel;
+
+namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a project.
@@ -10,8 +12,8 @@ public interface IReadOnlyProject : IReadOnlyProject<IReadOnlyProjectCollection>
 /// <summary>
 /// Represents a project.
 /// </summary>
-public interface IReadOnlyProject<out TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection
-    where TDependencyCollection : IReadOnlyProjectCollection
+public interface IReadOnlyProject<out TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection, IHasId
+    where TDependencyCollection : IReadOnlyProjectCollection<IReadOnlyProject>
 {
     /// <summary>
     /// The projects that this project depends on.
@@ -31,7 +33,7 @@ public interface IReadOnlyProject<out TDependencyCollection> : IReadOnlyEntity, 
     /// <summary>
     /// Raised when <see cref="Dependencies"/> are updated. 
     /// </summary>
-    public event EventHandler<IReadOnlyPublisher> PublisherUpdated;
+    public event EventHandler<IReadOnlyPublisher>? PublisherUpdated;
 
     /// <summary>
     /// Gets the publisher for this project.

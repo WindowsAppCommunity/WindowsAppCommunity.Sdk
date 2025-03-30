@@ -20,10 +20,10 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
 
     /// <inheritdoc />
     public string? AccentColor => Inner.AccentColor;
-    
+
     /// <inheritdoc />
     public event EventHandler<string?>? AccentColorUpdated;
-    
+
     /// <inheritdoc />
     public override async Task ApplyEntryUpdateAsync(EventStreamEntry<DagCid> eventStreamEntry, ValueUpdateEvent updateEvent, CancellationToken cancellationToken)
     {
@@ -33,15 +33,15 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
             return;
 
         string? accentColor = null;
-        
+
         if (updateEvent is { Unset: false, Value: not null })
         {
-            (accentColor, _) = await Client.ResolveDagCidAsync<string>(updateEvent.Value,  nocache: !KuboOptions.UseCache, cancellationToken);
+            (accentColor, _) = await Client.ResolveDagCidAsync<string>(updateEvent.Value, nocache: !KuboOptions.UseCache, cancellationToken);
         }
-        
+
         await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, accentColor, cancellationToken);
     }
-    
+
     /// <summary>
     /// Applies an event stream update event and raises the relevant events.
     /// </summary>
@@ -55,10 +55,10 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
 
         if (eventStreamEntry.EventId is not nameof(UpdateAccentColorAsync))
             return Task.CompletedTask;
-        
+
         Inner.Inner.AccentColor = accentColor;
         AccentColorUpdated?.Invoke(this, accentColor);
-        
+
         return Task.CompletedTask;
     }
 
@@ -67,10 +67,10 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
     {
         EventStreamPosition = null;
         Inner.Inner.AccentColor = null;
-            
+
         return Task.CompletedTask;
     }
-    
+
     /// <inheritdoc />
     public async Task UpdateAccentColorAsync(string? accentColor, CancellationToken cancellationToken)
     {
