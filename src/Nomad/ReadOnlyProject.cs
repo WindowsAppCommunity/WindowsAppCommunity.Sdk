@@ -1,5 +1,10 @@
 using System.Collections.Generic;
+using CommunityToolkit.Diagnostics;
+using Ipfs;
+using Ipfs.CoreApi;
 using OwlCore.ComponentModel;
+using OwlCore.Nomad.Kubo;
+using OwlCore.Nomad.Kubo.Events;
 using OwlCore.Storage;
 using WindowsAppCommunity.Sdk.Models;
 
@@ -10,6 +15,81 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// </summary>
 public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
 {
+    /// <summary>
+    /// Creates a new instance of <see cref="ReadOnlyProject"/> from the specified handler configuration.
+    /// </summary>
+    /// <param name="handlerConfig">The handler configuration to create the instance from.</param>
+    /// <param name="projectDependencyRepository">The repository to use for returning project dependencies.</param>
+    /// <param name="publisherRepository">The repository to use for returning publishers.</param>
+    /// <param name="userRepository">>The repository to use for returning users.</param>
+    /// <param name="kuboOptions">The options used to read and write data to and from Kubo.</param>
+    /// <param name="client">The client used to interact with the ipfs network.</param>
+    /// <returns>A new instance of <see cref="ReadOnlyProject"/>.</returns>
+    public static ReadOnlyProject FromHandlerConfig(NomadKuboEventStreamHandlerConfig<Project> handlerConfig, NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> projectDependencyRepository, NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> publisherRepository, NomadKuboRepository<ModifiableUser, IReadOnlyUser, User, ValueUpdateEvent> userRepository, ICoreApi client, IKuboOptions kuboOptions)
+    {
+        Guard.IsNotNull(handlerConfig.RoamingValue);
+        Guard.IsNotNull(handlerConfig.RoamingId);
+
+        ReadOnlyImagesCollection readOnlyImagesCollection = new ReadOnlyImagesCollection
+        {
+            Inner = handlerConfig.RoamingValue,
+            Client = client,
+        };
+
+        IReadOnlyConnectionsCollection readOnlyConnectionsCollection = null!;
+        IReadOnlyLinksCollection readOnlyLinksCollection = null!;
+
+        ReadOnlyEntity readOnlyEntity = new ReadOnlyEntity
+        {
+            Id = handlerConfig.RoamingId,
+            Inner = handlerConfig.RoamingValue,
+            InnerConnections = readOnlyConnectionsCollection,
+            InnerImages = readOnlyImagesCollection,
+            InnerLinks = readOnlyLinksCollection,
+            Client = client,
+        };
+
+        ReadOnlyAccentColor readOnlyAccentColor = new ReadOnlyAccentColor
+        {
+            Inner = handlerConfig.RoamingValue,
+            Client = client,
+        };
+
+        ReadOnlyUserRoleCollection readOnlyUserRoleCollection = new()
+        {
+            Id = handlerConfig.RoamingId,
+            Inner = handlerConfig.RoamingValue,
+            UserRepository = userRepository,
+            Client = client,
+        };
+
+        ReadOnlyProjectCollection dependencies = new ReadOnlyProjectCollection()
+        {
+            Id = handlerConfig.RoamingId,
+            Inner = handlerConfig.RoamingValue,
+            Client = client,
+            KuboOptions = kuboOptions,
+            ProjectDependencyRepository = projectDependencyRepository,
+        };
+
+        return new ReadOnlyProject
+        {
+            Id = handlerConfig.RoamingId,
+            Inner = handlerConfig.RoamingValue,
+            InnerEntity = readOnlyEntity,
+            InnerAccentColor = readOnlyAccentColor,
+            InnerUserRoleCollection = readOnlyUserRoleCollection,
+            Dependencies = dependencies,
+            Client = client,
+            PublisherRepository = publisherRepository,
+        };
+    }
+    
+    /// <summary>
+    /// The client to use for communicating with ipfs.
+    /// </summary>
+    public required ICoreApi Client { get; init; }
+
     /// <inheritdoc/>
     public required string Id { get; init; }
     
@@ -26,17 +106,22 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
     /// <summary>
     /// The read only accent color handler for this project.
     /// </summary>
-    public required IReadOnlyAccentColor InnerAccentColor { get; init; }
+    public required ReadOnlyAccentColor InnerAccentColor { get; init; }
 
     /// <summary>
     /// The read only user role handler for this project.
     /// </summary>
-    public required IReadOnlyUserRoleCollection InnerUserRoleCollection { get; init; }
+    public required ReadOnlyUserRoleCollection InnerUserRoleCollection { get; init; }
 
     /// <summary>
     /// The readonly dependency collection handler for this project.
     /// </summary>
     public required IReadOnlyProjectCollection Dependencies { get; init; }
+
+    /// <summary>
+    /// A repository to get modifiable or readonly project instances from.
+    /// </summary>
+    public required NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> PublisherRepository { get; init; }
 
     /// <inheritdoc/>
     public string Name => InnerEntity.Name;
@@ -120,12 +205,12 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerEntity.GetImageFilesAsync(cancellationToken);
 
     /// <inheritdoc/>
-    public Task<IReadOnlyPublisher> GetPublisherAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyPublisher> GetPublisherAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        // TODO: Needs publisher nomad repository
-        throw new NotImplementedException();
+        var publisherId = await Client.Dag.GetAsync<Cid>(Inner.Publisher, cancel: cancellationToken);
+        return await PublisherRepository.GetAsync(publisherId, cancellationToken);
     }
 
     /// <inheritdoc/>

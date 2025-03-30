@@ -4,6 +4,8 @@ using Ipfs;
 using OwlCore.Nomad;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
+using User = WindowsAppCommunity.Sdk.Models.User;
+using CommunityToolkit.Diagnostics;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
 
@@ -18,6 +20,11 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
     /// <inheritdoc/>
     public required ReadOnlyUserRoleCollection Inner { get; init; }
 
+    /// <summary>
+    /// The repository to use for getting modifiable or readonly user instances.
+    /// </summary>
+    public required NomadKuboRepository<ModifiableUser, IReadOnlyUser, User, ValueUpdateEvent> UserRepository { get; init; }
+
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyUserRole[]>? UsersAdded;
 
@@ -30,9 +37,10 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
     /// <inheritdoc/>
     public async Task AddUserAsync(IReadOnlyUserRole user, CancellationToken cancellationToken)
     {
-        var valueCid = await Client.Dag.PutAsync(user.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+        var keyCid = await Client.Dag.PutAsync(user.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+        var valueCid = await Client.Dag.PutAsync(user.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
 
-        var updateEvent = new ValueUpdateEvent(Key: null, Value: (DagCid)valueCid, false);
+        var updateEvent = new ValueUpdateEvent(Key: (DagCid)keyCid, Value: (DagCid)valueCid, false);
         var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(AddUserAsync), updateEvent, DateTime.UtcNow, cancellationToken);
         await ApplyAddUserRoleEntryAsync(appendedEntry, updateEvent, user, cancellationToken);
 
@@ -42,9 +50,10 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
     /// <inheritdoc/>
     public async Task RemoveUserAsync(IReadOnlyUserRole user, CancellationToken cancellationToken)
     {
-        var valueCid = await Client.Dag.PutAsync(user.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+        var keyCid = await Client.Dag.PutAsync(user.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+        var valueCid = await Client.Dag.PutAsync(user.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
 
-        var updateEvent = new ValueUpdateEvent(Key: null, Value: (DagCid)valueCid, false);
+        var updateEvent = new ValueUpdateEvent(Key: (DagCid)keyCid, Value: (DagCid)valueCid, true);
         var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(RemoveUserAsync), updateEvent, DateTime.UtcNow, cancellationToken);
         await ApplyRemoveUserRoleEntryAsync(appendedEntry, updateEvent, user, cancellationToken);
 
@@ -54,17 +63,80 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
     /// <inheritdoc/>
     public override async Task ApplyEntryUpdateAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, CancellationToken cancellationToken)
     {
+        if (updateEvent.Key == null || updateEvent.Value == null)
+        {
+            throw new ArgumentNullException("Key or Value in updateEvent cannot be null.");
+        }
+
         switch (streamEntry.EventId)
         {
             case nameof(AddUserAsync):
-                // TODO: Needs user repository
-                IReadOnlyUserRole addedUserRole = null!;
-                await ApplyAddUserRoleEntryAsync(streamEntry, updateEvent, addedUserRole, cancellationToken);
+                var userId = await Client.Dag.GetAsync<string>(updateEvent.Key, cancel: cancellationToken);
+                var user = await UserRepository.GetAsync(userId, cancellationToken);
+                Guard.IsNotNull(user);
+
+                var role = await Client.Dag.GetAsync<Role>(updateEvent.Value, cancel: cancellationToken);
+                Guard.IsNotNull(role);
+
+                if (user is ModifiableUser modifiableUser)
+                {
+                    ModifiableUserRole addedUserRole = new ModifiableUserRole
+                    {
+                        InnerUser = modifiableUser,
+                        Role = role
+                    };
+
+                    await ApplyAddUserRoleEntryAsync(streamEntry, updateEvent, addedUserRole, cancellationToken);
+                }
+                else if (user is ReadOnlyUser readOnlyUser)
+                {
+                    IReadOnlyUserRole addedUserRole = new ReadOnlyUserRole
+                    {
+                        InnerUser = readOnlyUser,
+                        Role = role
+                    };
+
+                    await ApplyAddUserRoleEntryAsync(streamEntry, updateEvent, addedUserRole, cancellationToken);
+                }
+                else
+                {
+                    throw new InvalidOperationException("User is of an unsupported type.");
+                }
+
                 break;
             case nameof(RemoveUserAsync):
-                // TODO: Needs user repository
-                IReadOnlyUserRole removedUserRole = null!;
-                await ApplyRemoveUserRoleEntryAsync(streamEntry, updateEvent, removedUserRole, cancellationToken);
+                var removedUserId = await Client.Dag.GetAsync<string>(updateEvent.Key, cancel: cancellationToken);
+                var removedUser = await UserRepository.GetAsync(removedUserId, cancellationToken);
+                Guard.IsNotNull(removedUser);
+
+                var removedRole = await Client.Dag.GetAsync<Role>(updateEvent.Value, cancel: cancellationToken);
+                Guard.IsNotNull(removedRole);
+
+                if (removedUser is ModifiableUser modifiableRemovedUser)
+                {
+                    ModifiableUserRole removedUserRole = new ModifiableUserRole
+                    {
+                        InnerUser = modifiableRemovedUser,
+                        Role = removedRole
+                    };
+
+                    await ApplyRemoveUserRoleEntryAsync(streamEntry, updateEvent, removedUserRole, cancellationToken);
+                }
+                else if (removedUser is ReadOnlyUser readOnlyRemovedUser)
+                {
+                    IReadOnlyUserRole removedUserRole = new ReadOnlyUserRole
+                    {
+                        InnerUser = readOnlyRemovedUser,
+                        Role = removedRole
+                    };
+
+                    await ApplyRemoveUserRoleEntryAsync(streamEntry, updateEvent, removedUserRole, cancellationToken);
+                }
+                else
+                {
+                    throw new InvalidOperationException("User is of an unsupported type.");
+                }
+
                 break;
             default:
                 throw new InvalidOperationException($"Unknown event id: {streamEntry.EventId}");
@@ -83,7 +155,7 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
     public async Task ApplyRemoveUserRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyUserRole user, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(user.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner.Users = [.. Inner.Inner.Users.Where(x => x.Item1 != user.Id && x.Item2 != (DagCid)roleCid)];
+        Inner.Inner.Users = [.. Inner.Inner.Users.Where(x => x.UserId != user.Id && x.RoleCid != (DagCid)roleCid)];
         UsersRemoved?.Invoke(this, [user]);
     }
 

@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using CommunityToolkit.Diagnostics;
 using Ipfs;
+using Ipfs.CoreApi;
 using OwlCore.Nomad;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
 using OwlCore.Storage;
+using WindowsAppCommunity.Sdk.Models;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
 
@@ -12,9 +15,107 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// </summary>
 public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IModifiableUser
 {
+    /// <summary>
+    /// Creates a new instance of the <see cref="ModifiableUser"/> class from the given handler configuration.
+    /// </summary>
+    /// <param name="handlerConfig">The handler configuration to create the instance from.</param>
+    /// <param name="projectDependencyRepository">The repository to use for getting modifiable or readonly project dependency instances.</param>
+    /// <param name="publisherRepository">>The repository to use for getting modifiable or readonly publisher instances.</param>
+    /// <param name="client">The client used to interact with the ipfs network.</param>
+    /// <param name="kuboOptions">The options used to read and write data to and from Kubo.</param>
+    /// <returns>A new instance of <see cref="ModifiableUser"/>.</returns>
+    public static ModifiableUser FromHandlerConfig(NomadKuboEventStreamHandlerConfig<User> handlerConfig, NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> projectDependencyRepository, NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> publisherRepository, ICoreApi client, IKuboOptions kuboOptions)
+    {
+        Guard.IsNotNull(handlerConfig.RoamingValue);
+        Guard.IsNotNull(handlerConfig.RoamingKey);
+        Guard.IsNotNull(handlerConfig.LocalValue);
+        Guard.IsNotNull(handlerConfig.LocalKey);
+
+        // Root read-only user handler
+        var readOnlyUser = ReadOnlyUser.FromHandlerConfig(handlerConfig, projectDependencyRepository, publisherRepository, client, kuboOptions);
+        var readOnlyEntity = readOnlyUser.InnerEntity;
+
+        // Modifiable virtual event stream handlers
+        IModifiableConnectionsCollection modifiableConnectionsCollection = null!;
+        IModifiableLinksCollection modifiableLinksCollection = null!;
+        ModifiableImagesCollection modifiableImagesCollection = new()
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            Inner = readOnlyEntity.InnerImages,
+            RoamingKey = handlerConfig.RoamingKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            Sources = handlerConfig.RoamingValue.Sources,
+            KuboOptions = kuboOptions,
+            Client = client,
+        };
+
+        ModifiableEntity modifiableEntity = new()
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            Inner = readOnlyEntity,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            InnerConnections = modifiableConnectionsCollection,
+            InnerImages = modifiableImagesCollection,
+            InnerLinks = modifiableLinksCollection,
+            Sources = handlerConfig.RoamingValue.Sources,
+            KuboOptions = kuboOptions,
+            Client = client,
+        };
+
+        ModifiablePublisherRoleCollection modifiablePublisherRoleCollection = new()
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            Inner = readOnlyUser.InnerPublisherRoles,
+            PublisherRepository = publisherRepository,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            Sources = handlerConfig.RoamingValue.Sources,
+            KuboOptions = kuboOptions,
+            Client = client,
+        };
+
+        ModifiableProjectRoleCollection modifiableProjectRoleCollection = new()
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            Inner = readOnlyUser.InnerProjectRoles,
+            ProjectRepository = projectDependencyRepository,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            Sources = handlerConfig.RoamingValue.Sources,
+            KuboOptions = kuboOptions,
+            Client = client,
+        };
+
+        // Modifiable user root event stream handler.
+        return new ModifiableUser
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            InnerUser = readOnlyUser,
+            InnerEntity = modifiableEntity,
+            InnerPublisherRoles = modifiablePublisherRoleCollection,
+            InnerProjectRoles = modifiableProjectRoleCollection,
+            RoamingKey = handlerConfig.RoamingKey,
+            Sources = handlerConfig.RoamingValue.Sources,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            KuboOptions = kuboOptions,
+            Client = client,
+        };
+    }
+
     /// <inheritdoc/>
     public required string Id { get; init; }
-    
+
     /// <summary>
     /// The handler for reading user data.
     /// </summary>
@@ -28,12 +129,12 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     /// <summary>
     /// The handler for modifying publisher roles on this user.
     /// </summary>
-    public required IModifiablePublisherRoleCollection InnerPublisherRoles { get; init; }
+    public required ModifiablePublisherRoleCollection InnerPublisherRoles { get; init; }
 
     /// <summary>
     /// The handler for modifying project roles on this user.
     /// </summary>
-    public required IModifiableProjectRoleCollection InnerProjectRoles { get; init; }
+    public required ModifiableProjectRoleCollection InnerProjectRoles { get; init; }
 
     /// <inheritdoc/>
     public string Name => InnerEntity.Name;
@@ -194,20 +295,16 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
                 await InnerEntity.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case nameof(AddPublisherAsync):
-                // TODO: Needs implementation, not interface
-                //await InnerPublisherRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await InnerPublisherRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case nameof(RemovePublisherAsync):
-                // TODO: Needs implementation, not interface
-                //await InnerPublisherRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await InnerPublisherRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case nameof(AddProjectAsync):
-                // TODO: Needs implementation, not interface
-                //await InnerProjectRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await InnerProjectRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case nameof(RemoveProjectAsync):
-                // TODO: Needs implementation, not interface
-                //await InnerProjectRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await InnerProjectRoles.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             default:
                 throw new NotImplementedException();
@@ -219,9 +316,9 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        // TODO: Reset inner virtual event stream handlers
         // Entity, PublisherRoles, ProjectRoles
         await InnerEntity.ResetEventStreamPositionAsync(cancellationToken);
-        throw new NotImplementedException();
+        await InnerPublisherRoles.ResetEventStreamPositionAsync(cancellationToken);
+        await InnerProjectRoles.ResetEventStreamPositionAsync(cancellationToken);
     }
 }

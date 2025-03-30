@@ -1,4 +1,5 @@
 using Ipfs;
+using OwlCore.ComponentModel;
 using System.Collections.Generic;
 
 namespace WindowsAppCommunity.Sdk.Models;
@@ -6,7 +7,7 @@ namespace WindowsAppCommunity.Sdk.Models;
 /// <summary>
 /// Represents a project.
 /// </summary>
-public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectCollection
+public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectCollection, ISources<Cid>
 {
     /// <summary>
     /// The canonical publisher for this project.
@@ -77,4 +78,8 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectColl
     /// A flag indicating whether this is a non-public project.
     /// </summary>
     public bool IsUnlisted { get; set; }
+
+    /// <summary>
+    /// The event stream sources for this project.
+    public required ICollection<Cid> Sources { get; init; }
 }

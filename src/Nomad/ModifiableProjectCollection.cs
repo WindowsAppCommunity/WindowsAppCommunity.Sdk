@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using CommunityToolkit.Diagnostics;
 using Ipfs;
 using OwlCore.Nomad;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
+using WindowsAppCommunity.Sdk.Models;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
 
@@ -18,6 +20,11 @@ public class ModifiableProjectCollection : NomadKuboEventStreamHandler<ValueUpda
     /// <inheritdoc/>
     public required ReadOnlyProjectCollection Inner { get; init; }
 
+    /// <summary>
+    /// The repository to use for getting modifiable or readonly project instances.
+    /// </summary>
+    public required NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> ProjectRepository { get; init; }
+
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyProject[]>? ProjectsAdded;
 
@@ -30,10 +37,9 @@ public class ModifiableProjectCollection : NomadKuboEventStreamHandler<ValueUpda
     /// <inheritdoc/>
     public async Task AddProjectAsync(IReadOnlyProject project, CancellationToken cancellationToken)
     {
-        var valueCid = await Client.Dag.PutAsync(project.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+        var keyCid = await Client.Dag.PutAsync(project.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
 
-        var updateEvent = new ValueUpdateEvent(Key: null, Value: (DagCid)valueCid, false);
-
+        var updateEvent = new ValueUpdateEvent(Key: null, Value: (DagCid)keyCid, false);
         var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(AddProjectAsync), updateEvent, DateTime.UtcNow, cancellationToken);
         await ApplyAddProjectEntryAsync(appendedEntry, updateEvent, project, cancellationToken);
 
@@ -43,9 +49,9 @@ public class ModifiableProjectCollection : NomadKuboEventStreamHandler<ValueUpda
     /// <inheritdoc/>
     public async Task RemoveProjectAsync(IReadOnlyProject project, CancellationToken cancellationToken)
     {
-        var valueCid = await Client.Dag.PutAsync(project.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+        var keyCid = await Client.Dag.PutAsync(project.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
 
-        var updateEvent = new ValueUpdateEvent(Key: null, Value: (DagCid)valueCid, false);
+        var updateEvent = new ValueUpdateEvent(Key: null, Value: (DagCid)keyCid, true);
 
         var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(RemoveProjectAsync), updateEvent, DateTime.UtcNow, cancellationToken);
         await ApplyRemoveProjectEntryAsync(appendedEntry, updateEvent, project, cancellationToken);
@@ -59,14 +65,22 @@ public class ModifiableProjectCollection : NomadKuboEventStreamHandler<ValueUpda
         switch (streamEntry.EventId)
         {
             case nameof(AddProjectAsync):
-                // TODO: Needs project repository
-                ReadOnlyProject addedProject = null!;
-                await ApplyAddProjectEntryAsync(streamEntry, updateEvent, addedProject, cancellationToken);
+                {
+                    Guard.IsNotNull(updateEvent.Value);
+                    var projectId = await Client.Dag.GetAsync<Cid>(updateEvent.Value, cancel: cancellationToken);
+                    var project = await ProjectRepository.GetAsync(projectId, cancellationToken);
+
+                    await ApplyAddProjectEntryAsync(streamEntry, updateEvent, project, cancellationToken);
+                }
                 break;
             case nameof(RemoveProjectAsync):
-                // TODO: Needs project repository
-                ReadOnlyProject removedProject = null!;
-                await ApplyRemoveProjectEntryAsync(streamEntry, updateEvent, removedProject, cancellationToken);
+                {
+                    Guard.IsNotNull(updateEvent.Value);
+                    var projectId = await Client.Dag.GetAsync<Cid>(updateEvent.Value, cancel: cancellationToken);
+                    var project = await ProjectRepository.GetAsync(projectId, cancellationToken);
+
+                    await ApplyRemoveProjectEntryAsync(streamEntry, updateEvent, project, cancellationToken);
+                }
                 break;
             default:
                 throw new InvalidOperationException($"Unknown event id: {streamEntry.EventId}");

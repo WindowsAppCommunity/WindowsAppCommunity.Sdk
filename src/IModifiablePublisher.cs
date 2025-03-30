@@ -3,6 +3,6 @@
 /// <summary>
 /// Represents a content publisher that can be modified.
 /// </summary>
-public interface IModifiablePublisher : IReadOnlyPublisher<IModifiablePublisherCollection<IReadOnlyPublisher>>, IModifiableEntity, IModifiableAccentColor, IModifiableUserRoleCollection
+public interface IModifiablePublisher : IReadOnlyPublisher<IModifiablePublisherCollection<IReadOnlyPublisher>>, IReadOnlyPublisher, IModifiableEntity, IModifiableAccentColor, IModifiableUserRoleCollection
 {
 }

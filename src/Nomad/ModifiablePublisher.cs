@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using CommunityToolkit.Diagnostics;
 using Ipfs;
+using Ipfs.CoreApi;
 using OwlCore.ComponentModel;
 using OwlCore.Nomad;
 using OwlCore.Nomad.Kubo;
@@ -13,8 +15,149 @@ using Link = WindowsAppCommunity.Sdk.Link;
 /// <summary>
 /// A modifiable event stream handler for modifying roaming publisher data.
 /// </summary>
-public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>, IDelegable<Project>, IModifiablePublisher
+public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>, IDelegable<Publisher>, IModifiablePublisher
 {
+    /// <summary>
+    /// Creates a new instance of <see cref="ModifiablePublisher"/> from the specified handler configuration.
+    /// </summary>
+    /// <param name="handlerConfig">The handler configuration to create the instance from.</param>
+    /// <param name="userRepository">The repository to use for returning modifiable or readonly users.</param>
+    /// <param name="publisherRepository">The repository to use for returning modifiable or readonly publishers.</param>
+    /// <param name="projectDependencyRepository">The repository to use for returning modifiable or readonly projects.</param>
+    /// <param name="client">The client used to interact with the ipfs network.</param>
+    /// <param name="kuboOptions">The options used to read and write data to and from Kubo.</param>
+    /// <returns>A new instance of <see cref="ModifiablePublisher"/>.</returns>
+    public static ModifiablePublisher FromHandlerConfig(NomadKuboEventStreamHandlerConfig<Publisher> handlerConfig, NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> projectDependencyRepository, NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> publisherRepository, NomadKuboRepository<ModifiableUser, IReadOnlyUser, User, ValueUpdateEvent> userRepository, ICoreApi client, IKuboOptions kuboOptions)
+    {
+        Guard.IsNotNull(handlerConfig.RoamingValue);
+        Guard.IsNotNull(handlerConfig.RoamingKey);
+        Guard.IsNotNull(handlerConfig.LocalValue);
+        Guard.IsNotNull(handlerConfig.LocalKey);
+
+        var readonlyPublisher = ReadOnlyPublisher.FromHandlerConfig(handlerConfig, projectDependencyRepository, publisherRepository, userRepository, client, kuboOptions);
+
+        ModifiableImagesCollection modifiableImagesCollection = new()
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            Client = client,
+            KuboOptions = kuboOptions,
+            Inner = readonlyPublisher.InnerEntity.InnerImages,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            Sources = handlerConfig.RoamingValue.Sources,
+        };
+
+        IModifiableConnectionsCollection modifiableConnectionsCollection = null!;
+        IModifiableLinksCollection modifiableLinksCollection = null!;
+
+        ModifiableEntity modifiableEntity = new()
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            Client = client,
+            KuboOptions = kuboOptions,
+            Inner = readonlyPublisher.InnerEntity,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            InnerConnections = modifiableConnectionsCollection,
+            InnerImages = modifiableImagesCollection,
+            InnerLinks = modifiableLinksCollection,
+            Sources = handlerConfig.RoamingValue.Sources,
+        };
+
+        ModifiableAccentColor modifiableAccentColor = new()
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            Client = client,
+            KuboOptions = kuboOptions,
+            Inner = readonlyPublisher.InnerAccentColor,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            Sources = handlerConfig.RoamingValue.Sources,
+        };
+
+        ModifiableUserRoleCollection modifiableUserRoleCollection = new()
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            Client = client,
+            KuboOptions = kuboOptions,
+            Inner = readonlyPublisher.InnerUserRoleCollection,
+            UserRepository = userRepository,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            Sources = handlerConfig.RoamingValue.Sources,
+        };
+
+        var parentPublishers = new ModifiablePublisherCollection
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            Inner = (ReadOnlyPublisherCollection)readonlyPublisher.ParentPublishers,
+            Client = client,
+            KuboOptions = kuboOptions,
+            PublisherRepository = publisherRepository,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            Sources = handlerConfig.RoamingValue.Sources,
+        };
+
+        var childPublishers = new ModifiablePublisherCollection
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            Inner = (ReadOnlyPublisherCollection)readonlyPublisher.ChildPublishers,
+            Client = client,
+            KuboOptions = kuboOptions,
+            PublisherRepository = publisherRepository,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            Sources = handlerConfig.RoamingValue.Sources,
+        };
+
+        var projectCollection = new ModifiableProjectCollection
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            Inner = readonlyPublisher.InnerProjectCollection,
+            Client = client,
+            KuboOptions = kuboOptions,
+            ProjectRepository = projectDependencyRepository,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            Sources = handlerConfig.RoamingValue.Sources,
+        };
+
+        return new ModifiablePublisher
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            InnerPublisher = readonlyPublisher,
+            InnerEntity = modifiableEntity,
+            InnerAccentColor = modifiableAccentColor,
+            InnerUserRoleCollection = modifiableUserRoleCollection,
+            InnerProjectCollection = projectCollection,
+            ParentPublishers = parentPublishers,
+            ChildPublishers = childPublishers,
+            Client = client,
+            KuboOptions = kuboOptions,
+            Inner = handlerConfig.RoamingValue,
+            RoamingKey = handlerConfig.RoamingKey,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            Sources = handlerConfig.RoamingValue.Sources,
+        };
+    }
+
     /// <inheritdoc/>
     public required string Id { get; init; }
 
@@ -36,23 +179,29 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
     /// <summary>
     /// The modifiable project collection handler for this publisher.
     /// </summary>
-    public required IModifiableProjectCollection<IReadOnlyProject> InnerProjectCollection { get; init; }
+    public required ModifiableProjectCollection InnerProjectCollection { get; init; }
 
     /// <summary>
     /// The read only user role handler for this publisher.
     /// </summary>
-    public required IModifiableUserRoleCollection InnerUserRoleCollection { get; init; }
+    public required ModifiableUserRoleCollection InnerUserRoleCollection { get; init; }
 
     /// <summary>
     /// The roaming project data that this handler modifies.
     /// </summary>
-    public required Project Inner { get; init; }
+    public required Publisher Inner { get; init; }
 
     /// <inheritdoc/>
     public required IModifiablePublisherCollection<IReadOnlyPublisher> ParentPublishers { get; init; }
 
     /// <inheritdoc/>
     public required IModifiablePublisherCollection<IReadOnlyPublisher> ChildPublishers { get; init; }
+
+    /// <inheritdoc/>
+    IReadOnlyPublisherCollection IReadOnlyPublisher<IReadOnlyPublisherCollection>.ParentPublishers => (IReadOnlyPublisherCollection)ParentPublishers;
+
+    /// <inheritdoc/>
+    IReadOnlyPublisherCollection IReadOnlyPublisher<IReadOnlyPublisherCollection>.ChildPublishers => (IReadOnlyPublisherCollection)ChildPublishers;
 
     /// <inheritdoc/>
     public string Name => InnerEntity.Name;
@@ -113,7 +262,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
 
     /// <inheritdoc/>
     public event EventHandler<string?>? AccentColorUpdated;
-    
+
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyProject[]>? ProjectsAdded;
 
@@ -213,36 +362,28 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
                 await InnerAccentColor.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case nameof(AddUserAsync):
-                // TODO: Needs implementation instead of interface
-                // await InnerUserRoleCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await InnerUserRoleCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case nameof(RemoveUserAsync):
-                // TODO: Needs implementation instead of interface
-                // await InnerUserRoleCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await InnerUserRoleCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case nameof(InnerProjectCollection.AddProjectAsync):
-                // TODO: Needs implementation instead of interface
-                // await InnerProjectCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await InnerProjectCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case nameof(InnerProjectCollection.RemoveProjectAsync):
-                // TODO: Needs implementation instead of interface
-                // await InnerProjectCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await InnerProjectCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case $"{nameof(ParentPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.AddPublisherAsync)}":
-                // TODO: Needs implementation instead of interface
-                // await ParentPublishers.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await ((ModifiablePublisherCollection)ParentPublishers).ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case $"{nameof(ParentPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.RemovePublisherAsync)}":
-                // TODO: Needs implementation instead of interface
-                // await ParentPublishers.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await ((ModifiablePublisherCollection)ParentPublishers).ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case $"{nameof(ChildPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.AddPublisherAsync)}":
-                // TODO: Needs implementation instead of interface
-                // await ChildPublishers.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await ((ModifiablePublisherCollection)ChildPublishers).ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case $"{nameof(ChildPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.RemovePublisherAsync)}":
-                // TODO: Needs implementation instead of interface
-                // await ChildPublishers.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                await ((ModifiablePublisherCollection)ChildPublishers).ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             default:
                 throw new NotImplementedException();
@@ -256,8 +397,9 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
         await InnerEntity.ResetEventStreamPositionAsync(cancellationToken);
         await InnerAccentColor.ResetEventStreamPositionAsync(cancellationToken);
 
-        // TODO, needs implementation instead of interface.
-        // await InnerUserRoleCollection.ResetEventStreamPositionAsync(cancellationToken);
-        // await Dependencies.ResetEventStreamPositionAsync(cancellationToken);
+        await InnerUserRoleCollection.ResetEventStreamPositionAsync(cancellationToken);
+        await InnerProjectCollection.ResetEventStreamPositionAsync(cancellationToken);
+        await ((ModifiablePublisherCollection)ParentPublishers).ResetEventStreamPositionAsync(cancellationToken);
+        await ((ModifiablePublisherCollection)ChildPublishers).ResetEventStreamPositionAsync(cancellationToken);
     }
 }

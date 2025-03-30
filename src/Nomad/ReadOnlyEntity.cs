@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Ipfs.CoreApi;
 using OwlCore.ComponentModel;
 using OwlCore.Storage;
 using WindowsAppCommunity.Sdk.Models;
@@ -12,6 +13,11 @@ public class ReadOnlyEntity : IDelegable<IEntity>, IReadOnlyEntity
     public required string Id { get; init; }
     
     /// <summary>
+    /// The client to use for communicating with ipfs.
+    /// </summary>
+    public required ICoreApi Client { get; init; }
+    
+    /// <summary>
     /// Handles the connections for this entity.
     /// </summary>
     public required IReadOnlyConnectionsCollection InnerConnections { get; init; }
@@ -19,7 +25,7 @@ public class ReadOnlyEntity : IDelegable<IEntity>, IReadOnlyEntity
     /// <summary>
     /// Handles the images collection for this entity.
     /// </summary>
-    public required IReadOnlyImagesCollection InnerImages { get; init; }
+    public required ReadOnlyImagesCollection InnerImages { get; init; }
 
     /// <summary>
     /// Handles the links collection for this entity.

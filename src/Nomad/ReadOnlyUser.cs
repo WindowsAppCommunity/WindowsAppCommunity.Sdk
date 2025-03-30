@@ -1,5 +1,9 @@
 using System.Collections.Generic;
+using CommunityToolkit.Diagnostics;
+using Ipfs.CoreApi;
 using OwlCore.ComponentModel;
+using OwlCore.Nomad.Kubo;
+using OwlCore.Nomad.Kubo.Events;
 using OwlCore.Storage;
 using WindowsAppCommunity.Sdk.Models;
 
@@ -10,9 +14,67 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// </summary>
 public class ReadOnlyUser : IReadOnlyUser, IDelegable<User>
 {
+    /// <summary>
+    /// Creates a new instance of <see cref="ReadOnlyUser"/> from the specified handler configuration.
+    /// </summary>
+    /// <param name="handlerConfig">The handler configuration to create the instance from.</param>
+    /// <param name="projectDependencyRepository">The repository to use for returning modifiable or readonly projects.</param>
+    /// <param name="publisherRepository">The repository to use for returning modifiable or readonly publishers.</param>
+    /// <param name="client">The client used to interact with the ipfs network.</param>
+    /// <param name="kuboOptions">The options used to read and write data to and from Kubo.</param>
+    public static ReadOnlyUser FromHandlerConfig(NomadKuboEventStreamHandlerConfig<User> handlerConfig, NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> projectDependencyRepository, NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> publisherRepository, ICoreApi client, IKuboOptions kuboOptions)
+    {
+        Guard.IsNotNull(handlerConfig.RoamingValue);
+        Guard.IsNotNull(handlerConfig.RoamingId);
+
+        ReadOnlyImagesCollection readOnlyImagesCollection = new ReadOnlyImagesCollection
+        {
+            Inner = handlerConfig.RoamingValue,
+            Client = client,
+        };
+
+        IReadOnlyConnectionsCollection readOnlyConnectionsCollection = null!;
+        IReadOnlyLinksCollection readOnlyLinksCollection = null!;
+
+        ReadOnlyEntity readOnlyEntity = new ReadOnlyEntity
+        {
+            Id = handlerConfig.RoamingId,
+            Inner = handlerConfig.RoamingValue,
+            InnerConnections = readOnlyConnectionsCollection,
+            InnerImages = readOnlyImagesCollection,
+            InnerLinks = readOnlyLinksCollection,
+            Client = client,
+        };
+
+        var projectRoles = new ReadOnlyProjectRoleCollection
+        {
+            Id = handlerConfig.RoamingId,
+            Inner = handlerConfig.RoamingValue,
+            ProjectRepository = projectDependencyRepository,
+            Client = client,
+        };
+
+        var publisherRoles = new ReadOnlyPublisherRoleCollection
+        {
+            Id = handlerConfig.RoamingId,
+            Inner = handlerConfig.RoamingValue,
+            PublisherRepository = publisherRepository,
+            Client = client,
+        };
+
+        return new ReadOnlyUser
+        {
+            Id = handlerConfig.RoamingId,
+            Inner = handlerConfig.RoamingValue,
+            InnerEntity = readOnlyEntity,
+            InnerPublisherRoles = publisherRoles,
+            InnerProjectRoles = projectRoles,
+        };
+    }
+
     /// <inheritdoc/>
     public required string Id { get; init; }
-    
+
     /// <summary>
     /// The roaming user data.
     /// </summary>
@@ -26,12 +88,12 @@ public class ReadOnlyUser : IReadOnlyUser, IDelegable<User>
     /// <summary>
     /// The handler for reading publisher roles on this user.
     /// </summary>
-    public required IReadOnlyPublisherRoleCollection InnerPublisherRoles { get; init; }
+    public required ReadOnlyPublisherRoleCollection InnerPublisherRoles { get; init; }
 
     /// <summary>
     /// The handler for reading project roles on this user.
     /// </summary>
-    public required IReadOnlyProjectRoleCollection InnerProjectRoles { get; init; }
+    public required ReadOnlyProjectRoleCollection InnerProjectRoles { get; init; }
 
     /// <inheritdoc/>
     public string Name => InnerEntity.Name;

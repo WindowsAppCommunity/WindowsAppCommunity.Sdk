@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Ipfs;
 
 namespace WindowsAppCommunity.Sdk.Models;
@@ -11,5 +10,5 @@ public interface IPublisherRoleCollection
     /// <summary>
     /// Represents a list of registered publishers along with the role on each.
     /// </summary>
-    public (Cid, DagCid)[] Publishers { get; set; }
+    public (Cid PublisherId, DagCid RoleCid)[] Publishers { get; set; }
 }
