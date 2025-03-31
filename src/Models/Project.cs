@@ -12,7 +12,7 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectColl
     /// <summary>
     /// The canonical publisher for this project.
     /// </summary>
-    public required Cid Publisher { get; set; }
+    public Cid? Publisher { get; set; }
 
     /// <summary>
     /// The name of this project.

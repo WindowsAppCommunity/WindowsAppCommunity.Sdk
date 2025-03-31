@@ -107,7 +107,7 @@ public class ReadOnlyProjectRole : IReadOnlyProjectRole
 
 
     /// <inheritdoc/>
-    public Task<IReadOnlyPublisher> GetPublisherAsync(CancellationToken cancellationToken) => InnerProject.GetPublisherAsync(cancellationToken);
+    public Task<IReadOnlyPublisher?> GetPublisherAsync(CancellationToken cancellationToken) => InnerProject.GetPublisherAsync(cancellationToken);
 
 
     /// <inheritdoc/>

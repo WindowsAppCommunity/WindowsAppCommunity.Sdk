@@ -39,5 +39,5 @@ public interface IReadOnlyProject<out TDependencyCollection> : IReadOnlyEntity, 
     /// Gets the publisher for this project.
     /// </summary>
     /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
-    public Task<IReadOnlyPublisher> GetPublisherAsync(CancellationToken cancellationToken);
+    public Task<IReadOnlyPublisher?> GetPublisherAsync(CancellationToken cancellationToken);
 }

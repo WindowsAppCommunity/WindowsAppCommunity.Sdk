@@ -84,7 +84,7 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
             PublisherRepository = publisherRepository,
         };
     }
-    
+
     /// <summary>
     /// The client to use for communicating with ipfs.
     /// </summary>
@@ -92,7 +92,7 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
 
     /// <inheritdoc/>
     public required string Id { get; init; }
-    
+
     /// <summary>
     /// The roaming project data that this handler reads.
     /// </summary>
@@ -205,9 +205,12 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerEntity.GetImageFilesAsync(cancellationToken);
 
     /// <inheritdoc/>
-    public async Task<IReadOnlyPublisher> GetPublisherAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyPublisher?> GetPublisherAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
+        if (Inner.Publisher is null)
+            return null;
 
         var publisherId = await Client.Dag.GetAsync<Cid>(Inner.Publisher, cancel: cancellationToken);
         return await PublisherRepository.GetAsync(publisherId, cancellationToken);
