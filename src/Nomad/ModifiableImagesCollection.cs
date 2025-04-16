@@ -116,15 +116,15 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
         {
             case nameof(AddImageAsync):
                 {
-                    var imageFile = await Inner.GetAsync(image.Id, cancellationToken);
                     Inner.Inner.Images = [.. Inner.Inner.Images, image];
+                    var imageFile = await Inner.GetAsync(image.Id, cancellationToken);
                     ImagesAdded?.Invoke(this, [imageFile]);
                     break;
                 }
             case nameof(RemoveImageAsync):
                 {
-                    var imageFile = await Inner.GetAsync(image.Id, cancellationToken);
                     Inner.Inner.Images = [.. Inner.Inner.Images.Except([image])];
+                    var imageFile = await Inner.GetAsync(image.Id, cancellationToken);
                     ImagesRemoved?.Invoke(this, [imageFile]);
                     break;
                 }

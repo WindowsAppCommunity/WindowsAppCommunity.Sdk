@@ -149,7 +149,6 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             ChildPublishers = childPublishers,
             Client = client,
             KuboOptions = kuboOptions,
-            Inner = handlerConfig.RoamingValue,
             RoamingKey = handlerConfig.RoamingKey,
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
@@ -189,7 +188,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
     /// <summary>
     /// The roaming project data that this handler modifies.
     /// </summary>
-    public required Publisher Inner { get; init; }
+    public Publisher Inner => InnerPublisher.Inner;
 
     /// <inheritdoc/>
     public required IModifiablePublisherCollection<IReadOnlyPublisher> ParentPublishers { get; init; }

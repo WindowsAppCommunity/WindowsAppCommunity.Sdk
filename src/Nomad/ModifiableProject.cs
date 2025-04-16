@@ -116,7 +116,6 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
         {
             Id = handlerConfig.RoamingKey.Id,
             EventStreamHandlerId = handlerConfig.RoamingKey.Id,
-            Inner = handlerConfig.RoamingValue,
             InnerProject = readOnlyProject,
             InnerEntity = modifiableEntity,
             InnerAccentColor = modifiableAccentColor,
@@ -158,7 +157,7 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
     /// <summary>
     /// The roaming project data that this handler modifies.
     /// </summary>
-    public required Project Inner { get; init; }
+    public Project Inner => InnerProject.Inner;
 
     /// <inheritdoc/>
     public required IModifiableProjectCollection<IReadOnlyProject> Dependencies { get; init; }
@@ -175,7 +174,7 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
     public string Category => InnerProject.Category;
 
     /// <inheritdoc/>
-    public string Name => InnerProject.Category;
+    public string Name => InnerProject.Name;
 
     /// <inheritdoc/>
     public string Description => InnerProject.Description;
@@ -201,10 +200,10 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
     /// <inheritdoc/>
     public string[] Features => InnerProject.Features;
 
-    /// <inheritdoc/>
+    /// <inheritdoc cref="WindowsAppCommunity.Sdk.IReadOnlyProject.CategoryUpdated" />
     public event EventHandler<string>? CategoryUpdated;
 
-    /// <inheritdoc/>
+    /// <inheritdoc cref="WindowsAppCommunity.Sdk.IReadOnlyProject.PublisherUpdated" />
     public event EventHandler<IReadOnlyPublisher>? PublisherUpdated;
 
     /// <inheritdoc/>
@@ -252,7 +251,7 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
     /// <inheritdoc/>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerEntity.GetImageFilesAsync(cancellationToken);
 
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IReadOnlyProject{TDependencyCollection}.GetPublisherAsync" />
     public Task<IReadOnlyPublisher?> GetPublisherAsync(CancellationToken cancellationToken) => InnerProject.GetPublisherAsync(cancellationToken);
 
     /// <inheritdoc/>
@@ -267,15 +266,23 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
         var updateEvent = new ValueUpdateEvent(null, (DagCid)valueCid, false);
 
         var appendedEntry = await AppendNewEntryAsync(targetId: EventStreamHandlerId, eventId: nameof(UpdatePublisherAsync), updateEvent, DateTime.UtcNow, cancellationToken);
-        await ApplyPublisherUpdateEntryUpdateAsync(appendedEntry, updateEvent, publisher.Id, cancellationToken);
+        await ApplyPublisherUpdateEntryUpdateAsync(appendedEntry, updateEvent, publisher.Id, publisher, cancellationToken);
 
         EventStreamPosition = appendedEntry;
     }
 
     /// <inheritdoc/>
-    public Task UpdateCategoryAsync(string category, CancellationToken cancellationToken)
+    public async Task UpdateCategoryAsync(string category, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var valueCid = await Client.Dag.PutAsync(category, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+        var updateEvent = new ValueUpdateEvent(null, (DagCid)valueCid, false);
+
+        var appendedEntry = await AppendNewEntryAsync(targetId: EventStreamHandlerId, eventId: nameof(UpdateCategoryAsync), updateEvent, DateTime.UtcNow, cancellationToken);
+        await ApplyCategoryEntryUpdateAsync(appendedEntry, updateEvent, category, cancellationToken);
+
+        EventStreamPosition = appendedEntry;
     }
 
     /// <inheritdoc/>
@@ -415,7 +422,6 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
         ;
     }
 
-    /// <inheritdoc />
     internal Task ApplyFeatureAddEntryUpdateAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, string addedFeature, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -425,8 +431,7 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
         FeaturesAdded?.Invoke(this, [addedFeature]);
         return Task.CompletedTask;
     }
-
-    /// <inheritdoc />
+    
     internal Task ApplyFeatureRemoveEntryUpdateAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, string removedFeature, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -437,7 +442,6 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
         return Task.CompletedTask;
     }
 
-    /// <inheritdoc />
     internal async Task ApplyPublisherUpdateEntryUpdateAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, string publisherId, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -447,7 +451,6 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
         await ApplyPublisherUpdateEntryUpdateAsync(streamEntry, updateEvent, publisherId, publisher, cancellationToken);
     }
 
-    /// <inheritdoc />
     internal Task ApplyPublisherUpdateEntryUpdateAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, string publisherId, IReadOnlyPublisher updatedPublisher, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();

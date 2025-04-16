@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using CommunityToolkit.Diagnostics;
 using Ipfs;
 using Ipfs.CoreApi;
+using OwlCore.ComponentModel;
 using OwlCore.Nomad;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
@@ -13,7 +14,7 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <summary>
 /// Represents a user that can be modified.
 /// </summary>
-public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IModifiableUser
+public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IModifiableUser, IDelegable<User>
 {
     /// <summary>
     /// Creates a new instance of the <see cref="ModifiableUser"/> class from the given handler configuration.
@@ -115,6 +116,11 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
 
     /// <inheritdoc/>
     public required string Id { get; init; }
+
+    /// <summary>
+    /// The roaming user data that this handler modifies.
+    /// </summary>
+    public User Inner => InnerUser.Inner;
 
     /// <summary>
     /// The handler for reading user data.

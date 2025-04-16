@@ -212,8 +212,7 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
         if (Inner.Publisher is null)
             return null;
 
-        var publisherId = await Client.Dag.GetAsync<Cid>(Inner.Publisher, cancel: cancellationToken);
-        return await PublisherRepository.GetAsync(publisherId, cancellationToken);
+        return await PublisherRepository.GetAsync(Inner.Publisher, cancellationToken);
     }
 
     /// <inheritdoc/>
