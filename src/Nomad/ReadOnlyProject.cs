@@ -36,7 +36,12 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
             Client = client,
         };
 
-        IReadOnlyConnectionsCollection readOnlyConnectionsCollection = null!;
+        IReadOnlyConnectionsCollection readOnlyConnectionsCollection = new ReadOnlyConnectionsCollection
+        {
+            Inner = handlerConfig.RoamingValue,
+            Client = client,
+        };
+
         IReadOnlyLinksCollection readOnlyLinksCollection = null!;
 
         ReadOnlyEntity readOnlyEntity = new ReadOnlyEntity

@@ -37,7 +37,18 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
         var readOnlyEntity = readOnlyUser.InnerEntity;
 
         // Modifiable virtual event stream handlers
-        IModifiableConnectionsCollection modifiableConnectionsCollection = null!;
+        IModifiableConnectionsCollection modifiableConnectionsCollection = new ModifiableConnectionsCollection
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            Inner = readOnlyEntity.InnerConnections,
+            RoamingKey = handlerConfig.RoamingKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            Sources = handlerConfig.RoamingValue.Sources,
+            KuboOptions = kuboOptions,
+            Client = client,
+        };
         IModifiableLinksCollection modifiableLinksCollection = null!;
         ModifiableImagesCollection modifiableImagesCollection = new()
         {
