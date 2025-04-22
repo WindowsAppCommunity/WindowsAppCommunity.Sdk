@@ -109,6 +109,9 @@ public class ModifiablePublisherRole : IModifiablePublisherRole
     public Task AddLinkAsync(Link link, CancellationToken cancellationToken) => InnerPublisher.AddLinkAsync(link, cancellationToken);
 
     /// <inheritdoc/>
+    public Task AddProjectAsync(IReadOnlyProject project, CancellationToken cancellationToken) => InnerPublisher.AddProjectAsync(project, cancellationToken);
+
+    /// <inheritdoc/>
     public Task AddUserAsync(IReadOnlyUserRole user, CancellationToken cancellationToken) => InnerPublisher.AddUserAsync(user, cancellationToken);
 
     /// <inheritdoc/>
@@ -128,6 +131,9 @@ public class ModifiablePublisherRole : IModifiablePublisherRole
 
     /// <inheritdoc/>
     public Task RemoveLinkAsync(Link link, CancellationToken cancellationToken) => InnerPublisher.RemoveLinkAsync(link, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task RemoveProjectAsync(IReadOnlyProject project, CancellationToken cancellationToken) => InnerPublisher.RemoveProjectAsync(project, cancellationToken);
 
     /// <inheritdoc/>
     public Task RemoveUserAsync(IReadOnlyUserRole user, CancellationToken cancellationToken) => InnerPublisher.RemoveUserAsync(user, cancellationToken);

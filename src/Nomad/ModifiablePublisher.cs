@@ -281,6 +281,9 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
     public Task AddUserAsync(IReadOnlyUserRole user, CancellationToken cancellationToken) => InnerUserRoleCollection.AddUserAsync(user, cancellationToken);
 
     /// <inheritdoc/>
+    public Task AddProjectAsync(IReadOnlyProject project, CancellationToken cancellationToken) => InnerProjectCollection.AddProjectAsync(project, cancellationToken);
+
+    /// <inheritdoc/>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerEntity.GetImageFilesAsync(cancellationToken);
 
     /// <inheritdoc/>
@@ -288,6 +291,9 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
 
     /// <inheritdoc/>
     public IAsyncEnumerable<IReadOnlyUserRole> GetUsersAsync(CancellationToken cancellationToken) => InnerUserRoleCollection.GetUsersAsync(cancellationToken);
+
+    /// <inheritdoc/>
+    public Task RemoveProjectAsync(IReadOnlyProject project, CancellationToken cancellationToken) => InnerProjectCollection.RemoveProjectAsync(project, cancellationToken);
 
     /// <inheritdoc/>
     public Task RemoveConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken) => InnerEntity.RemoveConnectionAsync(connection, cancellationToken);
