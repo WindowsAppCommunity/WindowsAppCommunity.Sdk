@@ -215,14 +215,12 @@ public static class TestSetupHelpers
             {
                 Guard.IsNotNull(repositoryContainer.ProjectRepository);
                 Guard.IsNotNull(repositoryContainer.PublisherRepository);
-                Guard.IsNotNull(repositoryContainer.UserRepository);
                 return ModifiableUser.FromHandlerConfig(config, repositoryContainer.ProjectRepository, repositoryContainer.PublisherRepository, client, kuboOptions);
             },
             ReadOnlyFromHandlerConfig = config =>
             {
                 Guard.IsNotNull(repositoryContainer.ProjectRepository);
                 Guard.IsNotNull(repositoryContainer.PublisherRepository);
-                Guard.IsNotNull(repositoryContainer.UserRepository);
                 return ReadOnlyUser.FromHandlerConfig(config, repositoryContainer.ProjectRepository, repositoryContainer.PublisherRepository, client, kuboOptions);
             },
         };
