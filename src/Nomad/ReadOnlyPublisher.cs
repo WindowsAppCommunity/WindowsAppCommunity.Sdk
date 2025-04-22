@@ -35,7 +35,12 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
             Client = client,
         };
 
-        IReadOnlyConnectionsCollection readOnlyConnectionsCollection = null!;
+        IReadOnlyConnectionsCollection readOnlyConnectionsCollection = new ReadOnlyConnectionsCollection
+        {
+            Inner = handlerConfig.RoamingValue,
+            Client = client,
+        };
+
         IReadOnlyLinksCollection readOnlyLinksCollection = null!;
 
         ReadOnlyEntity readOnlyEntity = new ReadOnlyEntity
