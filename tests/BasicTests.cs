@@ -2,6 +2,7 @@
 using Ipfs;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Storage.System.IO;
+using WindowsAppCommunity.Sdk.Nomad;
 
 namespace WindowsAppCommunity.Sdk.Tests;
 
@@ -25,22 +26,18 @@ public partial class BasicTests
             UseCache = false,
         };
 
-        var projectRoamingKeyName = "TestProject.Roaming";
-        var projectLocalKeyName = "TestProject.Local";
-        var publisherRoamingKeyName = "TestPublisher.Roaming";
-        var publisherLocalKeyName = "TestPublisher.Local";
-        var userRoamingKeyName = "TestUser.Roaming";
-        var userLocalKeyName = "TestUser.Local";
+        var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
+        var managedKeys = new List<IKey>(managedKeysEnumerable);
 
-        RepositoryContainer repositoryContainer = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys);
 
         Guard.IsNotNull(repositoryContainer.ProjectRepository);
         Guard.IsNotNull(repositoryContainer.PublisherRepository);
         Guard.IsNotNull(repositoryContainer.UserRepository);
 
-        var project = await repositoryContainer.ProjectRepository.CreateAsync(cancellationToken);
-        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(cancellationToken);
-        var user = await repositoryContainer.UserRepository.CreateAsync(cancellationToken);
+        var project = await repositoryContainer.ProjectRepository.CreateAsync(new(KnownId: "Test"), cancellationToken);
+        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(new(KnownId: "Test"), cancellationToken);
+        var user = await repositoryContainer.UserRepository.CreateAsync(new(KnownId: "Test"), cancellationToken);
 
         await kubo.Client.ShutdownAsync();
         kubo.Dispose();

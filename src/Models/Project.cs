@@ -17,17 +17,17 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectColl
     /// <summary>
     /// The name of this project.
     /// </summary>
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// A description of this project.
     /// </summary>
-    public required string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     /// <summary>
     /// An extended description of this project.
     /// </summary>
-    public required string ExtendedDescription { get; set; }
+    public string ExtendedDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// A list of <see cref="Image"/>s demonstrating this project.
@@ -47,7 +47,7 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectColl
     /// <summary>
     /// The category defining this project, as found in an app store.
     /// </summary>
-    public required string Category { get; set; }
+    public string Category { get; set; } = string.Empty;
 
     /// <summary>
     /// Other projects which this project may depend on for various reasons.
@@ -57,7 +57,7 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectColl
     /// <summary>
     /// The <see cref="User"/>s who collaborate on this project, and their corresponding roles.
     /// </summary>
-    public (Cid, DagCid)[] Users { get; set; } = [];
+    public UserRole[] Users { get; set; } = [];
 
     /// <summary>
     /// Represents links to external profiles or resources added by the user.

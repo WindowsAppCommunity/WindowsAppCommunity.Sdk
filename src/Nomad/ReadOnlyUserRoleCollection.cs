@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using Ipfs.CoreApi;
 using OwlCore.ComponentModel;
 using OwlCore.Nomad.Kubo;
-using OwlCore.Nomad.Kubo.Events;
 using WindowsAppCommunity.Sdk.Models;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
@@ -27,7 +26,7 @@ public class ReadOnlyUserRoleCollection : IReadOnlyUserRoleCollection, IDelegabl
     /// <summary>
     /// The repository to use for getting modifiable or readonly user instances.
     /// </summary>
-    public required NomadKuboRepository<ModifiableUser, IReadOnlyUser, User, ValueUpdateEvent> UserRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiableUser, IReadOnlyUser> UserRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyUserRole[]>? UsersAdded;
@@ -40,7 +39,7 @@ public class ReadOnlyUserRoleCollection : IReadOnlyUserRoleCollection, IDelegabl
     {
         foreach (var userRole in Inner.Users)
         {
-            var role = await Client.Dag.GetAsync<Role>(userRole.RoleCid, cancel: cancellationToken);
+            var role = await Client.Dag.GetAsync<Role>(userRole.Role, cancel: cancellationToken);
             var user = await UserRepository.GetAsync(userRole.UserId, cancellationToken);
 
             yield return new ReadOnlyUserRole

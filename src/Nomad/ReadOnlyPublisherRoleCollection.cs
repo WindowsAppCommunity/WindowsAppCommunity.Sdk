@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using Ipfs.CoreApi;
 using OwlCore.ComponentModel;
 using OwlCore.Nomad.Kubo;
-using OwlCore.Nomad.Kubo.Events;
 using WindowsAppCommunity.Sdk.Models;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
@@ -27,7 +26,7 @@ public class ReadOnlyPublisherRoleCollection : IReadOnlyPublisherRoleCollection,
     /// <summary>
     /// The repository to use for getting modifiable or readonly publisher instances.
     /// </summary>
-    public required NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> PublisherRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> PublisherRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyPublisherRole[]>? PublishersAdded;
@@ -40,7 +39,7 @@ public class ReadOnlyPublisherRoleCollection : IReadOnlyPublisherRoleCollection,
     {
         foreach (var publisherRole in Inner.Publishers)
         {
-            var role = await Client.Dag.GetAsync<Role>(publisherRole.RoleCid, cancel: cancellationToken);
+            var role = await Client.Dag.GetAsync<Role>(publisherRole.Role, cancel: cancellationToken);
             var publisher = await PublisherRepository.GetAsync(publisherRole.PublisherId, cancellationToken);
 
             yield return new ReadOnlyPublisherRole

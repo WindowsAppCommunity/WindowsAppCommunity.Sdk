@@ -5,7 +5,6 @@ using Ipfs;
 using OwlCore.Nomad;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
-using WindowsAppCommunity.Sdk.Models;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
 
@@ -23,7 +22,7 @@ public class ModifiableProjectCollection : NomadKuboEventStreamHandler<ValueUpda
     /// <summary>
     /// The repository to use for getting modifiable or readonly project instances.
     /// </summary>
-    public required NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> ProjectRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyProject[]>? ProjectsAdded;

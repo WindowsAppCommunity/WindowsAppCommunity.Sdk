@@ -12,17 +12,17 @@ public record User : IEntity, IConnections, ILinkCollection, IProjectRoleCollect
     /// <summary>
     /// The name of the user.
     /// </summary>
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// A description of the user. Supports markdown.
     /// </summary>
-    public required string Description { get; set;  }
+    public string Description { get; set; } = string.Empty;
 
     /// <summary>
     /// An extended description of the user. Supports markdown.
     /// </summary>
-    public required string ExtendedDescription { get; set; }
+    public string ExtendedDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// Represents application connections added by the user.
@@ -42,12 +42,12 @@ public record User : IEntity, IConnections, ILinkCollection, IProjectRoleCollect
     /// <summary>
     /// A list of all the projects the user is registered with, along with their role on the project.
     /// </summary>
-    public (Cid, DagCid)[] Projects { get; set; } = [];
+    public ProjectRole[] Projects { get; set; } = [];
 
     /// <summary>
     /// Represents all publishers the user is registered with, along with their roles.
     /// </summary>
-    public (Cid, DagCid)[] Publishers { get; set; } = [];
+    public PublisherRole[] Publishers { get; set; } = [];
 
     /// <summary>
     /// A flag that indicates whether the profile has requested to be forgotten.

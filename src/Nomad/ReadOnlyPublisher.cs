@@ -3,7 +3,6 @@ using CommunityToolkit.Diagnostics;
 using Ipfs.CoreApi;
 using OwlCore.ComponentModel;
 using OwlCore.Nomad.Kubo;
-using OwlCore.Nomad.Kubo.Events;
 using OwlCore.Storage;
 using WindowsAppCommunity.Sdk;
 using WindowsAppCommunity.Sdk.Models;
@@ -24,7 +23,7 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
     /// <param name="projectDependencyRepository">The repository to use for returning modifiable or readonly projects.</param>
     /// <param name="client">The client used to interact with the ipfs network.</param>
     /// <param name="kuboOptions">The options used to read and write data to and from Kubo.</param>
-    public static ReadOnlyPublisher FromHandlerConfig(NomadKuboEventStreamHandlerConfig<Publisher> handlerConfig, NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> projectDependencyRepository, NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> publisherRepository, NomadKuboRepository<ModifiableUser, IReadOnlyUser, User, ValueUpdateEvent> userRepository, ICoreApi client, IKuboOptions kuboOptions)
+    public static ReadOnlyPublisher FromHandlerConfig(NomadKuboEventStreamHandlerConfig<Publisher> handlerConfig, INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> projectDependencyRepository, INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> publisherRepository, INomadKuboRepositoryBase<ModifiableUser, IReadOnlyUser> userRepository, ICoreApi client, IKuboOptions kuboOptions)
     {
         Guard.IsNotNull(handlerConfig.RoamingValue);
         Guard.IsNotNull(handlerConfig.RoamingId);

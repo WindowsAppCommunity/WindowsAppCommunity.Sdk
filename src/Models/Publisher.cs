@@ -12,17 +12,17 @@ public record Publisher : IEntity, ILinkCollection, IProjectCollection, IUserRol
     /// <summary>
     /// The name of the publisher.
     /// </summary>
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// A description of the publisher.
     /// </summary>
-    public required string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     /// <summary>
     /// An extended description of the publisher.
     /// </summary>
-    public required string ExtendedDescription { get; set; }
+    public string ExtendedDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// A hex-encoded accent color for this publisher.
@@ -42,7 +42,7 @@ public record Publisher : IEntity, ILinkCollection, IProjectCollection, IUserRol
     /// <summary>
     /// Users who are registered to participate in this publisher, along with their roles.
     /// </summary>
-    public (Cid, DagCid)[] Users { get; set; } = [];
+    public UserRole[] Users { get; set; } = [];
 
     /// <summary>
     /// Projects who are registered under this publisher.
