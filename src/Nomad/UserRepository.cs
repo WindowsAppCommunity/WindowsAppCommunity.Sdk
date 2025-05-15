@@ -31,7 +31,7 @@ public class UserRepository : NomadKuboRepository<ModifiableUser, IReadOnlyUser,
     public required INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectRepository { get; set; }
 
     /// <summary>
-    /// The repository to use for returning modifiable or readonly projects.
+    /// The repository to use for returning modifiable or readonly publishers.
     /// </summary>
     public required INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> PublisherRepository { get; set; }
 
