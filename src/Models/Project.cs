@@ -7,7 +7,7 @@ namespace WindowsAppCommunity.Sdk.Models;
 /// <summary>
 /// Represents a project.
 /// </summary>
-public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectCollection, ISources<Cid>
+public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectCollection, ILinkCollection, ISources<Cid>
 {
     /// <summary>
     /// The canonical publisher for this project.

@@ -143,7 +143,8 @@ public partial class UserTests
         // Test adding a link
         var newLink = new Link
         {
-            Uri = "http://example.com/",
+            Id = "test id",
+            Url = "http://example.com/",
             Name = "Test Link",
             Description = "Just a test"
         };
@@ -155,7 +156,7 @@ public partial class UserTests
         // Data should match the updated values
         Guard.IsEqualTo(user.Links.First().Name, newLink.Name);
         Guard.IsEqualTo(user.Links.First().Description, newLink.Description);
-        Guard.IsEqualTo(user.Links.First().Uri, newLink.Uri);
+        Guard.IsEqualTo(user.Links.First().Url, newLink.Url);
 
         // Read user from secondary kubo client
         var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
@@ -169,7 +170,7 @@ public partial class UserTests
         // Data should match the updated values
         Guard.IsEqualTo(user1.Links.First().Name, newLink.Name);
         Guard.IsEqualTo(user1.Links.First().Description, newLink.Description);
-        Guard.IsEqualTo(user1.Links.First().Uri, newLink.Uri);
+        Guard.IsEqualTo(user1.Links.First().Url, newLink.Url);
 
         await kubo.Client.ShutdownAsync();
         kubo.Dispose();

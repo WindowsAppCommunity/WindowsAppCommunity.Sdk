@@ -30,7 +30,7 @@ public class ReadOnlyEntity : IDelegable<IEntity>, IReadOnlyEntity
     /// <summary>
     /// Handles the links collection for this entity.
     /// </summary>
-    public required IReadOnlyLinksCollection InnerLinks { get; init; }
+    public required ReadOnlyLinksCollection InnerLinks { get; init; }
 
     /// <inheritdoc />
     public required IEntity Inner { get; init; }

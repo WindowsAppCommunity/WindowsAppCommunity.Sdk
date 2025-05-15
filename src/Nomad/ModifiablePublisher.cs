@@ -62,7 +62,18 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             Client = client,
         };
 
-        IModifiableLinksCollection modifiableLinksCollection = null!;
+        ModifiableLinksCollection modifiableLinksCollection = new()
+        {
+            Id = handlerConfig.RoamingKey.Id,
+            Inner = readonlyPublisher.InnerEntity.InnerLinks,
+            RoamingKey = handlerConfig.RoamingKey,
+            EventStreamHandlerId = handlerConfig.RoamingKey.Id,
+            LocalEventStream = handlerConfig.LocalValue,
+            LocalEventStreamKey = handlerConfig.LocalKey,
+            Sources = handlerConfig.RoamingValue.Sources,
+            KuboOptions = kuboOptions,
+            Client = client,
+        };
 
         ModifiableEntity modifiableEntity = new()
         {
