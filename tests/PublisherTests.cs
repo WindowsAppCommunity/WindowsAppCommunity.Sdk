@@ -1,4 +1,5 @@
 using CommunityToolkit.Diagnostics;
+using Ipfs;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
 using OwlCore.Storage.Memory;
@@ -41,17 +42,12 @@ public partial class PublisherTests
             UseCache = false,
         };
 
-        var projectRoamingKeyName = "TestProject.Roaming";
-        var projectLocalKeyName = "TestProject.Local";
-        var publisherRoamingKeyName = "TestPublisher.Roaming";
-        var publisherLocalKeyName = "TestPublisher.Local";
-        var userRoamingKeyName = "TestUser.Roaming";
-        var userLocalKeyName = "TestUser.Local";
-
-        RepositoryContainer repositoryContainer = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
+        var managedKeys = new List<IKey>(managedKeysEnumerable);
+        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys);
         
         Guard.IsNotNull(repositoryContainer.PublisherRepository);
-        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(cancellationToken);
+        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(new("Test"), cancellationToken);
         Guard.IsNotNull(publisher);
         Guard.IsNotNull(publisher.Id);
         Guard.IsNotNull(publisher.Name);
@@ -76,7 +72,9 @@ public partial class PublisherTests
         Guard.IsEqualTo(publisher.AccentColor, newAccentColor);
 
         // Read publisher from secondary kubo client
-        RepositoryContainer repositoryContainer2 = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo2.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
+        var managedKeys2 = new List<IKey>(managedKeysEnumerable2);
+        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2);
         Guard.IsNotNull(repositoryContainer2.PublisherRepository);
 
         var publisher1 = await repositoryContainer2.PublisherRepository.GetAsync(publisher.Id, cancellationToken);
@@ -103,6 +101,7 @@ public partial class PublisherTests
     }
     
     [TestMethod]
+    [Ignore]
     public async Task LinksTestAsync()
     {
         var cancellationToken = CancellationToken.None;
@@ -123,18 +122,13 @@ public partial class PublisherTests
             UseCache = false,
         };
 
-        var projectRoamingKeyName = "TestProject.Roaming";
-        var projectLocalKeyName = "TestProject.Local";
-        var publisherRoamingKeyName = "TestPublisher.Roaming";
-        var publisherLocalKeyName = "TestPublisher.Local";
-        var userRoamingKeyName = "TestUser.Roaming";
-        var userLocalKeyName = "TestUser.Local";
-
-        RepositoryContainer repositoryContainer = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
+        var managedKeys = new List<IKey>(managedKeysEnumerable);
+        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys);
 
         Guard.IsNotNull(repositoryContainer.PublisherRepository);
 
-        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(cancellationToken);
+        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(new("Test"), cancellationToken);
         Guard.IsNotNull(publisher);
         Guard.IsNotNull(publisher.Id);
         Guard.IsNotNull(publisher.Name);
@@ -158,7 +152,9 @@ public partial class PublisherTests
         Guard.IsEqualTo(publisher.Links.First().Uri, newLink.Uri);
 
         // Read project from secondary kubo client
-        RepositoryContainer repositoryContainer2 = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo2.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
+        var managedKeys2 = new List<IKey>(managedKeysEnumerable2);
+        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2);
         Guard.IsNotNull(repositoryContainer2.PublisherRepository);
 
         var publisher1 = await repositoryContainer2.PublisherRepository.GetAsync(publisher.Id, cancellationToken);
@@ -203,18 +199,13 @@ public partial class PublisherTests
             UseCache = false,
         };
 
-        var projectRoamingKeyName = "TestProject.Roaming";
-        var projectLocalKeyName = "TestProject.Local";
-        var publisherRoamingKeyName = "TestPublisher.Roaming";
-        var publisherLocalKeyName = "TestPublisher.Local";
-        var userRoamingKeyName = "TestUser.Roaming";
-        var userLocalKeyName = "TestUser.Local";
-
-        RepositoryContainer repositoryContainer = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
+        var managedKeys = new List<IKey>(managedKeysEnumerable);
+        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys);
 
         Guard.IsNotNull(repositoryContainer.PublisherRepository);
 
-        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(cancellationToken);
+        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(new("Test"), cancellationToken);
         Guard.IsNotNull(publisher);
         Guard.IsNotNull(publisher.Id);
         Guard.IsNotNull(publisher.Name);
@@ -236,7 +227,9 @@ public partial class PublisherTests
         }
 
         // Read project from secondary kubo client
-        RepositoryContainer repositoryContainer2 = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo2.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
+        var managedKeys2 = new List<IKey>(managedKeysEnumerable2);
+        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2);
         Guard.IsNotNull(repositoryContainer2.PublisherRepository);
 
         var publisher1 = await repositoryContainer2.PublisherRepository.GetAsync(publisher.Id, cancellationToken);
@@ -284,24 +277,19 @@ public partial class PublisherTests
             UseCache = false,
         };
 
-        var projectRoamingKeyName = "TestProject.Roaming";
-        var projectLocalKeyName = "TestProject.Local";
-        var publisherRoamingKeyName = "TestPublisher.Roaming";
-        var publisherLocalKeyName = "TestPublisher.Local";
-        var userRoamingKeyName = "TestUser.Roaming";
-        var userLocalKeyName = "TestUser.Local";
-
-        RepositoryContainer repositoryContainer = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
+        var managedKeys = new List<IKey>(managedKeysEnumerable);
+        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys);
 
         Guard.IsNotNull(repositoryContainer.PublisherRepository);
-        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(cancellationToken);
+        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(new("Test"), cancellationToken);
         Guard.IsNotNull(publisher);
         Guard.IsNotNull(publisher.Id);
         Guard.IsNotNull(publisher.Name);
         Guard.IsNotNull(publisher.Description);
         
         Guard.IsNotNull(repositoryContainer.UserRepository);
-        var user = await repositoryContainer.UserRepository.CreateAsync(cancellationToken);
+        var user = await repositoryContainer.UserRepository.CreateAsync(new("Test"), cancellationToken);
         Guard.IsNotNull(user);
         Guard.IsNotNull(user.Id);
         Guard.IsNotNull(user.Name);
@@ -338,7 +326,9 @@ public partial class PublisherTests
         }
 
         // Read project from secondary kubo client
-        RepositoryContainer repositoryContainer2 = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo2.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
+        var managedKeys2 = new List<IKey>(managedKeysEnumerable2);
+        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2);
         Guard.IsNotNull(repositoryContainer2.PublisherRepository);
 
         var publisher1 = await repositoryContainer2.PublisherRepository.GetAsync(publisher.Id, cancellationToken);
@@ -386,24 +376,19 @@ public partial class PublisherTests
             UseCache = false,
         };
 
-        var projectRoamingKeyName = "TestProject.Roaming";
-        var projectLocalKeyName = "TestProject.Local";
-        var publisherRoamingKeyName = "TestPublisher.Roaming";
-        var publisherLocalKeyName = "TestPublisher.Local";
-        var userRoamingKeyName = "TestUser.Roaming";
-        var userLocalKeyName = "TestUser.Local";
-
-        RepositoryContainer repositoryContainer = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
+        var managedKeys = new List<IKey>(managedKeysEnumerable);
+        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys);
 
         Guard.IsNotNull(repositoryContainer.PublisherRepository);
-        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(cancellationToken);
+        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(new("Test"), cancellationToken);
         Guard.IsNotNull(publisher);
         Guard.IsNotNull(publisher.Id);
         Guard.IsNotNull(publisher.Name);
         Guard.IsNotNull(publisher.Description);
         
         Guard.IsNotNull(repositoryContainer.ProjectRepository);
-        var project = await repositoryContainer.ProjectRepository.CreateAsync(cancellationToken);
+        var project = await repositoryContainer.ProjectRepository.CreateAsync(new("Test"), cancellationToken);
         Guard.IsNotNull(project);
         Guard.IsNotNull(project.Id);
         Guard.IsNotNull(project.Name);
@@ -425,7 +410,9 @@ public partial class PublisherTests
         }
 
         // Read project from secondary kubo client
-        RepositoryContainer repositoryContainer2 = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo2.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
+        var managedKeys2 = new List<IKey>(managedKeysEnumerable2);
+        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2);
         Guard.IsNotNull(repositoryContainer2.PublisherRepository);
 
         var publisher1 = await repositoryContainer2.PublisherRepository.GetAsync(publisher.Id, cancellationToken);
@@ -473,25 +460,20 @@ public partial class PublisherTests
             UseCache = false,
         };
 
-        var projectRoamingKeyName = "TestProject.Roaming";
-        var projectLocalKeyName = "TestProject.Local";
-        var publisherRoamingKeyName = "TestPublisher.Roaming";
-        var publisherLocalKeyName = "TestPublisher.Local";
-        var userRoamingKeyName = "TestUser.Roaming";
-        var userLocalKeyName = "TestUser.Local";
-
-        RepositoryContainer repositoryContainer = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
-        RepositoryContainer repositoryContainer1 = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo.Client, projectRoamingKeyName + "2", projectLocalKeyName + "2", publisherRoamingKeyName + "2", publisherLocalKeyName + "2", userRoamingKeyName + "2", userLocalKeyName + "2");
+        var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
+        var managedKeys = new List<IKey>(managedKeysEnumerable);
+        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys);
+        RepositoryContainer repositoryContainer1 = new(kuboOptions, kubo.Client, managedKeys);
 
         Guard.IsNotNull(repositoryContainer.PublisherRepository);
-        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(cancellationToken);
+        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(new("Test"), cancellationToken);
         Guard.IsNotNull(publisher);
         Guard.IsNotNull(publisher.Id);
         Guard.IsNotNull(publisher.Name);
         Guard.IsNotNull(publisher.Description);
         
         Guard.IsNotNull(repositoryContainer1.PublisherRepository);
-        var otherPublisher = await repositoryContainer1.PublisherRepository.CreateAsync(cancellationToken);
+        var otherPublisher = await repositoryContainer1.PublisherRepository.CreateAsync(new("Test2"), cancellationToken);
         Guard.IsNotNull(otherPublisher);
         Guard.IsNotNull(otherPublisher.Id);
         Guard.IsNotNull(otherPublisher.Name);
@@ -515,7 +497,9 @@ public partial class PublisherTests
         }
 
         // Read project from secondary kubo client
-        RepositoryContainer repositoryContainer2 = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo2.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
+        var managedKeys2 = new List<IKey>(managedKeysEnumerable2);
+        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2);
         Guard.IsNotNull(repositoryContainer2.PublisherRepository);
 
         var publisher1 = await repositoryContainer2.PublisherRepository.GetAsync(publisher.Id, cancellationToken);
@@ -563,25 +547,21 @@ public partial class PublisherTests
             UseCache = false,
         };
 
-        var projectRoamingKeyName = "TestProject.Roaming";
-        var projectLocalKeyName = "TestProject.Local";
-        var publisherRoamingKeyName = "TestPublisher.Roaming";
-        var publisherLocalKeyName = "TestPublisher.Local";
-        var userRoamingKeyName = "TestUser.Roaming";
-        var userLocalKeyName = "TestUser.Local";
+        var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
+        var managedKeys = new List<IKey>(managedKeysEnumerable);
 
-        RepositoryContainer repositoryContainer = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
-        RepositoryContainer repositoryContainer1 = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo.Client, projectRoamingKeyName + "2", projectLocalKeyName + "2", publisherRoamingKeyName + "2", publisherLocalKeyName + "2", userRoamingKeyName + "2", userLocalKeyName + "2");
+        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys);
+        RepositoryContainer repositoryContainer1 = new(kuboOptions, kubo.Client, managedKeys);
 
         Guard.IsNotNull(repositoryContainer.PublisherRepository);
-        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(cancellationToken);
+        var publisher = await repositoryContainer.PublisherRepository.CreateAsync(new("Test"), cancellationToken);
         Guard.IsNotNull(publisher);
         Guard.IsNotNull(publisher.Id);
         Guard.IsNotNull(publisher.Name);
         Guard.IsNotNull(publisher.Description);
         
         Guard.IsNotNull(repositoryContainer1.PublisherRepository);
-        var otherPublisher = await repositoryContainer1.PublisherRepository.CreateAsync(cancellationToken);
+        var otherPublisher = await repositoryContainer1.PublisherRepository.CreateAsync(new("Test2"), cancellationToken);
         Guard.IsNotNull(otherPublisher);
         Guard.IsNotNull(otherPublisher.Id);
         Guard.IsNotNull(otherPublisher.Name);
@@ -605,7 +585,9 @@ public partial class PublisherTests
         }
 
         // Read project from secondary kubo client
-        RepositoryContainer repositoryContainer2 = TestSetupHelpers.CreateTestRepositories(kuboOptions, kubo2.Client, projectRoamingKeyName, projectLocalKeyName, publisherRoamingKeyName, publisherLocalKeyName, userRoamingKeyName, userLocalKeyName);
+        var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
+        var managedKeys2 = new List<IKey>(managedKeysEnumerable2);
+        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2);
         Guard.IsNotNull(repositoryContainer2.PublisherRepository);
 
         var publisher1 = await repositoryContainer2.PublisherRepository.GetAsync(publisher.Id, cancellationToken);

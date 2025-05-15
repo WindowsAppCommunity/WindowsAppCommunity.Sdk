@@ -10,5 +10,21 @@ public interface IProjectRoleCollection
     /// <summary>
     /// Represents a list of registered projects along with the role on each.
     /// </summary>
-    (Cid ProjectId, DagCid RoleCid)[] Projects { get; set; }
+    ProjectRole[] Projects { get; set; }
+}
+
+/// <summary>
+/// A container for a project and a corresponding role.
+/// </summary>
+public record ProjectRole
+{
+    /// <summary>
+    /// The project ID.
+    /// </summary>
+    public required Cid ProjectId { get; init; }
+
+    /// <summary>
+    /// The role of the project.
+    /// </summary>
+    public required DagCid Role { get; init; }
 }

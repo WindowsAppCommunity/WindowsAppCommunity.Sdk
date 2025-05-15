@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using Ipfs.CoreApi;
 using OwlCore.ComponentModel;
 using OwlCore.Nomad.Kubo;
-using OwlCore.Nomad.Kubo.Events;
 using WindowsAppCommunity.Sdk.Models;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
@@ -30,7 +29,7 @@ public class ReadOnlyProjectCollection : IReadOnlyProjectCollection, IDelegable<
     /// <summary>
     /// The repository used to get and create project instances.
     /// </summary>
-    public required NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> ProjectDependencyRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectDependencyRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyProject[]>? ProjectsAdded;

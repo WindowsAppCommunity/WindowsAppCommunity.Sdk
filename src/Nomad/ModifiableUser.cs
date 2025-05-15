@@ -25,7 +25,7 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     /// <param name="client">The client used to interact with the ipfs network.</param>
     /// <param name="kuboOptions">The options used to read and write data to and from Kubo.</param>
     /// <returns>A new instance of <see cref="ModifiableUser"/>.</returns>
-    public static ModifiableUser FromHandlerConfig(NomadKuboEventStreamHandlerConfig<User> handlerConfig, NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> projectDependencyRepository, NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> publisherRepository, ICoreApi client, IKuboOptions kuboOptions)
+    public static ModifiableUser FromHandlerConfig(NomadKuboEventStreamHandlerConfig<User> handlerConfig, INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> projectDependencyRepository, INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> publisherRepository, ICoreApi client, IKuboOptions kuboOptions)
     {
         Guard.IsNotNull(handlerConfig.RoamingValue);
         Guard.IsNotNull(handlerConfig.RoamingKey);

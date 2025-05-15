@@ -27,7 +27,7 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
     /// <param name="client">The client used to interact with the ipfs network.</param>
     /// <param name="kuboOptions">The options used to read and write data to and from Kubo.</param>
     /// <returns>A new instance of <see cref="ModifiableProject"/>.</returns>
-    public static ModifiableProject FromHandlerConfig(NomadKuboEventStreamHandlerConfig<Project> handlerConfig, NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> projectDependencyRepository, NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> publisherRepository, NomadKuboRepository<ModifiableUser, IReadOnlyUser, User, ValueUpdateEvent> userRepository, ICoreApi client, IKuboOptions kuboOptions)
+    public static ModifiableProject FromHandlerConfig(NomadKuboEventStreamHandlerConfig<Project> handlerConfig, INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> projectDependencyRepository, INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> publisherRepository, INomadKuboRepositoryBase<ModifiableUser, IReadOnlyUser> userRepository, ICoreApi client, IKuboOptions kuboOptions)
     {
         Guard.IsNotNull(handlerConfig.RoamingValue);
         Guard.IsNotNull(handlerConfig.RoamingKey);
@@ -168,7 +168,7 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
     /// <summary>
     /// A repository to get modifiable or readonly project instances from.
     /// </summary>
-    public required NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> PublisherRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> PublisherRepository { get; init; }
 
     /// <inheritdoc/>
     public string Category => InnerProject.Category;

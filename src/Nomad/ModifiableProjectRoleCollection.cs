@@ -23,7 +23,7 @@ public class ModifiableProjectRoleCollection : NomadKuboEventStreamHandler<Value
     /// <summary>
     /// The repository to use for getting modifiable or readonly project instances.
     /// </summary>
-    public required NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> ProjectRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyProjectRole[]>? ProjectsAdded;
@@ -108,7 +108,7 @@ public class ModifiableProjectRoleCollection : NomadKuboEventStreamHandler<Value
     public async Task ApplyAddProjectRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyProjectRole project, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(project.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner.Projects = [.. Inner.Inner.Projects, (project.Id, (DagCid)roleCid)];
+        Inner.Inner.Projects = [.. Inner.Inner.Projects, new ProjectRole { ProjectId = project.Id, Role = (DagCid)roleCid }];
         ProjectsAdded?.Invoke(this, [project]);
     }
 
@@ -116,7 +116,7 @@ public class ModifiableProjectRoleCollection : NomadKuboEventStreamHandler<Value
     public async Task ApplyRemoveProjectRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyProjectRole project, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(project.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner.Projects = [.. Inner.Inner.Projects.Where(x => x.ProjectId != project.Id && x.RoleCid != (DagCid)roleCid)];
+        Inner.Inner.Projects = [.. Inner.Inner.Projects.Where(x => x.ProjectId != project.Id && x.Role != (DagCid)roleCid)];
         ProjectsRemoved?.Invoke(this, [project]);
     }
 

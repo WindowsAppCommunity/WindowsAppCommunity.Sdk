@@ -1,5 +1,3 @@
-using Ipfs;
-
 namespace WindowsAppCommunity.Sdk.Models;
 
 /// <summary>
