@@ -129,7 +129,6 @@ public partial class ProjectTests
     }
     
     [TestMethod]
-    [Ignore]
     public async Task LinksTestAsync()
     {
         var cancellationToken = CancellationToken.None;

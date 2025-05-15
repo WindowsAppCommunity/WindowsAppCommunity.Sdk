@@ -101,7 +101,6 @@ public partial class PublisherTests
     }
     
     [TestMethod]
-    [Ignore]
     public async Task LinksTestAsync()
     {
         var cancellationToken = CancellationToken.None;
