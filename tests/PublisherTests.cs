@@ -101,7 +101,6 @@ public partial class PublisherTests
     }
     
     [TestMethod]
-    [Ignore]
     public async Task LinksTestAsync()
     {
         var cancellationToken = CancellationToken.None;
@@ -137,7 +136,8 @@ public partial class PublisherTests
         // Test adding a link
         var newLink = new Link
         {
-            Uri = "http://example.com/",
+            Id = "test id",
+            Url = "http://example.com/",
             Name = "Test Link",
             Description = "Just a test"
         };
@@ -149,7 +149,7 @@ public partial class PublisherTests
         // Data should match the updated values
         Guard.IsEqualTo(publisher.Links.First().Name, newLink.Name);
         Guard.IsEqualTo(publisher.Links.First().Description, newLink.Description);
-        Guard.IsEqualTo(publisher.Links.First().Uri, newLink.Uri);
+        Guard.IsEqualTo(publisher.Links.First().Url, newLink.Url);
 
         // Read project from secondary kubo client
         var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
@@ -163,7 +163,7 @@ public partial class PublisherTests
         // Data should match the updated values
         Guard.IsEqualTo(publisher1.Links.First().Name, newLink.Name);
         Guard.IsEqualTo(publisher1.Links.First().Description, newLink.Description);
-        Guard.IsEqualTo(publisher1.Links.First().Uri, newLink.Uri);
+        Guard.IsEqualTo(publisher1.Links.First().Url, newLink.Url);
 
         await kubo.Client.ShutdownAsync();
         kubo.Dispose();

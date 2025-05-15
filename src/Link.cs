@@ -1,14 +1,21 @@
+using OwlCore.Storage;
+
 namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents the data for a link.
 /// </summary>
-public class Link
+public class Link : IStorable
 {
     /// <summary>
-    /// The uri this link points to.
+    /// A unique identifier for this Link that is persistent across runs and property updates.
     /// </summary>
-    public required string Uri { get; set; }
+    public required string Id { get; init; }
+
+    /// <summary>
+    /// The external url this link points to.
+    /// </summary>
+    public required string Url { get; set; }
 
     /// <summary>
     /// A display name for this link.
