@@ -28,12 +28,12 @@ public class PublisherRepository : NomadKuboRepository<ModifiablePublisher, IRea
     /// <summary>
     /// The repository to use for returning modifiable or readonly users.
     /// </summary>
-    public required INomadKuboRepositoryBase<ModifiableUser, IReadOnlyUser> UserRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiableUser, IReadOnlyUser> UserRepository { get; set; }
 
     /// <summary>
     /// The repository to use for returning modifiable or readonly projects.
     /// </summary>
-    public required INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectRepository { get; set; }
 
     /// <inheritdoc/> 
     public override Task<(string LocalKeyName, string RoamingKeyName)?> GetExistingKeyNamesAsync(string roamingId, CancellationToken cancellationToken)
