@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
@@ -6,17 +8,17 @@ namespace WindowsAppCommunity.Sdk;
 public interface IReadOnlyConnectionsCollection
 {
     /// <summary>
-    /// The connections associated with this entity.
+    /// Gets the connections associated with this entity.
     /// </summary>
-    IReadOnlyConnection[] Connections { get; }
+    IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Raised when items are added to the <see cref="Connections"/> collection.
+    /// Raised when items are added to the collection.
     /// </summary>
     event EventHandler<IReadOnlyConnection[]>? ConnectionsAdded;
 
     /// <summary>
-    /// Raised when items are removed from the <see cref="Connections"/> collection.
+    /// Raised when items are removed from the collection.
     /// </summary>
     event EventHandler<IReadOnlyConnection[]>? ConnectionsRemoved;
 }

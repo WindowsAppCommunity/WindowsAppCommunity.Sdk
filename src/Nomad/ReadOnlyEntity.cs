@@ -20,7 +20,7 @@ public class ReadOnlyEntity : IDelegable<IEntity>, IReadOnlyEntity
     /// <summary>
     /// Handles the connections for this entity.
     /// </summary>
-    public required IReadOnlyConnectionsCollection InnerConnections { get; init; }
+    public required ReadOnlyConnectionCollection InnerConnections { get; init; }
 
     /// <summary>
     /// Handles the images collection for this entity.
@@ -54,9 +54,6 @@ public class ReadOnlyEntity : IDelegable<IEntity>, IReadOnlyEntity
     public Link[] Links => InnerLinks.Links;
 
     /// <inheritdoc />
-    public IReadOnlyConnection[] Connections => InnerConnections.Connections;
-
-    /// <inheritdoc />
     public event EventHandler<string>? NameUpdated;
 
     /// <inheritdoc />
@@ -88,6 +85,9 @@ public class ReadOnlyEntity : IDelegable<IEntity>, IReadOnlyEntity
 
     /// <inheritdoc />
     public event EventHandler<IFile[]>? ImagesRemoved;
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerConnections.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc />
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerImages.GetImageFilesAsync(cancellationToken);

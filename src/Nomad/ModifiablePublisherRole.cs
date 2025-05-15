@@ -34,9 +34,6 @@ public class ModifiablePublisherRole : IModifiablePublisherRole
     public bool IsUnlisted => InnerPublisher.IsUnlisted;
 
     /// <inheritdoc/>
-    public IReadOnlyConnection[] Connections => InnerPublisher.Connections;
-
-    /// <inheritdoc/>
     public Link[] Links => InnerPublisher.Links;
 
     /// <inheritdoc/>
@@ -98,6 +95,9 @@ public class ModifiablePublisherRole : IModifiablePublisherRole
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyProject[]>? ProjectsRemoved;
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerPublisher.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc/>
     public Task AddConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken) => InnerPublisher.AddConnectionAsync(connection, cancellationToken);

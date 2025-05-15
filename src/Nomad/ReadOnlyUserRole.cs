@@ -34,9 +34,6 @@ public class ReadOnlyUserRole : IReadOnlyUserRole
     public bool IsUnlisted => InnerUser.IsUnlisted;
 
     /// <inheritdoc/>
-    public IReadOnlyConnection[] Connections => InnerUser.Connections;
-
-    /// <inheritdoc/>
     public Link[] Links => InnerUser.Links;
 
     /// <inheritdoc/>
@@ -87,21 +84,15 @@ public class ReadOnlyUserRole : IReadOnlyUserRole
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyProjectRole[]>? ProjectsRemoved;
 
-    /// <inheritdoc/>
-    public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken)
-    {
-        return InnerUser.GetImageFilesAsync(cancellationToken);
-    }
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerUser.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc/>
-    public IAsyncEnumerable<IReadOnlyProjectRole> GetProjectsAsync(CancellationToken cancellationToken)
-    {
-        return InnerUser.GetProjectsAsync(cancellationToken);
-    }
+    public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerUser.GetImageFilesAsync(cancellationToken);
 
     /// <inheritdoc/>
-    public IAsyncEnumerable<IReadOnlyPublisherRole> GetPublishersAsync(CancellationToken cancellationToken)
-    {
-        return InnerUser.GetPublishersAsync(cancellationToken);
-    }
+    public IAsyncEnumerable<IReadOnlyProjectRole> GetProjectsAsync(CancellationToken cancellationToken) => InnerUser.GetProjectsAsync(cancellationToken);
+
+    /// <inheritdoc/>
+    public IAsyncEnumerable<IReadOnlyPublisherRole> GetPublishersAsync(CancellationToken cancellationToken) => InnerUser.GetPublishersAsync(cancellationToken);
 }

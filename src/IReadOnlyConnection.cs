@@ -13,10 +13,10 @@ public interface IReadOnlyConnection
     /// <summary>
     /// Gets the value of the connection.
     /// </summary>
-    string Value { get; }
+    Task<string> GetValueAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Raised when <see cref="Value"/> is updated.
+    /// Raised when the value is updated.
     /// </summary>
     event EventHandler<string>? ValueUpdated;
 }

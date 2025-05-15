@@ -21,7 +21,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
     /// <summary>
     /// The connections associated with this entity.
     /// </summary>
-    public required IModifiableConnectionsCollection InnerConnections { get; init; }
+    public required ModifiableConnectionCollection InnerConnections { get; init; }
 
     /// <summary>
     /// The images associated with this entity.
@@ -47,9 +47,6 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
 
     /// <inheritdoc />
     public bool IsUnlisted => Inner.Inner.IsUnlisted;
-
-    /// <inheritdoc />
-    public IReadOnlyConnection[] Connections => InnerConnections.Connections;
 
     /// <inheritdoc />
     public Link[] Links => InnerLinks.Links;
@@ -86,6 +83,9 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
 
     /// <inheritdoc />
     public event EventHandler<IFile[]>? ImagesRemoved;
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerConnections.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc />
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerImages.GetImageFilesAsync(cancellationToken);
@@ -335,6 +335,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
 
         // TODO: Reset inner virtual event stream handlers
         // Connections, Links, Images
+        await InnerConnections.ResetEventStreamPositionAsync(cancellationToken);
         await InnerImages.ResetEventStreamPositionAsync(cancellationToken);
         throw new NotImplementedException();
     }
