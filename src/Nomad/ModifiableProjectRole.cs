@@ -43,9 +43,6 @@ public class ModifiableProjectRole : IModifiableProjectRole
     public bool IsUnlisted => InnerProject.IsUnlisted;
 
     /// <inheritdoc/>
-    public IReadOnlyConnection[] Connections => InnerProject.Connections;
-
-    /// <inheritdoc/>
     public Link[] Links => InnerProject.Links;
 
     /// <inheritdoc/>
@@ -119,6 +116,9 @@ public class ModifiableProjectRole : IModifiableProjectRole
 
     /// <inheritdoc/>
     public Task AddUserAsync(IReadOnlyUserRole user, CancellationToken cancellationToken) => InnerProject.AddUserAsync(user, cancellationToken);
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerProject.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc/>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerProject.GetImageFilesAsync(cancellationToken);

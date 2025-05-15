@@ -34,7 +34,7 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
             Client = client,
         };
 
-        IReadOnlyConnectionsCollection readOnlyConnectionsCollection = new ReadOnlyConnectionsCollection
+        ReadOnlyConnectionCollection readOnlyConnectionCollection = new ReadOnlyConnectionCollection
         {
             Inner = handlerConfig.RoamingValue,
             Client = client,
@@ -46,7 +46,7 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
         {
             Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
-            InnerConnections = readOnlyConnectionsCollection,
+            InnerConnections = readOnlyConnectionCollection,
             InnerImages = readOnlyImagesCollection,
             InnerLinks = readOnlyLinksCollection,
             Client = client,
@@ -152,9 +152,6 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
     public bool IsUnlisted => InnerEntity.IsUnlisted;
 
     /// <inheritdoc/>
-    public IReadOnlyConnection[] Connections => InnerEntity.Connections;
-
-    /// <inheritdoc/>
     public Link[] Links => InnerEntity.Links;
 
     /// <inheritdoc/>
@@ -201,6 +198,9 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
     
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyProject[]>? ProjectsRemoved;
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerEntity.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc/>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerEntity.GetImageFilesAsync(cancellationToken);

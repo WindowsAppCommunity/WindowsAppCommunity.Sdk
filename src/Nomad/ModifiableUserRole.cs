@@ -30,9 +30,6 @@ public class ModifiableUserRole : IModifiableUserRole
     public bool IsUnlisted => InnerUser.IsUnlisted;
 
     /// <inheritdoc />
-    public IReadOnlyConnection[] Connections => InnerUser.Connections;
-
-    /// <inheritdoc />
     public Link[] Links => InnerUser.Links;
 
     /// <inheritdoc />
@@ -84,110 +81,59 @@ public class ModifiableUserRole : IModifiableUserRole
     public event EventHandler<IReadOnlyProjectRole[]>? ProjectsRemoved;
 
     /// <inheritdoc />
-    public Task AddConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken)
-    {
-        return InnerUser.AddConnectionAsync(connection, cancellationToken);
-    }
+    public Task AddConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken) => InnerUser.AddConnectionAsync(connection, cancellationToken);
 
     /// <inheritdoc />
-    public Task AddImageAsync(IFile imageFile, CancellationToken cancellationToken)
-    {
-        return InnerUser.AddImageAsync(imageFile, cancellationToken);
-    }
+    public Task AddImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerUser.AddImageAsync(imageFile, cancellationToken);
 
     /// <inheritdoc />
-    public Task AddLinkAsync(Link link, CancellationToken cancellationToken)
-    {
-        return InnerUser.AddLinkAsync(link, cancellationToken);
-    }
+    public Task AddLinkAsync(Link link, CancellationToken cancellationToken) => InnerUser.AddLinkAsync(link, cancellationToken);
 
     /// <inheritdoc />
-    public Task AddProjectAsync(IReadOnlyProjectRole project, CancellationToken cancellationToken)
-    {
-        return InnerUser.AddProjectAsync(project, cancellationToken);
-    }
+    public Task AddProjectAsync(IReadOnlyProjectRole project, CancellationToken cancellationToken) => InnerUser.AddProjectAsync(project, cancellationToken);
 
     /// <inheritdoc />
-    public Task AddPublisherAsync(IReadOnlyPublisherRole publisher, CancellationToken cancellationToken)
-    {
-        return InnerUser.AddPublisherAsync(publisher, cancellationToken);
-    }
+    public Task AddPublisherAsync(IReadOnlyPublisherRole publisher, CancellationToken cancellationToken) => InnerUser.AddPublisherAsync(publisher, cancellationToken);
 
     /// <inheritdoc />
-    public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken)
-    {
-        return InnerUser.GetImageFilesAsync(cancellationToken);
-    }
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerUser.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc />
-    public IAsyncEnumerable<IReadOnlyProjectRole> GetProjectsAsync(CancellationToken cancellationToken)
-    {
-        return InnerUser.GetProjectsAsync(cancellationToken);
-    }
+    public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerUser.GetImageFilesAsync(cancellationToken);
 
     /// <inheritdoc />
-    public IAsyncEnumerable<IReadOnlyPublisherRole> GetPublishersAsync(CancellationToken cancellationToken)
-    {
-        return InnerUser.GetPublishersAsync(cancellationToken);
-    }
+    public IAsyncEnumerable<IReadOnlyProjectRole> GetProjectsAsync(CancellationToken cancellationToken) => InnerUser.GetProjectsAsync(cancellationToken);
 
     /// <inheritdoc />
-    public Task RemoveConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken)
-    {
-        return InnerUser.RemoveConnectionAsync(connection, cancellationToken);
-    }
+    public IAsyncEnumerable<IReadOnlyPublisherRole> GetPublishersAsync(CancellationToken cancellationToken) => InnerUser.GetPublishersAsync(cancellationToken);
 
     /// <inheritdoc />
-    public Task RemoveImageAsync(IFile imageFile, CancellationToken cancellationToken)
-    {
-        return InnerUser.RemoveImageAsync(imageFile, cancellationToken);
-    }
+    public Task RemoveConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken) => InnerUser.RemoveConnectionAsync(connection, cancellationToken);
 
     /// <inheritdoc />
-    public Task RemoveLinkAsync(Link link, CancellationToken cancellationToken)
-    {
-        return InnerUser.RemoveLinkAsync(link, cancellationToken);
-    }
+    public Task RemoveImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerUser.RemoveImageAsync(imageFile, cancellationToken);
 
     /// <inheritdoc />
-    public Task RemoveProjectAsync(IReadOnlyProjectRole project, CancellationToken cancellationToken)
-    {
-        return InnerUser.RemoveProjectAsync(project, cancellationToken);
-    }
+    public Task RemoveLinkAsync(Link link, CancellationToken cancellationToken) => InnerUser.RemoveLinkAsync(link, cancellationToken);
 
     /// <inheritdoc />
-    public Task RemovePublisherAsync(IReadOnlyPublisherRole publisher, CancellationToken cancellationToken)
-    {
-        return InnerUser.RemovePublisherAsync(publisher, cancellationToken);
-    }
+    public Task RemoveProjectAsync(IReadOnlyProjectRole project, CancellationToken cancellationToken) => InnerUser.RemoveProjectAsync(project, cancellationToken);
 
     /// <inheritdoc />
-    public Task UpdateDescriptionAsync(string description, CancellationToken cancellationToken)
-    {
-        return InnerUser.UpdateDescriptionAsync(description, cancellationToken);
-    }
+    public Task RemovePublisherAsync(IReadOnlyPublisherRole publisher, CancellationToken cancellationToken) => InnerUser.RemovePublisherAsync(publisher, cancellationToken);
 
     /// <inheritdoc />
-    public Task UpdateExtendedDescriptionAsync(string extendedDescription, CancellationToken cancellationToken)
-    {
-        return InnerUser.UpdateExtendedDescriptionAsync(extendedDescription, cancellationToken);
-    }
+    public Task UpdateDescriptionAsync(string description, CancellationToken cancellationToken) => InnerUser.UpdateDescriptionAsync(description, cancellationToken);
 
     /// <inheritdoc />
-    public Task UpdateForgetMeStatusAsync(bool? forgetMe, CancellationToken cancellationToken)
-    {
-        return InnerUser.UpdateForgetMeStatusAsync(forgetMe, cancellationToken);
-    }
+    public Task UpdateExtendedDescriptionAsync(string extendedDescription, CancellationToken cancellationToken) => InnerUser.UpdateExtendedDescriptionAsync(extendedDescription, cancellationToken);
 
     /// <inheritdoc />
-    public Task UpdateNameAsync(string name, CancellationToken cancellationToken)
-    {
-        return InnerUser.UpdateNameAsync(name, cancellationToken);
-    }
+    public Task UpdateForgetMeStatusAsync(bool? forgetMe, CancellationToken cancellationToken) => InnerUser.UpdateForgetMeStatusAsync(forgetMe, cancellationToken);
 
     /// <inheritdoc />
-    public Task UpdateUnlistedStateAsync(bool isUnlisted, CancellationToken cancellationToken)
-    {
-        return InnerUser.UpdateUnlistedStateAsync(isUnlisted, cancellationToken);
-    }
+    public Task UpdateNameAsync(string name, CancellationToken cancellationToken) => InnerUser.UpdateNameAsync(name, cancellationToken);
+
+    /// <inheritdoc />
+    public Task UpdateUnlistedStateAsync(bool isUnlisted, CancellationToken cancellationToken) => InnerUser.UpdateUnlistedStateAsync(isUnlisted, cancellationToken);
 }

@@ -25,6 +25,24 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
     public event EventHandler<string?>? AccentColorUpdated;
 
     /// <inheritdoc />
+    public async Task UpdateAccentColorAsync(string? accentColor, CancellationToken cancellationToken)
+    {
+        DagCid? valueCid = null;
+        if (accentColor is not null)
+        {
+            Cid cid = await Client.Dag.PutAsync(accentColor, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
+            valueCid = (DagCid)cid;
+        }
+
+        var updateEvent = new ValueUpdateEvent(null, valueCid, accentColor is null);
+
+        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(UpdateAccentColorAsync), updateEvent, DateTime.UtcNow, cancellationToken);
+        await ApplyEntryUpdateAsync(appendedEntry, updateEvent, accentColor, cancellationToken);
+
+        EventStreamPosition = appendedEntry;
+    }
+
+    /// <inheritdoc />
     public override async Task ApplyEntryUpdateAsync(EventStreamEntry<DagCid> eventStreamEntry, ValueUpdateEvent updateEvent, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -69,23 +87,5 @@ public class ModifiableAccentColor : NomadKuboEventStreamHandler<ValueUpdateEven
         Inner.Inner.AccentColor = null;
 
         return Task.CompletedTask;
-    }
-
-    /// <inheritdoc />
-    public async Task UpdateAccentColorAsync(string? accentColor, CancellationToken cancellationToken)
-    {
-        DagCid? valueCid = null;
-        if (accentColor is not null)
-        {
-            Cid cid = await Client.Dag.PutAsync(accentColor, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-            valueCid = (DagCid)cid;
-        }
-
-        var updateEvent = new ValueUpdateEvent(null, valueCid, accentColor is null);
-
-        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(UpdateAccentColorAsync), updateEvent, DateTime.UtcNow, cancellationToken);
-        await ApplyEntryUpdateAsync(appendedEntry, updateEvent, accentColor, cancellationToken);
-
-        EventStreamPosition = appendedEntry;
     }
 }

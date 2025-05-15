@@ -27,7 +27,7 @@ public record User : IEntity, IConnections, ILinkCollection, IProjectRoleCollect
     /// <summary>
     /// Represents application connections added by the user.
     /// </summary>
-    public Dictionary<string, DagCid> Connections { get; set; } = [];
+    public Connection[] Connections { get; set; } = [];
 
     /// <summary>
     /// Represents links to external profiles or resources added by the user.

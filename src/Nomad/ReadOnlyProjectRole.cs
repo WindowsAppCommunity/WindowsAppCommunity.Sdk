@@ -40,9 +40,6 @@ public class ReadOnlyProjectRole : IReadOnlyProjectRole
     public bool IsUnlisted => InnerProject.IsUnlisted;
 
     /// <inheritdoc/>
-    public IReadOnlyConnection[] Connections => InnerProject.Connections;
-
-    /// <inheritdoc/>
     public Link[] Links => InnerProject.Links;
 
     /// <inheritdoc/>
@@ -101,6 +98,9 @@ public class ReadOnlyProjectRole : IReadOnlyProjectRole
     
     /// <inheritdoc/>
     public event EventHandler<string[]>? FeaturesRemoved;
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerProject.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc/>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerProject.GetImageFilesAsync(cancellationToken);

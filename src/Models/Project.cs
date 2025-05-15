@@ -67,7 +67,7 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectColl
     /// <summary>
     /// Holds information about project assets that have been published for consumption by an end user, such as a Microsoft Store app, a package on nuget.org, a git repo, etc.
     /// </summary>
-    public Dictionary<string, DagCid> Connections { get; set; } = new();
+    public Connection[] Connections { get; set; } = [];
 
     /// <summary>
     /// A flag that indicates whether the profile has requested to be forgotten.

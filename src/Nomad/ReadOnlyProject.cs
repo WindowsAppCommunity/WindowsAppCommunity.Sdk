@@ -34,7 +34,7 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
             Client = client,
         };
 
-        IReadOnlyConnectionsCollection readOnlyConnectionsCollection = new ReadOnlyConnectionsCollection
+        ReadOnlyConnectionCollection readOnlyConnectionCollection = new ReadOnlyConnectionCollection
         {
             Inner = handlerConfig.RoamingValue,
             Client = client,
@@ -46,7 +46,7 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
         {
             Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
-            InnerConnections = readOnlyConnectionsCollection,
+            InnerConnections = readOnlyConnectionCollection,
             InnerImages = readOnlyImagesCollection,
             InnerLinks = readOnlyLinksCollection,
             Client = client,
@@ -142,9 +142,6 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
     public bool IsUnlisted => InnerEntity.IsUnlisted;
 
     /// <inheritdoc/>
-    public IReadOnlyConnection[] Connections => InnerEntity.Connections;
-
-    /// <inheritdoc/>
     public Link[] Links => InnerEntity.Links;
 
     /// <inheritdoc/>
@@ -217,6 +214,9 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
 
         return await PublisherRepository.GetAsync(Inner.Publisher, cancellationToken);
     }
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerEntity.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc/>
     public IAsyncEnumerable<IReadOnlyUserRole> GetUsersAsync(CancellationToken cancellationToken) => InnerUserRoleCollection.GetUsersAsync(cancellationToken);

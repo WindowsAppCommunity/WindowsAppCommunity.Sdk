@@ -39,7 +39,7 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
         ReadOnlyEntity readOnlyEntity = readOnlyProject.InnerEntity;
 
         // Modifiable virtual event stream handlers
-        IModifiableConnectionsCollection modifiableConnectionsCollection = new ModifiableConnectionsCollection
+        ModifiableConnectionCollection modifiableConnectionsCollection = new ModifiableConnectionCollection
         {
             Id = handlerConfig.RoamingKey.Id,
             Inner = readOnlyEntity.InnerConnections,
@@ -200,9 +200,6 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
     public bool IsUnlisted => InnerProject.IsUnlisted;
 
     /// <inheritdoc/>
-    public IReadOnlyConnection[] Connections => InnerProject.Connections;
-
-    /// <inheritdoc/>
     public Link[] Links => InnerProject.Links;
 
     /// <inheritdoc/>
@@ -211,10 +208,10 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
     /// <inheritdoc/>
     public string[] Features => InnerProject.Features;
 
-    /// <inheritdoc cref="WindowsAppCommunity.Sdk.IReadOnlyProject.CategoryUpdated" />
+    /// <inheritdoc />
     public event EventHandler<string>? CategoryUpdated;
 
-    /// <inheritdoc cref="WindowsAppCommunity.Sdk.IReadOnlyProject.PublisherUpdated" />
+    /// <inheritdoc />
     public event EventHandler<IReadOnlyPublisher>? PublisherUpdated;
 
     /// <inheritdoc/>
@@ -261,6 +258,9 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
 
     /// <inheritdoc/>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerEntity.GetImageFilesAsync(cancellationToken);
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerEntity.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc cref="IReadOnlyProject{TDependencyCollection}.GetPublisherAsync" />
     public Task<IReadOnlyPublisher?> GetPublisherAsync(CancellationToken cancellationToken) => InnerProject.GetPublisherAsync(cancellationToken);

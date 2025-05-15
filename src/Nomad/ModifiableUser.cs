@@ -37,7 +37,7 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
         var readOnlyEntity = readOnlyUser.InnerEntity;
 
         // Modifiable virtual event stream handlers
-        IModifiableConnectionsCollection modifiableConnectionsCollection = new ModifiableConnectionsCollection
+        ModifiableConnectionCollection modifiableConnectionCollection = new ModifiableConnectionCollection
         {
             Id = handlerConfig.RoamingKey.Id,
             Inner = readOnlyEntity.InnerConnections,
@@ -71,7 +71,7 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
             RoamingKey = handlerConfig.RoamingKey,
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
-            InnerConnections = modifiableConnectionsCollection,
+            InnerConnections = modifiableConnectionCollection,
             InnerImages = modifiableImagesCollection,
             InnerLinks = modifiableLinksCollection,
             Sources = handlerConfig.RoamingValue.Sources,
@@ -169,9 +169,6 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
     public bool IsUnlisted => InnerEntity.IsUnlisted;
 
     /// <inheritdoc/>
-    public IReadOnlyConnection[] Connections => InnerEntity.Connections;
-
-    /// <inheritdoc/>
     public Link[] Links => InnerEntity.Links;
 
     /// <inheritdoc/>
@@ -233,6 +230,9 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
 
     /// <inheritdoc/>
     public Task AddPublisherAsync(IReadOnlyPublisherRole publisher, CancellationToken cancellationToken) => InnerPublisherRoles.AddPublisherAsync(publisher, cancellationToken);
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerEntity.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc/>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerEntity.GetImageFilesAsync(cancellationToken);

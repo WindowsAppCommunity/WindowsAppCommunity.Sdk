@@ -42,7 +42,7 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
         var updateEvent = new ValueUpdateEvent((DagCid)keyCid, (DagCid)valueCid, false);
 
         var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(AddImageAsync), updateEvent, DateTime.UtcNow, cancellationToken);
-        await ApplyEntryUpdateAsync(appendedEntry, updateEvent, newImage, cancellationToken);
+        await ApplyEntryUpdateAsync(appendedEntry, updateEvent, newImage, imageFile, cancellationToken);
 
         EventStreamPosition = appendedEntry;
     }
@@ -62,7 +62,7 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
         var updateEvent = new ValueUpdateEvent((DagCid)keyCid, (DagCid)valueCid, true);
 
         var appendedEntry = await AppendNewEntryAsync(Id, nameof(RemoveImageAsync), updateEvent, DateTime.UtcNow, cancellationToken);
-        await ApplyEntryUpdateAsync(appendedEntry, updateEvent, image, cancellationToken);
+        await ApplyEntryUpdateAsync(appendedEntry, updateEvent, image, imageFile, cancellationToken);
 
         EventStreamPosition = appendedEntry;
     }
@@ -98,7 +98,7 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
         var (image, _) = await Client.ResolveDagCidAsync<Image>(updateEvent.Value.Value, nocache: !KuboOptions.UseCache, cancellationToken);
 
         Guard.IsNotNull(image);
-        await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, image, cancellationToken);
+        await ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, image, null, cancellationToken);
     }
 
     /// <summary>
@@ -108,7 +108,7 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
     /// <param name="updateEvent">The update event to apply.</param>
     /// <param name="image">The resolved image data for this event.</param>
     /// <param name="cancellationToken">A token that can be used to cancel the ongoing operation.</param>
-    public async Task ApplyEntryUpdateAsync(EventStreamEntry<DagCid> eventStreamEntry, ValueUpdateEvent updateEvent, Image image, CancellationToken cancellationToken)
+    public async Task ApplyEntryUpdateAsync(EventStreamEntry<DagCid> eventStreamEntry, ValueUpdateEvent updateEvent, Image image, IFile? file = null, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -117,14 +117,14 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
             case nameof(AddImageAsync):
                 {
                     Inner.Inner.Images = [.. Inner.Inner.Images, image];
-                    var imageFile = await Inner.GetAsync(image.Id, cancellationToken);
+                    var imageFile = file ??= await Inner.GetAsync(image.Id, cancellationToken);
                     ImagesAdded?.Invoke(this, [imageFile]);
                     break;
                 }
             case nameof(RemoveImageAsync):
                 {
                     Inner.Inner.Images = [.. Inner.Inner.Images.Except([image])];
-                    var imageFile = await Inner.GetAsync(image.Id, cancellationToken);
+                    var imageFile = file ??= await Inner.GetAsync(image.Id, cancellationToken);
                     ImagesRemoved?.Invoke(this, [imageFile]);
                     break;
                 }

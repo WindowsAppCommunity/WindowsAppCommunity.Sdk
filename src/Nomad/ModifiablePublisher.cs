@@ -49,7 +49,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             Sources = handlerConfig.RoamingValue.Sources,
         };
 
-        IModifiableConnectionsCollection modifiableConnectionsCollection = new ModifiableConnectionsCollection
+        ModifiableConnectionCollection modifiableConnectionsCollection = new ModifiableConnectionCollection
         {
             Id = handlerConfig.RoamingKey.Id,
             Inner = readonlyPublisher.InnerEntity.InnerConnections,
@@ -227,10 +227,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
     public bool? ForgetMe => InnerEntity.ForgetMe;
 
     /// <inheritdoc/>
-    public bool IsUnlisted => InnerEntity.IsUnlisted;
-
-    /// <inheritdoc/>
-    public IReadOnlyConnection[] Connections => InnerEntity.Connections;
+    public bool IsUnlisted => InnerEntity.IsUnlisted; 
 
     /// <inheritdoc/>
     public Link[] Links => InnerEntity.Links;
@@ -294,6 +291,9 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
 
     /// <inheritdoc/>
     public Task AddProjectAsync(IReadOnlyProject project, CancellationToken cancellationToken) => InnerProjectCollection.AddProjectAsync(project, cancellationToken);
+
+    /// <inheritdoc />
+    public IAsyncEnumerable<IReadOnlyConnection> GetConnectionsAsync(CancellationToken cancellationToken = default) => InnerEntity.GetConnectionsAsync(cancellationToken);
 
     /// <inheritdoc/>
     public IAsyncEnumerable<IFile> GetImageFilesAsync(CancellationToken cancellationToken) => InnerEntity.GetImageFilesAsync(cancellationToken);
