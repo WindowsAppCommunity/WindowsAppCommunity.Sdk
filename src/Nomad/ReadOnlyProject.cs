@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using CommunityToolkit.Diagnostics;
-using Ipfs;
 using Ipfs.CoreApi;
 using OwlCore.ComponentModel;
 using OwlCore.Nomad.Kubo;
-using OwlCore.Nomad.Kubo.Events;
 using OwlCore.Storage;
 using WindowsAppCommunity.Sdk.Models;
 
@@ -25,7 +23,7 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
     /// <param name="kuboOptions">The options used to read and write data to and from Kubo.</param>
     /// <param name="client">The client used to interact with the ipfs network.</param>
     /// <returns>A new instance of <see cref="ReadOnlyProject"/>.</returns>
-    public static ReadOnlyProject FromHandlerConfig(NomadKuboEventStreamHandlerConfig<Project> handlerConfig, NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent> projectDependencyRepository, NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> publisherRepository, NomadKuboRepository<ModifiableUser, IReadOnlyUser, User, ValueUpdateEvent> userRepository, ICoreApi client, IKuboOptions kuboOptions)
+    public static ReadOnlyProject FromHandlerConfig(NomadKuboEventStreamHandlerConfig<Project> handlerConfig, INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> projectDependencyRepository, INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> publisherRepository, INomadKuboRepositoryBase<ModifiableUser, IReadOnlyUser> userRepository, ICoreApi client, IKuboOptions kuboOptions)
     {
         Guard.IsNotNull(handlerConfig.RoamingValue);
         Guard.IsNotNull(handlerConfig.RoamingId);
@@ -126,7 +124,7 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
     /// <summary>
     /// A repository to get modifiable or readonly project instances from.
     /// </summary>
-    public required NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> PublisherRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> PublisherRepository { get; init; }
 
     /// <inheritdoc/>
     public string Name => InnerEntity.Name;

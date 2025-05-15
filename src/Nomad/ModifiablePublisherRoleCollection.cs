@@ -22,7 +22,7 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
     /// <summary>
     /// The repository to use for getting modifiable or readonly publisher instances.
     /// </summary>
-    public required NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent> PublisherRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> PublisherRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyPublisherRole[]>? PublishersAdded;
@@ -140,7 +140,7 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
     public async Task ApplyAddPublisherRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyPublisherRole publisher, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(publisher.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner.Publishers = [.. Inner.Inner.Publishers, (publisher.Id, (DagCid)roleCid)];
+        Inner.Inner.Publishers = [.. Inner.Inner.Publishers, new PublisherRole { PublisherId = publisher.Id, Role = (DagCid)roleCid }];
         PublishersAdded?.Invoke(this, [publisher]);
     }
 
@@ -148,7 +148,7 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
     public async Task ApplyRemovePublisherRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyPublisherRole publisher, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(publisher.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner.Publishers = [.. Inner.Inner.Publishers.Where(x => x.PublisherId != publisher.Id && x.RoleCid != (DagCid)roleCid)];
+        Inner.Inner.Publishers = [.. Inner.Inner.Publishers.Where(x => x.PublisherId != publisher.Id && x.Role != (DagCid)roleCid)];
         PublishersRemoved?.Invoke(this, [publisher]);
     }
 

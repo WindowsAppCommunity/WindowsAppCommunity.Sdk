@@ -1,16 +1,10 @@
 using System.Diagnostics;
 using CommunityToolkit.Diagnostics;
-using Ipfs;
-using Ipfs.CoreApi;
 using OwlCore.Diagnostics;
 using OwlCore.Extensions;
 using OwlCore.Kubo;
-using OwlCore.Nomad.Kubo;
-using OwlCore.Nomad.Kubo.Events;
 using OwlCore.Storage;
 using OwlCore.Storage.System.IO;
-using WindowsAppCommunity.Sdk.Models;
-using WindowsAppCommunity.Sdk.Nomad;
 
 namespace WindowsAppCommunity.Sdk.Tests;
 
@@ -100,130 +94,5 @@ public static class TestSetupHelpers
                 }
             }
         }
-    }
-
-    public static RepositoryContainer CreateTestRepositories(KuboOptions kuboOptions, ICoreApi client, string projectRoamingKeyName, string projectLocalKeyName, string publisherRoamingKeyName, string publisherLocalKeyName, string userRoamingKeyName, string userLocalKeyName)
-    {
-        var repositoryContainer = new RepositoryContainer();
-
-        repositoryContainer.ProjectRepository = new NomadKuboRepository<ModifiableProject, IReadOnlyProject, Project, ValueUpdateEvent>
-        {
-            DefaultEventStreamLabel = "Test Project",
-            Client = client,
-            KuboOptions = kuboOptions,
-            GetEventStreamHandlerConfigAsync = async (roamingId, cancellationToken) =>
-            {
-                var (localKey, roamingKey, foundRoamingId) = await NomadKeyHelpers.RoamingIdToNomadKeysAsync(roamingId, projectRoamingKeyName, projectLocalKeyName, client, cancellationToken);
-                return new NomadKuboEventStreamHandlerConfig<Project>
-                {
-                    RoamingId = roamingKey?.Id ?? (foundRoamingId is not null ? Cid.Decode(foundRoamingId) : null),
-                    RoamingKey = roamingKey,
-                    RoamingKeyName = projectRoamingKeyName,
-                    LocalKey = localKey,
-                    LocalKeyName = projectLocalKeyName,
-                };
-            },
-            GetDefaultRoamingValue = (localKey, roamingKey) => new Project
-            {
-                Name = "Test Project",
-                Description = "This is a test project.",
-                ExtendedDescription = "This is a test project. It is used to test the Windows App Community SDK.",
-                Category = "Test",
-                Sources = [localKey.Id],
-            },
-            ModifiableFromHandlerConfig = config =>
-            {
-                Guard.IsNotNull(repositoryContainer.ProjectRepository);
-                Guard.IsNotNull(repositoryContainer.PublisherRepository);
-                Guard.IsNotNull(repositoryContainer.UserRepository);
-                return ModifiableProject.FromHandlerConfig(config, repositoryContainer.ProjectRepository, repositoryContainer.PublisherRepository, repositoryContainer.UserRepository, client, kuboOptions);
-            },
-            ReadOnlyFromHandlerConfig = config =>
-            {
-                Guard.IsNotNull(repositoryContainer.ProjectRepository);
-                Guard.IsNotNull(repositoryContainer.PublisherRepository);
-                Guard.IsNotNull(repositoryContainer.UserRepository);
-                return ReadOnlyProject.FromHandlerConfig(config, repositoryContainer.ProjectRepository, repositoryContainer.PublisherRepository, repositoryContainer.UserRepository, client, kuboOptions);
-            },
-        };
-
-        repositoryContainer.PublisherRepository = new NomadKuboRepository<ModifiablePublisher, IReadOnlyPublisher, Publisher, ValueUpdateEvent>
-        {
-            DefaultEventStreamLabel = "Test Publisher",
-            Client = client,
-            KuboOptions = kuboOptions,
-            GetEventStreamHandlerConfigAsync = async (roamingId, cancellationToken) =>
-            {
-                var (localKey, roamingKey, foundRoamingId) = await NomadKeyHelpers.RoamingIdToNomadKeysAsync(roamingId, publisherRoamingKeyName, publisherLocalKeyName, client, cancellationToken);
-                return new NomadKuboEventStreamHandlerConfig<Publisher>
-                {
-                    RoamingId = roamingKey?.Id ?? (foundRoamingId is not null ? Cid.Decode(foundRoamingId) : null),
-                    RoamingKey = roamingKey,
-                    RoamingKeyName = publisherRoamingKeyName,
-                    LocalKey = localKey,
-                    LocalKeyName = publisherLocalKeyName,
-                };
-            },
-            GetDefaultRoamingValue = (localKey, roamingKey) => new Publisher
-            {
-                Name = "Test Publisher",
-                Description = "This is a test publisher.",
-                ExtendedDescription = "This is a test publisher. It is used to test the Windows App Community SDK.",
-                Sources = [localKey.Id],
-            },
-            ModifiableFromHandlerConfig = config =>
-            {
-                Guard.IsNotNull(repositoryContainer.ProjectRepository);
-                Guard.IsNotNull(repositoryContainer.PublisherRepository);
-                Guard.IsNotNull(repositoryContainer.UserRepository);
-                return ModifiablePublisher.FromHandlerConfig(config, repositoryContainer.ProjectRepository, repositoryContainer.PublisherRepository, repositoryContainer.UserRepository, client, kuboOptions);
-            },
-            ReadOnlyFromHandlerConfig = config =>
-            {
-                Guard.IsNotNull(repositoryContainer.ProjectRepository);
-                Guard.IsNotNull(repositoryContainer.PublisherRepository);
-                Guard.IsNotNull(repositoryContainer.UserRepository);
-                return ReadOnlyPublisher.FromHandlerConfig(config, repositoryContainer.ProjectRepository, repositoryContainer.PublisherRepository, repositoryContainer.UserRepository, client, kuboOptions);
-            },
-        };
-
-        repositoryContainer.UserRepository = new NomadKuboRepository<ModifiableUser, IReadOnlyUser, User, ValueUpdateEvent>
-        {
-            DefaultEventStreamLabel = "Test User",
-            Client = client,
-            KuboOptions = kuboOptions,
-            GetEventStreamHandlerConfigAsync = async (roamingId, cancellationToken) =>
-            {
-                var (localKey, roamingKey, foundRoamingId) = await NomadKeyHelpers.RoamingIdToNomadKeysAsync(roamingId, userRoamingKeyName, userLocalKeyName, client, cancellationToken);
-                return new NomadKuboEventStreamHandlerConfig<User>
-                {
-                    RoamingId = roamingKey?.Id ?? (foundRoamingId is not null ? Cid.Decode(foundRoamingId) : null),
-                    RoamingKey = roamingKey,
-                    RoamingKeyName = userRoamingKeyName,
-                    LocalKey = localKey,
-                    LocalKeyName = userLocalKeyName,
-                };
-            },
-            GetDefaultRoamingValue = (localKey, roamingKey) => new User
-            {
-                Name = "Test User",
-                Description = "This is a test user.",
-                ExtendedDescription = "This is a test user. It is used to test the Windows App Community SDK.",
-                Sources = [localKey.Id],
-            },
-            ModifiableFromHandlerConfig = config =>
-            {
-                Guard.IsNotNull(repositoryContainer.ProjectRepository);
-                Guard.IsNotNull(repositoryContainer.PublisherRepository);
-                return ModifiableUser.FromHandlerConfig(config, repositoryContainer.ProjectRepository, repositoryContainer.PublisherRepository, client, kuboOptions);
-            },
-            ReadOnlyFromHandlerConfig = config =>
-            {
-                Guard.IsNotNull(repositoryContainer.ProjectRepository);
-                Guard.IsNotNull(repositoryContainer.PublisherRepository);
-                return ReadOnlyUser.FromHandlerConfig(config, repositoryContainer.ProjectRepository, repositoryContainer.PublisherRepository, client, kuboOptions);
-            },
-        };
-        return repositoryContainer;
     }
 }

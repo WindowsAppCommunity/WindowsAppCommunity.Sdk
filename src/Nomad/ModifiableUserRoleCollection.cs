@@ -4,8 +4,8 @@ using Ipfs;
 using OwlCore.Nomad;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
-using User = WindowsAppCommunity.Sdk.Models.User;
 using CommunityToolkit.Diagnostics;
+using WindowsAppCommunity.Sdk.Models;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
 
@@ -23,7 +23,7 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
     /// <summary>
     /// The repository to use for getting modifiable or readonly user instances.
     /// </summary>
-    public required NomadKuboRepository<ModifiableUser, IReadOnlyUser, User, ValueUpdateEvent> UserRepository { get; init; }
+    public required INomadKuboRepositoryBase<ModifiableUser, IReadOnlyUser> UserRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyUserRole[]>? UsersAdded;
@@ -147,7 +147,7 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
     public async Task ApplyAddUserRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyUserRole user, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(user.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner.Users = [.. Inner.Inner.Users, (user.Id, (DagCid)roleCid)];
+        Inner.Inner.Users = [.. Inner.Inner.Users, new UserRole { UserId = user.Id, Role = (DagCid)roleCid }];
         UsersAdded?.Invoke(this, [user]);
     }
 
@@ -155,7 +155,7 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
     public async Task ApplyRemoveUserRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyUserRole user, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(user.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner.Users = [.. Inner.Inner.Users.Where(x => x.UserId != user.Id && x.RoleCid != (DagCid)roleCid)];
+        Inner.Inner.Users = [.. Inner.Inner.Users.Where(x => x.UserId != user.Id && x.Role != (DagCid)roleCid)];
         UsersRemoved?.Invoke(this, [user]);
     }
 
