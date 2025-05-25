@@ -81,5 +81,6 @@ public record Project : IEntity, IUserRoleCollection, IAccentColor, IProjectColl
 
     /// <summary>
     /// The event stream sources for this project.
+    /// </summary>
     public required ICollection<Cid> Sources { get; init; }
 }

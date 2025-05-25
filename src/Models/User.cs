@@ -61,5 +61,6 @@ public record User : IEntity, IConnections, ILinkCollection, IProjectRoleCollect
 
     /// <summary>
     /// The event stream handler sources for this user.
+    /// </summary>
     public required ICollection<Cid> Sources { get; init; }
 }
