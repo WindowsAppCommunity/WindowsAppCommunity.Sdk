@@ -15,7 +15,7 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <summary>
 /// Represents a project that can be modified.
 /// </summary>
-public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, IDelegable<Project>, IModifiableProject
+public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, IDelegable<Project>, IModifiableProject, IFlushable
 {
     /// <summary>
     /// Creates a new instance of <see cref="ModifiableProject"/> from the specified handler configuration.
@@ -503,5 +503,12 @@ public class ModifiableProject : NomadKuboEventStreamHandler<ValueUpdateEvent>, 
 
         await InnerUserRoleCollection.ResetEventStreamPositionAsync(cancellationToken);
         await ((ModifiableProjectCollection)Dependencies).ResetEventStreamPositionAsync(cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public async Task FlushAsync(CancellationToken cancellationToken)
+    {
+        await this.PublishLocalAsync<ModifiableProject, ValueUpdateEvent>(cancellationToken);
+        await this.PublishRoamingAsync<ModifiableProject, ValueUpdateEvent, Project>(cancellationToken);
     }
 }

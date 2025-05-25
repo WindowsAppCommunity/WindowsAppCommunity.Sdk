@@ -14,7 +14,7 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <summary>
 /// Represents a user that can be modified.
 /// </summary>
-public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IModifiableUser, IDelegable<User>
+public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IModifiableUser, IDelegable<User>, IFlushable
 {
     /// <summary>
     /// Creates a new instance of the <see cref="ModifiableUser"/> class from the given handler configuration.
@@ -350,5 +350,12 @@ public class ModifiableUser : NomadKuboEventStreamHandler<ValueUpdateEvent>, IMo
         await InnerEntity.ResetEventStreamPositionAsync(cancellationToken);
         await InnerPublisherRoles.ResetEventStreamPositionAsync(cancellationToken);
         await InnerProjectRoles.ResetEventStreamPositionAsync(cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public async Task FlushAsync(CancellationToken cancellationToken)
+    {
+        await this.PublishLocalAsync<ModifiableUser, ValueUpdateEvent>(cancellationToken);
+        await this.PublishRoamingAsync<ModifiableUser, ValueUpdateEvent, User>(cancellationToken);
     }
 }

@@ -15,7 +15,7 @@ using Link = WindowsAppCommunity.Sdk.Link;
 /// <summary>
 /// A modifiable event stream handler for modifying roaming publisher data.
 /// </summary>
-public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>, IDelegable<Publisher>, IModifiablePublisher
+public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>, IDelegable<Publisher>, IModifiablePublisher, IFlushable
 {
     /// <summary>
     /// Creates a new instance of <see cref="ModifiablePublisher"/> from the specified handler configuration.
@@ -238,7 +238,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
     public bool? ForgetMe => InnerEntity.ForgetMe;
 
     /// <inheritdoc/>
-    public bool IsUnlisted => InnerEntity.IsUnlisted; 
+    public bool IsUnlisted => InnerEntity.IsUnlisted;
 
     /// <inheritdoc/>
     public Link[] Links => InnerEntity.Links;
@@ -415,7 +415,8 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
                 break;
             default:
                 throw new NotImplementedException();
-        };
+        }
+        ;
     }
 
     /// <inheritdoc/>
@@ -429,5 +430,12 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
         await InnerProjectCollection.ResetEventStreamPositionAsync(cancellationToken);
         await ((ModifiablePublisherCollection)ParentPublishers).ResetEventStreamPositionAsync(cancellationToken);
         await ((ModifiablePublisherCollection)ChildPublishers).ResetEventStreamPositionAsync(cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public async Task FlushAsync(CancellationToken cancellationToken)
+    {
+        await this.PublishLocalAsync<ModifiablePublisher, ValueUpdateEvent>(cancellationToken);
+        await this.PublishRoamingAsync<ModifiablePublisher, ValueUpdateEvent, Publisher>(cancellationToken);
     }
 }
