@@ -30,18 +30,21 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
 
         ReadOnlyImagesCollection readOnlyImagesCollection = new ReadOnlyImagesCollection
         {
+            Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
             Client = client,
         };
 
         ReadOnlyConnectionCollection readOnlyConnectionCollection = new ReadOnlyConnectionCollection
         {
+            Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
             Client = client,
         };
 
         ReadOnlyLinksCollection readOnlyLinksCollection = new ReadOnlyLinksCollection
         {
+            Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
             Client = client,
         };
@@ -58,15 +61,8 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
 
         ReadOnlyAccentColor readOnlyAccentColor = new ReadOnlyAccentColor
         {
-            Inner = handlerConfig.RoamingValue,
-            Client = client,
-        };
-
-        ReadOnlyUserRoleCollection readOnlyUserRoleCollection = new()
-        {
             Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
-            UserRepository = userRepository,
             Client = client,
         };
 
@@ -93,6 +89,14 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
             Client = client,
             KuboOptions = kuboOptions,
             ProjectDependencyRepository = projectDependencyRepository,
+        };
+
+        ReadOnlyUserRoleCollection readOnlyUserRoleCollection = new ReadOnlyUserRoleCollection
+        {
+            Id = handlerConfig.RoamingId,
+            Inner = handlerConfig.RoamingValue,
+            Client = client,
+            UserRepository = userRepository,
         };
 
         return new ReadOnlyPublisher

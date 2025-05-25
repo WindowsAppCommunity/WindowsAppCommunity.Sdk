@@ -30,18 +30,21 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
 
         ReadOnlyImagesCollection readOnlyImagesCollection = new ReadOnlyImagesCollection
         {
+            Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
             Client = client,
         };
 
         ReadOnlyConnectionCollection readOnlyConnectionCollection = new ReadOnlyConnectionCollection
         {
+            Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
             Client = client,
         };
 
         ReadOnlyLinksCollection readOnlyLinksCollection = new ReadOnlyLinksCollection
         {
+            Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
             Client = client,
         };
@@ -58,6 +61,7 @@ public class ReadOnlyProject : IReadOnlyProject, IDelegable<Project>
 
         ReadOnlyAccentColor readOnlyAccentColor = new ReadOnlyAccentColor
         {
+            Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
             Client = client,
         };

@@ -12,6 +12,9 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// </summary>
 public class ReadOnlyConnectionCollection : IReadOnlyConnectionsCollection, IDelegable<IConnections>, IReadOnlyNomadKuboRegistry<IReadOnlyConnection>
 {
+    /// <inheritdoc />
+    public required string Id { get; init; }
+
     /// <summary>
     /// The client to use for communicating with ipfs.
     /// </summary>

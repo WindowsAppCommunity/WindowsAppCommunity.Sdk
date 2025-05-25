@@ -7,6 +7,9 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <inheritdoc cref="IReadOnlyAccentColor" />
 public class ReadOnlyAccentColor : IReadOnlyAccentColor, IDelegable<IAccentColor>
 {
+    /// <inheritdoc />
+    public required string Id { get; init; }
+
     /// <summary>
     /// The client to use for communicating with ipfs.
     /// </summary>

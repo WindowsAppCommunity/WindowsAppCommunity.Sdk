@@ -28,18 +28,21 @@ public class ReadOnlyUser : IReadOnlyUser, IDelegable<User>
 
         ReadOnlyImagesCollection readOnlyImagesCollection = new ReadOnlyImagesCollection
         {
+            Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
             Client = client,
         };
 
         ReadOnlyConnectionCollection readOnlyConnectionCollection = new ReadOnlyConnectionCollection
         {
+            Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
             Client = client,
         };
 
         ReadOnlyLinksCollection readOnlyLinksCollection = new ReadOnlyLinksCollection
         {
+            Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue,
             Client = client,
         };

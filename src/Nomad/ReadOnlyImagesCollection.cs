@@ -12,6 +12,9 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <inheritdoc cref="IReadOnlyImagesCollection" />
 public class ReadOnlyImagesCollection : IReadOnlyImagesCollection, IDelegable<IImages>, IReadOnlyNomadKuboRegistry<IFile>
 {
+    /// <inheritdoc />
+    public required string Id { get; init; }
+    
     /// <summary>
     /// The client to use for communicating with ipfs.
     /// </summary>
