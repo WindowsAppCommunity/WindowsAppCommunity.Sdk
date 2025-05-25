@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using OwlCore.ComponentModel;
 
 namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a modifiable connections collection.
 /// </summary>
-public interface IReadOnlyConnectionsCollection
+public interface IReadOnlyConnectionsCollection : IHasId
 {
     /// <summary>
     /// Gets the connections associated with this entity.

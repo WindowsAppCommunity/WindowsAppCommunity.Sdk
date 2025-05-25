@@ -1,9 +1,11 @@
+using OwlCore.ComponentModel;
+
 namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents an accent color that cannot be updatd.
 /// </summary>
-public interface IReadOnlyAccentColor
+public interface IReadOnlyAccentColor : IHasId
 {
     /// <summary>
     /// A hex-encoded accent color for this publisher.

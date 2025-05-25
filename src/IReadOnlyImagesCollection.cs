@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using OwlCore.ComponentModel;
 using OwlCore.Storage;
 
 namespace WindowsAppCommunity.Sdk;
@@ -6,7 +7,7 @@ namespace WindowsAppCommunity.Sdk;
 /// <summary>
 /// Represents a collection of images.
 /// </summary>
-public interface IReadOnlyImagesCollection
+public interface IReadOnlyImagesCollection : IHasId
 {
     /// <summary>
     /// Gets the image files in this collection.

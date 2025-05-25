@@ -1,9 +1,11 @@
+using OwlCore.ComponentModel;
+
 namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a collection of features that can be read but not modified.
 /// </summary>
-public interface IReadOnlyFeaturesCollection
+public interface IReadOnlyFeaturesCollection : IHasId
 {
     /// <summary>
     /// A list of features provided by this project.

@@ -1,9 +1,11 @@
+using OwlCore.ComponentModel;
+
 namespace WindowsAppCommunity.Sdk;
 
 /// <summary>
 /// Represents a read-only collection of links.
 /// </summary>
-public interface IReadOnlyLinksCollection
+public interface IReadOnlyLinksCollection : IHasId
 {
     /// <summary>
     /// Represents links to external profiles or resources added by the entity.
