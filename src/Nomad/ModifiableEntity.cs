@@ -31,7 +31,7 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
     /// <summary>
     /// The links associated with this entity.
     /// </summary>
-    public required IModifiableLinksCollection InnerLinks { get; init; }
+    public required ModifiableLinksCollection InnerLinks { get; init; }
 
     /// <inheritdoc />
     public string Name => Inner.Inner.Name;
@@ -100,7 +100,10 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
     public Task AddImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerImages.AddImageAsync(imageFile, cancellationToken);
 
     /// <inheritdoc />
-    public Task RemoveImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerImages.RemoveImageAsync(imageFile, cancellationToken);
+    public Task AddImageAsync(IFile imageFile, string? id, string? name, CancellationToken cancellationToken) => InnerImages.AddImageAsync(imageFile, id, name, cancellationToken);
+
+    /// <inheritdoc />
+    public Task RemoveImageAsync(string imageId, CancellationToken cancellationToken) => InnerImages.RemoveImageAsync(imageId, cancellationToken);
 
     /// <inheritdoc />
     public Task AddLinkAsync(Link link, CancellationToken cancellationToken) => InnerLinks.AddLinkAsync(link, cancellationToken);
@@ -127,26 +130,22 @@ public class ModifiableEntity : NomadKuboEventStreamHandler<ValueUpdateEvent>, I
                 }
             case nameof(AddConnectionAsync):
                 {
-                    // TODO: Needs implementation, not interface
-                    // await InnerConnections.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
+                    await InnerConnections.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
                     break;
                 }
             case nameof(RemoveConnectionAsync):
                 {
-                    // TODO: Needs implementation, not interface
-                    // await InnerConnections.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
+                    await InnerConnections.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
                     break;
                 }
             case nameof(AddLinkAsync):
                 {
-                    // TODO: Needs implementation, not interface
-                    // await InnerLinks.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
+                    await InnerLinks.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
                     break;
                 }
             case nameof(RemoveLinkAsync):
                 {
-                    // TODO: Needs implementation, not interface
-                    // await InnerLinks.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
+                    await InnerLinks.ApplyEntryUpdateAsync(eventStreamEntry, updateEvent, cancellationToken);
                     break;
                 }
             case nameof(UpdateNameAsync):

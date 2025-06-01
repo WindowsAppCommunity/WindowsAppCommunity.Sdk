@@ -113,14 +113,14 @@ public class ModifiableLinksCollection : NomadKuboEventStreamHandler<ValueUpdate
             case nameof(AddLinkAsync):
                 {
                     Inner.Inner.Links = [.. Inner.Inner.Links, linkModel];
-                    linkAppModel ??= await Inner.GetAsync(linkModel.Id, cancellationToken);
+                    linkAppModel ??= new Link { Description = linkModel.Description, Id = linkModel.Id, Name = linkModel.Name, Url = linkModel.Url, };
                     LinksAdded?.Invoke(this, [linkAppModel]);
                     break;
                 }
             case nameof(RemoveLinkAsync):
                 {
                     Inner.Inner.Links = [.. Inner.Inner.Links.Except([linkModel])];
-                    linkAppModel ??= await Inner.GetAsync(linkModel.Id, cancellationToken);
+                    linkAppModel ??= new Link { Description = linkModel.Description, Id = linkModel.Id, Name = linkModel.Name, Url = linkModel.Url, };
                     LinksRemoved?.Invoke(this, [linkAppModel]);
                     break;
                 }

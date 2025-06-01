@@ -106,6 +106,9 @@ public class ModifiablePublisherRole : IModifiablePublisherRole
     public Task AddImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerPublisher.AddImageAsync(imageFile, cancellationToken);
 
     /// <inheritdoc/>
+    public Task AddImageAsync(IFile imageFile, string? id, string? name, CancellationToken cancellationToken) => InnerPublisher.AddImageAsync(imageFile, id, name, cancellationToken);
+
+    /// <inheritdoc/>
     public Task AddLinkAsync(Link link, CancellationToken cancellationToken) => InnerPublisher.AddLinkAsync(link, cancellationToken);
 
     /// <inheritdoc/>
@@ -127,7 +130,7 @@ public class ModifiablePublisherRole : IModifiablePublisherRole
     public Task RemoveConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken) => InnerPublisher.RemoveConnectionAsync(connection, cancellationToken);
 
     /// <inheritdoc/>
-    public Task RemoveImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerPublisher.RemoveImageAsync(imageFile, cancellationToken);
+    public Task RemoveImageAsync(string imageId, CancellationToken cancellationToken) => InnerPublisher.RemoveImageAsync(imageId, cancellationToken);
 
     /// <inheritdoc/>
     public Task RemoveLinkAsync(Link link, CancellationToken cancellationToken) => InnerPublisher.RemoveLinkAsync(link, cancellationToken);

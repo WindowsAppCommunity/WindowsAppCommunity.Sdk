@@ -112,6 +112,9 @@ public class ModifiableProjectRole : IModifiableProjectRole
     public Task AddImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerProject.AddImageAsync(imageFile, cancellationToken);
 
     /// <inheritdoc/>
+    public Task AddImageAsync(IFile imageFile, string? id, string? name, CancellationToken cancellationToken) => InnerProject.AddImageAsync(imageFile, id, name, cancellationToken);
+
+    /// <inheritdoc/>
     public Task AddLinkAsync(Link link, CancellationToken cancellationToken) => InnerProject.AddLinkAsync(link, cancellationToken);
 
     /// <inheritdoc/>
@@ -136,7 +139,7 @@ public class ModifiableProjectRole : IModifiableProjectRole
     public Task RemoveFeatureAsync(string feature, CancellationToken cancellationToken) => InnerProject.RemoveFeatureAsync(feature, cancellationToken);
 
     /// <inheritdoc/>
-    public Task RemoveImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerProject.RemoveImageAsync(imageFile, cancellationToken);
+    public Task RemoveImageAsync(string imageId, CancellationToken cancellationToken) => InnerProject.RemoveImageAsync(imageId, cancellationToken);
 
     /// <inheritdoc/>
     public Task RemoveLinkAsync(Link link, CancellationToken cancellationToken) => InnerProject.RemoveLinkAsync(link, cancellationToken);

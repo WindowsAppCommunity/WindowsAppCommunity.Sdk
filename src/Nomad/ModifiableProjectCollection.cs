@@ -11,7 +11,7 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <summary>
 /// A modifiable handler for roaming project collection data.
 /// </summary>
-public class ModifiableProjectCollection : NomadKuboEventStreamHandler<ValueUpdateEvent>, IModifiableProjectCollection<IReadOnlyProject>
+public class ModifiableProjectCollection : NomadKuboEventStreamHandler<ValueUpdateEvent>, IModifiableProjectCollection<IReadOnlyProject>, IReadOnlyProjectCollection
 {
     /// <inheritdoc/>
     public required string Id { get; init; }

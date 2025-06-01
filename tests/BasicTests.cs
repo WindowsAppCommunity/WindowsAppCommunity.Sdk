@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Diagnostics;
-using Ipfs;
+using OwlCore.Kubo;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Storage.System.IO;
 using WindowsAppCommunity.Sdk.Nomad;
@@ -27,9 +27,9 @@ public partial class BasicTests
         };
 
         var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
-        var managedKeys = new List<IKey>(managedKeysEnumerable);
+        var managedKeys = new List<Key>(managedKeysEnumerable.Select(k => new Key(k)));
 
-        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys);
+        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
 
         Guard.IsNotNull(repositoryContainer.ProjectRepository);
         Guard.IsNotNull(repositoryContainer.PublisherRepository);

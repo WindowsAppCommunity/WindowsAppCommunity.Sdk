@@ -86,6 +86,9 @@ public class ModifiableUserRole : IModifiableUserRole
     /// <inheritdoc />
     public Task AddImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerUser.AddImageAsync(imageFile, cancellationToken);
 
+    /// <inheritdoc/>
+    public Task AddImageAsync(IFile imageFile, string? id, string? name, CancellationToken cancellationToken) => InnerUser.AddImageAsync(imageFile, id, name, cancellationToken);
+
     /// <inheritdoc />
     public Task AddLinkAsync(Link link, CancellationToken cancellationToken) => InnerUser.AddLinkAsync(link, cancellationToken);
 
@@ -111,7 +114,7 @@ public class ModifiableUserRole : IModifiableUserRole
     public Task RemoveConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken) => InnerUser.RemoveConnectionAsync(connection, cancellationToken);
 
     /// <inheritdoc />
-    public Task RemoveImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerUser.RemoveImageAsync(imageFile, cancellationToken);
+    public Task RemoveImageAsync(string imageId, CancellationToken cancellationToken) => InnerUser.RemoveImageAsync(imageId, cancellationToken);
 
     /// <inheritdoc />
     public Task RemoveLinkAsync(Link link, CancellationToken cancellationToken) => InnerUser.RemoveLinkAsync(link, cancellationToken);

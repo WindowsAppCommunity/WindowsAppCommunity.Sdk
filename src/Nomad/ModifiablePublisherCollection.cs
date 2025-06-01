@@ -11,7 +11,7 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <summary>
 /// A modifiable handler for roaming publisher collection data.
 /// </summary>
-public class ModifiablePublisherCollection : NomadKuboEventStreamHandler<ValueUpdateEvent>, IModifiablePublisherCollection<IReadOnlyPublisher>
+public class ModifiablePublisherCollection : NomadKuboEventStreamHandler<ValueUpdateEvent>, IModifiablePublisherCollection<IReadOnlyPublisher>, IReadOnlyPublisherCollection
 {
     /// <inheritdoc/>
     public required string Id { get; init; }
@@ -20,6 +20,16 @@ public class ModifiablePublisherCollection : NomadKuboEventStreamHandler<ValueUp
     /// The read-only handler for this publisher collection.
     /// </summary>
     public required ReadOnlyPublisherCollection Inner { get; init; }
+
+    /// <summary>
+    /// A unique identifier for add events, persistent across machines and reruns.
+    /// </summary>
+    public string AddPublisherEventId { get; init; } = nameof(AddPublisherAsync);
+
+    /// <summary>
+    /// A unique identifier for remove events, persistent across machines and reruns.
+    /// </summary>
+    public string RemovePublisherEventId { get; init; } = nameof(RemovePublisherAsync);
 
     /// <summary>
     /// The repository to use for getting modifiable or readonly publisher instances.
@@ -41,7 +51,7 @@ public class ModifiablePublisherCollection : NomadKuboEventStreamHandler<ValueUp
         var keyCid = await Client.Dag.PutAsync(publisher.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
 
         var updateEvent = new ValueUpdateEvent(Key: null, Value: (DagCid)keyCid, false);
-        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(AddPublisherAsync), updateEvent, DateTime.UtcNow, cancellationToken);
+        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: AddPublisherEventId, updateEvent, DateTime.UtcNow, cancellationToken);
         await ApplyAddPublisherEntryAsync(appendedEntry, updateEvent, publisher, cancellationToken);
 
         EventStreamPosition = appendedEntry;
@@ -54,7 +64,7 @@ public class ModifiablePublisherCollection : NomadKuboEventStreamHandler<ValueUp
 
         var updateEvent = new ValueUpdateEvent(Key: null, Value: (DagCid)keyCid, true);
 
-        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(RemovePublisherAsync), updateEvent, DateTime.UtcNow, cancellationToken);
+        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: RemovePublisherEventId, updateEvent, DateTime.UtcNow, cancellationToken);
         await ApplyRemovePublisherEntryAsync(appendedEntry, updateEvent, publisher, cancellationToken);
 
         EventStreamPosition = appendedEntry;
@@ -63,28 +73,25 @@ public class ModifiablePublisherCollection : NomadKuboEventStreamHandler<ValueUp
     /// <inheritdoc/>
     public override async Task ApplyEntryUpdateAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, CancellationToken cancellationToken)
     {
-        switch (streamEntry.EventId)
+        if (streamEntry.EventId == AddPublisherEventId)
         {
-            case nameof(AddPublisherAsync):
-                {
-                    Guard.IsNotNull(updateEvent.Value);
-                    var publisherId = await Client.Dag.GetAsync<Cid>(updateEvent.Value, cancel: cancellationToken);
-                    var publisher = await PublisherRepository.GetAsync(publisherId, cancellationToken);
+            Guard.IsNotNull(updateEvent.Value);
+            var publisherId = await Client.Dag.GetAsync<Cid>(updateEvent.Value, cancel: cancellationToken);
+            var publisher = await PublisherRepository.GetAsync(publisherId, cancellationToken);
 
-                    await ApplyAddPublisherEntryAsync(streamEntry, updateEvent, publisher, cancellationToken);
-                }
-                break;
-            case nameof(RemovePublisherAsync):
-                {
-                    Guard.IsNotNull(updateEvent.Value);
-                    var publisherId = await Client.Dag.GetAsync<Cid>(updateEvent.Value, cancel: cancellationToken);
-                    var publisher = await PublisherRepository.GetAsync(publisherId, cancellationToken);
+            await ApplyAddPublisherEntryAsync(streamEntry, updateEvent, publisher, cancellationToken);
+        }
+        else if (streamEntry.EventId == RemovePublisherEventId)
+        {
+            Guard.IsNotNull(updateEvent.Value);
+            var publisherId = await Client.Dag.GetAsync<Cid>(updateEvent.Value, cancel: cancellationToken);
+            var publisher = await PublisherRepository.GetAsync(publisherId, cancellationToken);
 
-                    await ApplyRemovePublisherEntryAsync(streamEntry, updateEvent, publisher, cancellationToken);
-                }
-                break;
-            default:
-                throw new InvalidOperationException($"Unknown event id: {streamEntry.EventId}");
+            await ApplyRemovePublisherEntryAsync(streamEntry, updateEvent, publisher, cancellationToken);
+        }
+        else
+        {
+            throw new InvalidOperationException($"Unknown event id: {streamEntry.EventId}");
         }
     }
 

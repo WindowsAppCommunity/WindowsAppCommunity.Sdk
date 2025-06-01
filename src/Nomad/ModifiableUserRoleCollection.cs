@@ -41,7 +41,7 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
         var valueCid = await Client.Dag.PutAsync(user.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
 
         var updateEvent = new ValueUpdateEvent(Key: (DagCid)keyCid, Value: (DagCid)valueCid, false);
-        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(AddUserAsync), updateEvent, DateTime.UtcNow, cancellationToken);
+        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: "AddUserRoleAsync", updateEvent, DateTime.UtcNow, cancellationToken);
         await ApplyAddUserRoleEntryAsync(appendedEntry, updateEvent, user, cancellationToken);
 
         EventStreamPosition = appendedEntry;
@@ -54,7 +54,7 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
         var valueCid = await Client.Dag.PutAsync(user.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
 
         var updateEvent = new ValueUpdateEvent(Key: (DagCid)keyCid, Value: (DagCid)valueCid, true);
-        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(RemoveUserAsync), updateEvent, DateTime.UtcNow, cancellationToken);
+        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: "RemoveUserRoleAsync", updateEvent, DateTime.UtcNow, cancellationToken);
         await ApplyRemoveUserRoleEntryAsync(appendedEntry, updateEvent, user, cancellationToken);
 
         EventStreamPosition = appendedEntry;
@@ -70,7 +70,7 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
 
         switch (streamEntry.EventId)
         {
-            case nameof(AddUserAsync):
+            case "AddUserRoleAsync":
                 var userId = await Client.Dag.GetAsync<string>(updateEvent.Key, cancel: cancellationToken);
                 var user = await UserRepository.GetAsync(userId, cancellationToken);
                 Guard.IsNotNull(user);
@@ -104,7 +104,7 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
                 }
 
                 break;
-            case nameof(RemoveUserAsync):
+            case "RemoveUserRoleAsync":
                 var removedUserId = await Client.Dag.GetAsync<string>(updateEvent.Key, cancel: cancellationToken);
                 var removedUser = await UserRepository.GetAsync(removedUserId, cancellationToken);
                 Guard.IsNotNull(removedUser);

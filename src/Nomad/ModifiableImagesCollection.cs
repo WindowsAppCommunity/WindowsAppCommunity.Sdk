@@ -25,20 +25,26 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
     public required string Id { get; init; }
 
     /// <inheritdoc />
-    public async Task AddImageAsync(IFile imageFile, CancellationToken cancellationToken)
+    public Task AddImageAsync(IFile imageFile, CancellationToken cancellationToken)
     {
-        var imageCid = await imageFile.GetCidAsync(Inner.Client, new AddFileOptions { Pin = KuboOptions.ShouldPin, }, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        return AddImageAsync(imageFile, id: null, name: null, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task AddImageAsync(IFile imageFile, string? id, string? name, CancellationToken cancellationToken)
+    {
+        var imageCid = await imageFile.GetCidAsync(Inner.Client, new AddFileOptions { Pin = KuboOptions.ShouldPin }, cancellationToken);
 
         var newImage = new Image
         {
-            Id = imageFile.Id,
-            Name = imageFile.Name,
+            Id = id ?? imageFile.Id,
+            Name = name ?? imageFile.Name,
             Cid = (DagCid)imageCid,
         };
 
         var keyCid = await Client.Dag.PutAsync(newImage.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
         var valueCid = await Client.Dag.PutAsync(newImage, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-
         var updateEvent = new ValueUpdateEvent((DagCid)keyCid, (DagCid)valueCid, false);
 
         var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(AddImageAsync), updateEvent, DateTime.UtcNow, cancellationToken);
@@ -48,21 +54,20 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
     }
 
     /// <inheritdoc />
-    public async Task RemoveImageAsync(IFile imageFile, CancellationToken cancellationToken)
+    public async Task RemoveImageAsync(string imageId, CancellationToken cancellationToken)
     {
-        var image = Inner.Inner.Images.FirstOrDefault(img => img.Id == imageFile.Id);
+        var image = Inner.Inner.Images.FirstOrDefault(img => img.Id == imageId);
         if (image == null)
         {
-            throw new ArgumentException("Image not found in the collection.", nameof(imageFile));
+            throw new ArgumentException($"Image with ID {imageId} not found in the collection.", nameof(imageId));
         }
 
         var keyCid = await Client.Dag.PutAsync(image.Id, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
         var valueCid = await Client.Dag.PutAsync(image, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-
         var updateEvent = new ValueUpdateEvent((DagCid)keyCid, (DagCid)valueCid, true);
 
         var appendedEntry = await AppendNewEntryAsync(Id, nameof(RemoveImageAsync), updateEvent, DateTime.UtcNow, cancellationToken);
-        await ApplyEntryUpdateAsync(appendedEntry, updateEvent, image, imageFile, cancellationToken);
+        await ApplyEntryUpdateAsync(appendedEntry, updateEvent, image, null, cancellationToken);
 
         EventStreamPosition = appendedEntry;
     }
@@ -82,7 +87,7 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
     /// <remarks>
     /// This method will call <see cref="ReadOnlyImagesCollection.GetAsync(string, CancellationToken)"/> and create a new instance to pass to the event handlers.
     /// <para/>
-    /// If already have a resolved instance of <see cref="Image"/>, you should call <see cref="ApplyEntryUpdateAsync(EventStreamEntry{DagCid}, ValueUpdateEvent, Image, CancellationToken)"/> instead.
+    /// If already have a resolved instance of <see cref="Image"/>, you should call <see cref="ApplyEntryUpdateAsync(EventStreamEntry{DagCid}, ValueUpdateEvent, Image, IFile?, CancellationToken)"/> instead.
     /// </remarks>
     /// <param name="eventStreamEntry">The event stream entry to apply.</param>
     /// <param name="updateEvent">The update event to apply.</param>
@@ -116,15 +121,15 @@ public class ModifiableImagesCollection : NomadKuboEventStreamHandler<ValueUpdat
         {
             case nameof(AddImageAsync):
                 {
+                    var imageFile = file ??= Inner.ImageToFile(image);
                     Inner.Inner.Images = [.. Inner.Inner.Images, image];
-                    var imageFile = file ??= await Inner.GetAsync(image.Id, cancellationToken);
                     ImagesAdded?.Invoke(this, [imageFile]);
                     break;
                 }
             case nameof(RemoveImageAsync):
                 {
+                    var imageFile = file ??= Inner.ImageToFile(image);
                     Inner.Inner.Images = [.. Inner.Inner.Images.Except([image])];
-                    var imageFile = file ??= await Inner.GetAsync(image.Id, cancellationToken);
                     ImagesRemoved?.Invoke(this, [imageFile]);
                     break;
                 }

@@ -40,7 +40,7 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
         var valueCid = await Client.Dag.PutAsync(publisher.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
 
         var updateEvent = new ValueUpdateEvent(Key: (DagCid)keyCid, Value: (DagCid)valueCid, false);
-        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(AddPublisherAsync), updateEvent, DateTime.UtcNow, cancellationToken);
+        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: "AddPublisherRoleAsync", updateEvent, DateTime.UtcNow, cancellationToken);
         await ApplyAddPublisherRoleEntryAsync(appendedEntry, updateEvent, publisher, cancellationToken);
 
         EventStreamPosition = appendedEntry;
@@ -53,7 +53,7 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
         var valueCid = await Client.Dag.PutAsync(publisher.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
 
         var updateEvent = new ValueUpdateEvent(Key: (DagCid)keyCid, Value: (DagCid)valueCid, true);
-        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: nameof(RemovePublisherAsync), updateEvent, DateTime.UtcNow, cancellationToken);
+        var appendedEntry = await AppendNewEntryAsync(targetId: Id, eventId: "RemovePublisherRoleAsync", updateEvent, DateTime.UtcNow, cancellationToken);
         await ApplyRemovePublisherRoleEntryAsync(appendedEntry, updateEvent, publisher, cancellationToken);
 
         EventStreamPosition = appendedEntry;
@@ -69,7 +69,7 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
 
         switch (streamEntry.EventId)
         {
-            case nameof(AddPublisherAsync):
+            case "AddPublisherRoleAsync":
                 var publisherId = await Client.Dag.GetAsync<string>(updateEvent.Key, cancel: cancellationToken);
                 var publisher = await PublisherRepository.GetAsync(publisherId, cancellationToken);
                 if (publisher is ModifiablePublisher modifiablePublisher)
@@ -100,7 +100,7 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
                 }
                 break;
 
-            case nameof(RemovePublisherAsync):
+            case "RemovePublisherRoleAsync":
                 var removedPublisherId = await Client.Dag.GetAsync<string>(updateEvent.Key, cancel: cancellationToken);
                 var removedPublisher = await PublisherRepository.GetAsync(removedPublisherId, cancellationToken);
                 if (removedPublisher is ModifiablePublisher modifiableRemovedPublisher)

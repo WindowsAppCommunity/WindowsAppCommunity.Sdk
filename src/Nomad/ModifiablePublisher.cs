@@ -46,7 +46,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
             EventStreamHandlerId = handlerConfig.RoamingKey.Id,
-            Sources = handlerConfig.RoamingValue.Sources,
+            Sources = handlerConfig.Sources,
         };
 
         ModifiableConnectionCollection modifiableConnectionsCollection = new ModifiableConnectionCollection
@@ -57,7 +57,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             EventStreamHandlerId = handlerConfig.RoamingKey.Id,
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
-            Sources = handlerConfig.RoamingValue.Sources,
+            Sources = handlerConfig.Sources,
             KuboOptions = kuboOptions,
             Client = client,
         };
@@ -70,7 +70,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             EventStreamHandlerId = handlerConfig.RoamingKey.Id,
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
-            Sources = handlerConfig.RoamingValue.Sources,
+            Sources = handlerConfig.Sources,
             KuboOptions = kuboOptions,
             Client = client,
         };
@@ -88,7 +88,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             InnerConnections = modifiableConnectionsCollection,
             InnerImages = modifiableImagesCollection,
             InnerLinks = modifiableLinksCollection,
-            Sources = handlerConfig.RoamingValue.Sources,
+            Sources = handlerConfig.Sources,
         };
 
         ModifiableAccentColor modifiableAccentColor = new()
@@ -101,7 +101,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
             EventStreamHandlerId = handlerConfig.RoamingKey.Id,
-            Sources = handlerConfig.RoamingValue.Sources,
+            Sources = handlerConfig.Sources,
         };
 
         ModifiableUserRoleCollection modifiableUserRoleCollection = new()
@@ -115,13 +115,15 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
             EventStreamHandlerId = handlerConfig.RoamingKey.Id,
-            Sources = handlerConfig.RoamingValue.Sources,
+            Sources = handlerConfig.Sources,
         };
 
         var parentPublishers = new ModifiablePublisherCollection
         {
             Id = handlerConfig.RoamingKey.Id,
             Inner = (ReadOnlyPublisherCollection)readonlyPublisher.ParentPublishers,
+            AddPublisherEventId = "AddParentPublisherAsync",
+            RemovePublisherEventId = "RemoveParentPublisherAsync",
             Client = client,
             KuboOptions = kuboOptions,
             PublisherRepository = publisherRepository,
@@ -129,13 +131,15 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
             EventStreamHandlerId = handlerConfig.RoamingKey.Id,
-            Sources = handlerConfig.RoamingValue.Sources,
+            Sources = handlerConfig.Sources,
         };
 
         var childPublishers = new ModifiablePublisherCollection
         {
             Id = handlerConfig.RoamingKey.Id,
             Inner = (ReadOnlyPublisherCollection)readonlyPublisher.ChildPublishers,
+            AddPublisherEventId = "AddChildPublisherAsync",
+            RemovePublisherEventId = "RemoveChildPublisherAsync",
             Client = client,
             KuboOptions = kuboOptions,
             PublisherRepository = publisherRepository,
@@ -143,7 +147,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
             EventStreamHandlerId = handlerConfig.RoamingKey.Id,
-            Sources = handlerConfig.RoamingValue.Sources,
+            Sources = handlerConfig.Sources,
         };
 
         var projectCollection = new ModifiableProjectCollection
@@ -157,7 +161,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
             EventStreamHandlerId = handlerConfig.RoamingKey.Id,
-            Sources = handlerConfig.RoamingValue.Sources,
+            Sources = handlerConfig.Sources,
         };
 
         return new ModifiablePublisher
@@ -176,7 +180,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             LocalEventStream = handlerConfig.LocalValue,
             LocalEventStreamKey = handlerConfig.LocalKey,
             EventStreamHandlerId = handlerConfig.RoamingKey.Id,
-            Sources = handlerConfig.RoamingValue.Sources,
+            Sources = handlerConfig.Sources,
         };
     }
 
@@ -295,6 +299,9 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
     public Task AddImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerEntity.AddImageAsync(imageFile, cancellationToken);
 
     /// <inheritdoc/>
+    public Task AddImageAsync(IFile imageFile, string? id, string? name, CancellationToken cancellationToken) => InnerEntity.AddImageAsync(imageFile, id, name, cancellationToken);
+
+    /// <inheritdoc/>
     public Task AddLinkAsync(Link link, CancellationToken cancellationToken) => InnerEntity.AddLinkAsync(link, cancellationToken);
 
     /// <inheritdoc/>
@@ -322,7 +329,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
     public Task RemoveConnectionAsync(IReadOnlyConnection connection, CancellationToken cancellationToken) => InnerEntity.RemoveConnectionAsync(connection, cancellationToken);
 
     /// <inheritdoc/>
-    public Task RemoveImageAsync(IFile imageFile, CancellationToken cancellationToken) => InnerEntity.RemoveImageAsync(imageFile, cancellationToken);
+    public Task RemoveImageAsync(string imageId, CancellationToken cancellationToken) => InnerEntity.RemoveImageAsync(imageId, cancellationToken);
 
     /// <inheritdoc/>
     public Task RemoveLinkAsync(Link link, CancellationToken cancellationToken) => InnerEntity.RemoveLinkAsync(link, cancellationToken);
@@ -395,28 +402,33 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             case nameof(RemoveUserAsync):
                 await InnerUserRoleCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
+            case "AddUserRoleAsync":
+                await InnerUserRoleCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                break;
+            case "RemoveUserRoleAsync":
+                await InnerUserRoleCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
+                break;
             case nameof(InnerProjectCollection.AddProjectAsync):
                 await InnerProjectCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             case nameof(InnerProjectCollection.RemoveProjectAsync):
                 await InnerProjectCollection.ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
-            case $"{nameof(ParentPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.AddPublisherAsync)}":
+            case var eventId when eventId == ((ModifiablePublisherCollection)ParentPublishers).AddPublisherEventId:
                 await ((ModifiablePublisherCollection)ParentPublishers).ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
-            case $"{nameof(ParentPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.RemovePublisherAsync)}":
+            case var eventId when eventId == ((ModifiablePublisherCollection)ParentPublishers).RemovePublisherEventId:
                 await ((ModifiablePublisherCollection)ParentPublishers).ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
-            case $"{nameof(ChildPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.AddPublisherAsync)}":
+            case var eventId when eventId == ((ModifiablePublisherCollection)ChildPublishers).AddPublisherEventId:
                 await ((ModifiablePublisherCollection)ChildPublishers).ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
-            case $"{nameof(ChildPublishers)}.{nameof(IModifiablePublisherCollection<IReadOnlyPublisher>.RemovePublisherAsync)}":
+            case var eventId when eventId == ((ModifiablePublisherCollection)ChildPublishers).RemovePublisherEventId:
                 await ((ModifiablePublisherCollection)ChildPublishers).ApplyEntryUpdateAsync(streamEntry, updateEvent, cancellationToken);
                 break;
             default:
-                throw new NotImplementedException();
+                throw new InvalidOperationException($"Unknown event id: {streamEntry.EventId}");
         }
-        ;
     }
 
     /// <inheritdoc/>
