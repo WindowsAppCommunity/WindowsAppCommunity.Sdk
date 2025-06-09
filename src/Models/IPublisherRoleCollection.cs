@@ -26,5 +26,5 @@ public record PublisherRole
     /// <summary>
     /// The role of the publisher.
     /// </summary>
-    public required DagCid Role { get; init; } 
+    public required DagCid Role { get; init; }
 }

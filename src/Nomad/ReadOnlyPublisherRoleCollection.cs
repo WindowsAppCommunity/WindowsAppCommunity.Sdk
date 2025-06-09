@@ -10,13 +10,13 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <summary>
 /// A read only handler for roaming publisher/role collection data.
 /// </summary>
-public class ReadOnlyPublisherRoleCollection : IReadOnlyPublisherRoleCollection, IDelegable<IPublisherRoleCollection>
+public class ReadOnlyPublisherRoleCollection : IReadOnlyPublisherRoleCollection, IDelegable<PublisherRole[]>
 {
     /// <inheritdoc/>
     public required string Id { get; init; }
 
     /// <inheritdoc/>
-    public required IPublisherRoleCollection Inner { get; init; }
+    public required PublisherRole[] Inner { get; set; }
 
     /// <summary>
     /// The client to use for communicating with IPFS.
@@ -37,7 +37,7 @@ public class ReadOnlyPublisherRoleCollection : IReadOnlyPublisherRoleCollection,
     /// <inheritdoc/>
     public async IAsyncEnumerable<IReadOnlyPublisherRole> GetPublishersAsync([EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        foreach (var publisherRole in Inner.Publishers)
+        foreach (var publisherRole in Inner)
         {
             var role = await Client.Dag.GetAsync<Role>(publisherRole.Role, cancel: cancellationToken);
             var publisher = await PublisherRepository.GetAsync(publisherRole.PublisherId, cancellationToken);

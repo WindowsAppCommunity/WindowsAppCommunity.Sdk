@@ -66,7 +66,7 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
             Client = client,
         };
 
-        var parentPublishers = new ReadOnlyPublisherCollection
+        var parentPublishers = new ReadOnlyPublisherRoleCollection
         {
             Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue.ParentPublishers,
@@ -74,7 +74,7 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
             PublisherRepository = publisherRepository,
         };
 
-        var childPublishers = new ReadOnlyPublisherCollection
+        var childPublishers = new ReadOnlyPublisherRoleCollection
         {
             Id = handlerConfig.RoamingId,
             Inner = handlerConfig.RoamingValue.ChildPublishers,
@@ -133,11 +133,10 @@ public class ReadOnlyPublisher : IReadOnlyPublisher, IDelegable<Publisher>
     public required ReadOnlyProjectCollection InnerProjectCollection { get; init; }
 
     /// <inheritdoc/>
-    public required IReadOnlyPublisherCollection ParentPublishers { get; init; }
+    public required IReadOnlyPublisherRoleCollection ParentPublishers { get; init; }
     
     /// <inheritdoc/>
-    public required IReadOnlyPublisherCollection ChildPublishers { get; init; }
-
+    public required IReadOnlyPublisherRoleCollection ChildPublishers { get; init; }
     /// <inheritdoc/>
     public required Publisher Inner { get; init; }
     

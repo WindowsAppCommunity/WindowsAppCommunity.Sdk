@@ -20,6 +20,16 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
     public required ReadOnlyPublisherRoleCollection Inner { get; init; }
 
     /// <summary>
+    /// A unique identifier for add events, persistent across machines and reruns.
+    /// </summary>
+    public string AddPublisherRoleEventId { get; init; } = "AddPublisherRoleAsync";
+
+    /// <summary>
+    /// A unique identifier for remove events, persistent across machines and reruns.
+    /// </summary>
+    public string RemovePublisherRoleEventId { get; init; } = "RemovePublisherRoleAsync";
+
+    /// <summary>
     /// The repository to use for getting modifiable or readonly publisher instances.
     /// </summary>
     public required INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> PublisherRepository { get; init; }
@@ -67,80 +77,81 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
             throw new ArgumentNullException("Key or Value in updateEvent cannot be null.");
         }
 
-        switch (streamEntry.EventId)
+        if (streamEntry.EventId == AddPublisherRoleEventId)
         {
-            case "AddPublisherRoleAsync":
-                var publisherId = await Client.Dag.GetAsync<string>(updateEvent.Key, cancel: cancellationToken);
-                var publisher = await PublisherRepository.GetAsync(publisherId, cancellationToken);
-                if (publisher is ModifiablePublisher modifiablePublisher)
+            var publisherId = await Client.Dag.GetAsync<string>(updateEvent.Key, cancel: cancellationToken);
+            var publisher = await PublisherRepository.GetAsync(publisherId, cancellationToken);
+            if (publisher is ModifiablePublisher modifiablePublisher)
+            {
+                var publisherRole = await Client.Dag.GetAsync<Role>(updateEvent.Value, cancel: cancellationToken);
+                var addedPublisherRole = new ModifiablePublisherRole
                 {
-                    var publisherRole = await Client.Dag.GetAsync<Role>(updateEvent.Value, cancel: cancellationToken);
-                    var addedPublisherRole = new ModifiablePublisherRole
-                    {
-                        InnerPublisher = modifiablePublisher,
-                        Role = publisherRole
-                    };
+                    InnerPublisher = modifiablePublisher,
+                    Role = publisherRole
+                };
 
-                    await ApplyAddPublisherRoleEntryAsync(streamEntry, updateEvent, addedPublisherRole, cancellationToken);
-                }
-                else if (publisher is ReadOnlyPublisher readOnlyPublisher)
+                await ApplyAddPublisherRoleEntryAsync(streamEntry, updateEvent, addedPublisherRole, cancellationToken);
+            }
+            else if (publisher is ReadOnlyPublisher readOnlyPublisher)
+            {
+                var publisherRole = await Client.Dag.GetAsync<Role>(updateEvent.Value, cancel: cancellationToken);
+                var addedPublisherRole = new ReadOnlyPublisherRole
                 {
-                    var publisherRole = await Client.Dag.GetAsync<Role>(updateEvent.Value, cancel: cancellationToken);
-                    var addedPublisherRole = new ReadOnlyPublisherRole
-                    {
-                        InnerPublisher = readOnlyPublisher,
-                        Role = publisherRole
-                    };
+                    InnerPublisher = readOnlyPublisher,
+                    Role = publisherRole
+                };
 
-                    await ApplyAddPublisherRoleEntryAsync(streamEntry, updateEvent, addedPublisherRole, cancellationToken);
-                }
-                else
-                {
-                    throw new InvalidOperationException("Publisher is of an unsupported type.");
-                }
-                break;
+                await ApplyAddPublisherRoleEntryAsync(streamEntry, updateEvent, addedPublisherRole, cancellationToken);
+            }
+            else
+            {
+                throw new InvalidOperationException("Publisher is of an unsupported type.");
+            }
 
-            case "RemovePublisherRoleAsync":
-                var removedPublisherId = await Client.Dag.GetAsync<string>(updateEvent.Key, cancel: cancellationToken);
-                var removedPublisher = await PublisherRepository.GetAsync(removedPublisherId, cancellationToken);
-                if (removedPublisher is ModifiablePublisher modifiableRemovedPublisher)
-                {
-                    var removedPublisherRole = await Client.Dag.GetAsync<Role>(updateEvent.Value, cancel: cancellationToken);
-                    var removedPublisherRoleInstance = new ModifiablePublisherRole
-                    {
-                        InnerPublisher = modifiableRemovedPublisher,
-                        Role = removedPublisherRole
-                    };
-
-                    await ApplyRemovePublisherRoleEntryAsync(streamEntry, updateEvent, removedPublisherRoleInstance, cancellationToken);
-                }
-                else if (removedPublisher is ReadOnlyPublisher readOnlyRemovedPublisher)
-                {
-                    var removedPublisherRole = await Client.Dag.GetAsync<Role>(updateEvent.Value, cancel: cancellationToken);
-                    var removedPublisherRoleInstance = new ReadOnlyPublisherRole
-                    {
-                        InnerPublisher = readOnlyRemovedPublisher,
-                        Role = removedPublisherRole
-                    };
-
-                    await ApplyRemovePublisherRoleEntryAsync(streamEntry, updateEvent, removedPublisherRoleInstance, cancellationToken);
-                }
-                else
-                {
-                    throw new InvalidOperationException("Publisher is of an unsupported type.");
-                }
-                break;
-
-            default:
-                throw new InvalidOperationException($"Unknown event id: {streamEntry.EventId}");
+            return;
         }
+
+        if (streamEntry.EventId == RemovePublisherRoleEventId)
+        {
+            var removedPublisherId = await Client.Dag.GetAsync<string>(updateEvent.Key, cancel: cancellationToken);
+            var removedPublisher = await PublisherRepository.GetAsync(removedPublisherId, cancellationToken);
+            if (removedPublisher is ModifiablePublisher modifiableRemovedPublisher)
+            {
+                var removedPublisherRole = await Client.Dag.GetAsync<Role>(updateEvent.Value, cancel: cancellationToken);
+                var removedPublisherRoleInstance = new ModifiablePublisherRole
+                {
+                    InnerPublisher = modifiableRemovedPublisher,
+                    Role = removedPublisherRole
+                };
+
+                await ApplyRemovePublisherRoleEntryAsync(streamEntry, updateEvent, removedPublisherRoleInstance, cancellationToken);
+            }
+            else if (removedPublisher is ReadOnlyPublisher readOnlyRemovedPublisher)
+            {
+                var removedPublisherRole = await Client.Dag.GetAsync<Role>(updateEvent.Value, cancel: cancellationToken);
+                var removedPublisherRoleInstance = new ReadOnlyPublisherRole
+                {
+                    InnerPublisher = readOnlyRemovedPublisher,
+                    Role = removedPublisherRole
+                };
+
+                await ApplyRemovePublisherRoleEntryAsync(streamEntry, updateEvent, removedPublisherRoleInstance, cancellationToken);
+            }
+            else
+            {
+                throw new InvalidOperationException("Publisher is of an unsupported type.");
+            }
+            return;
+        }
+
+        throw new InvalidOperationException($"Unknown event id: {streamEntry.EventId}");
     }
 
     /// <inheritdoc/>
     public async Task ApplyAddPublisherRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyPublisherRole publisher, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(publisher.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner.Publishers = [.. Inner.Inner.Publishers, new PublisherRole { PublisherId = publisher.Id, Role = (DagCid)roleCid }];
+        Inner.Inner = [.. Inner.Inner, new PublisherRole { PublisherId = publisher.Id, Role = (DagCid)roleCid }];
         PublishersAdded?.Invoke(this, [publisher]);
     }
 
@@ -148,14 +159,14 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
     public async Task ApplyRemovePublisherRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyPublisherRole publisher, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(publisher.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner.Publishers = [.. Inner.Inner.Publishers.Where(x => x.PublisherId != publisher.Id && x.Role != (DagCid)roleCid)];
+        Inner.Inner = [.. Inner.Inner.Where(x => x.PublisherId != publisher.Id && x.Role != (DagCid)roleCid)];
         PublishersRemoved?.Invoke(this, [publisher]);
     }
 
     /// <inheritdoc/>
     public override Task ResetEventStreamPositionAsync(CancellationToken cancellationToken)
     {
-        Inner.Inner.Publishers = [];
+        Inner.Inner = [];
         return Task.CompletedTask;
     }
 }

@@ -52,12 +52,12 @@ public record Publisher : IEntity, ILinkCollection, IProjectCollection, IUserRol
     /// <summary>
     /// A list of other publishers who are managed under this publisher.
     /// </summary>
-    public PublisherCollection ParentPublishers { get; set; } = new();
+    public PublisherRole[] ParentPublishers { get; set; } = [];
 
     /// <summary>
     /// A list of other publishers who are managed under this publisher.
     /// </summary>
-    public PublisherCollection ChildPublishers { get; set; } = new();
+    public PublisherRole[] ChildPublishers { get; set; } = [];
 
     /// <summary>
     /// Holds information about publisher assets that have been published for consumption by an end user, such as a Microsoft Store app, a package on nuget.org, a git repo, etc.

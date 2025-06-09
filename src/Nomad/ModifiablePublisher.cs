@@ -118,12 +118,12 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             Sources = handlerConfig.Sources,
         };
 
-        var parentPublishers = new ModifiablePublisherCollection
+        var parentPublishers = new ModifiablePublisherRoleCollection
         {
             Id = handlerConfig.RoamingKey.Id,
-            Inner = (ReadOnlyPublisherCollection)readonlyPublisher.ParentPublishers,
-            AddPublisherEventId = "AddParentPublisherAsync",
-            RemovePublisherEventId = "RemoveParentPublisherAsync",
+            Inner = (ReadOnlyPublisherRoleCollection)readonlyPublisher.ParentPublishers,
+            AddPublisherRoleEventId = "AddParentPublisherAsync",
+            RemovePublisherRoleEventId = "RemoveParentPublisherAsync",
             Client = client,
             KuboOptions = kuboOptions,
             PublisherRepository = publisherRepository,
@@ -134,12 +134,12 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
             Sources = handlerConfig.Sources,
         };
 
-        var childPublishers = new ModifiablePublisherCollection
+        var childPublishers = new ModifiablePublisherRoleCollection
         {
             Id = handlerConfig.RoamingKey.Id,
-            Inner = (ReadOnlyPublisherCollection)readonlyPublisher.ChildPublishers,
-            AddPublisherEventId = "AddChildPublisherAsync",
-            RemovePublisherEventId = "RemoveChildPublisherAsync",
+            Inner = (ReadOnlyPublisherRoleCollection)readonlyPublisher.ChildPublishers,
+            AddPublisherRoleEventId = "AddChildPublisherAsync",
+            RemovePublisherRoleEventId = "RemoveChildPublisherAsync",
             Client = client,
             KuboOptions = kuboOptions,
             PublisherRepository = publisherRepository,
@@ -218,16 +218,16 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
     public Publisher Inner => InnerPublisher.Inner;
 
     /// <inheritdoc/>
-    public required IModifiablePublisherCollection<IReadOnlyPublisher> ParentPublishers { get; init; }
+    public required IModifiablePublisherCollection<IReadOnlyPublisherRole> ParentPublishers { get; init; }
 
     /// <inheritdoc/>
-    public required IModifiablePublisherCollection<IReadOnlyPublisher> ChildPublishers { get; init; }
+    public required IModifiablePublisherCollection<IReadOnlyPublisherRole> ChildPublishers { get; init; }
 
     /// <inheritdoc/>
-    IReadOnlyPublisherCollection IReadOnlyPublisher<IReadOnlyPublisherCollection>.ParentPublishers => (IReadOnlyPublisherCollection)ParentPublishers;
+    IReadOnlyPublisherRoleCollection IReadOnlyPublisher<IReadOnlyPublisherRoleCollection>.ParentPublishers => (IReadOnlyPublisherRoleCollection)ParentPublishers;
 
     /// <inheritdoc/>
-    IReadOnlyPublisherCollection IReadOnlyPublisher<IReadOnlyPublisherCollection>.ChildPublishers => (IReadOnlyPublisherCollection)ChildPublishers;
+    IReadOnlyPublisherRoleCollection IReadOnlyPublisher<IReadOnlyPublisherRoleCollection>.ChildPublishers => (IReadOnlyPublisherRoleCollection)ChildPublishers;
 
     /// <inheritdoc/>
     public string Name => InnerEntity.Name;
