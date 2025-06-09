@@ -151,7 +151,7 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
     public async Task ApplyAddPublisherRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyPublisherRole publisher, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(publisher.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner = [.. Inner.Inner, new PublisherRole { PublisherId = publisher.Id, Role = (DagCid)roleCid }];
+        Inner.Inner.Publishers = [.. Inner.Inner.Publishers, new PublisherRole { PublisherId = publisher.Id, Role = (DagCid)roleCid }];
         PublishersAdded?.Invoke(this, [publisher]);
     }
 
@@ -159,14 +159,14 @@ public class ModifiablePublisherRoleCollection : NomadKuboEventStreamHandler<Val
     public async Task ApplyRemovePublisherRoleEntryAsync(EventStreamEntry<DagCid> streamEntry, ValueUpdateEvent updateEvent, IReadOnlyPublisherRole publisher, CancellationToken cancellationToken)
     {
         var roleCid = await Client.Dag.PutAsync(publisher.Role, pin: KuboOptions.ShouldPin, cancel: cancellationToken);
-        Inner.Inner = [.. Inner.Inner.Where(x => x.PublisherId != publisher.Id && x.Role != (DagCid)roleCid)];
+        Inner.Inner.Publishers = [.. Inner.Inner.Publishers.Where(x => x.PublisherId != publisher.Id && x.Role != (DagCid)roleCid)];
         PublishersRemoved?.Invoke(this, [publisher]);
     }
 
     /// <inheritdoc/>
     public override Task ResetEventStreamPositionAsync(CancellationToken cancellationToken)
     {
-        Inner.Inner = [];
+        Inner.Inner.Publishers = [];
         return Task.CompletedTask;
     }
 }

@@ -7,7 +7,7 @@ namespace WindowsAppCommunity.Sdk.Models;
 /// <summary>
 /// Represents a content publisher.
 /// </summary>
-public record Publisher : IEntity, ILinkCollection, IProjectCollection, IUserRoleCollection, IConnections, IAccentColor, ISources<Cid>
+public record Publisher : IEntity, ILinkCollection, IProjectCollection, IUserRoleCollection, IPublisherRoleGraphNodeCollection, IConnections, IAccentColor, ISources<Cid>
 {
     /// <summary>
     /// The name of the publisher.
@@ -52,12 +52,12 @@ public record Publisher : IEntity, ILinkCollection, IProjectCollection, IUserRol
     /// <summary>
     /// A list of other publishers who are managed under this publisher.
     /// </summary>
-    public PublisherRole[] ParentPublishers { get; set; } = [];
+    public PublisherRoleCollection ParentPublishers { get; set; } = new();
 
     /// <summary>
     /// A list of other publishers who are managed under this publisher.
     /// </summary>
-    public PublisherRole[] ChildPublishers { get; set; } = [];
+    public PublisherRoleCollection ChildPublishers { get; set; } = new();
 
     /// <summary>
     /// Holds information about publisher assets that have been published for consumption by an end user, such as a Microsoft Store app, a package on nuget.org, a git repo, etc.

@@ -481,7 +481,17 @@ public partial class PublisherTests
         Guard.IsNotEqualTo(publisher.Id, otherPublisher.Id);
         
         // Test adding parent publisher to publisher
-        await publisher.ParentPublishers.AddPublisherAsync(otherPublisher, cancellationToken);
+        var modifiablePublisherRole = new ModifiablePublisherRole
+        {
+            InnerPublisher = otherPublisher,
+            Role = new Role
+            {
+                Id = "test role id",
+                Name = "test role name",
+                Description = "test role desc"
+            }
+        };
+        await publisher.ParentPublishers.AddPublisherAsync(modifiablePublisherRole, cancellationToken);
 
         await publisher.PublishRoamingAsync<ModifiablePublisher, ValueUpdateEvent, Publisher>(cancellationToken);
         await publisher.PublishLocalAsync<ModifiablePublisher, ValueUpdateEvent>(cancellationToken);
@@ -567,9 +577,19 @@ public partial class PublisherTests
         Guard.IsNotNull(otherPublisher.Name);
 
         Guard.IsNotEqualTo(publisher.Id, otherPublisher.Id);
-        
+
         // Test adding child publisher to publisher
-        await publisher.ChildPublishers.AddPublisherAsync(otherPublisher, cancellationToken);
+        var modifiablePublisherRole = new ModifiablePublisherRole
+        {
+            InnerPublisher = otherPublisher,
+            Role = new Role
+            {
+                Id = "test role id",
+                Name = "test role name",
+                Description = "test role desc"
+            }
+        };
+        await publisher.ChildPublishers.AddPublisherAsync(modifiablePublisherRole, cancellationToken);
 
         await publisher.PublishRoamingAsync<ModifiablePublisher, ValueUpdateEvent, Publisher>(cancellationToken);
         await publisher.PublishLocalAsync<ModifiablePublisher, ValueUpdateEvent>(cancellationToken);
