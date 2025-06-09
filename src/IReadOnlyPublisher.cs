@@ -5,7 +5,7 @@ namespace WindowsAppCommunity.Sdk;
 /// <summary>
 /// Represents a publisher, a collection of projects and collaborators who publish content to users.
 /// </summary>
-public interface IReadOnlyPublisher : IReadOnlyPublisher<IReadOnlyPublisherCollection>
+public interface IReadOnlyPublisher : IReadOnlyPublisher<IReadOnlyPublisherRoleCollection>
 {
 }
 
@@ -13,7 +13,7 @@ public interface IReadOnlyPublisher : IReadOnlyPublisher<IReadOnlyPublisherColle
 /// Represents a publisher, a collection of projects and collaborators who publish content to users.
 /// </summary>
 public interface IReadOnlyPublisher<TPublisherCollection> : IReadOnlyEntity, IReadOnlyAccentColor, IReadOnlyUserRoleCollection, IReadOnlyProjectCollection, IHasId
-    where TPublisherCollection : IReadOnlyPublisherCollection<IReadOnlyPublisher>
+    where TPublisherCollection : IReadOnlyPublisherCollection<IReadOnlyPublisherRole>
 {
     /// <summary>
     /// The collection of publishers that this publisher belongs to.

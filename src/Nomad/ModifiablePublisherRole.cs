@@ -43,16 +43,16 @@ public class ModifiablePublisherRole : IModifiablePublisherRole
     public string? AccentColor => InnerPublisher.AccentColor;
 
     /// <inheritdoc/>
-    public IModifiablePublisherCollection<IReadOnlyPublisher> ParentPublishers => InnerPublisher.ParentPublishers;
+    public IModifiablePublisherCollection<IReadOnlyPublisherRole> ParentPublishers => InnerPublisher.ParentPublishers;
 
     /// <inheritdoc/>
-    public IModifiablePublisherCollection<IReadOnlyPublisher> ChildPublishers => InnerPublisher.ChildPublishers;
+    public IModifiablePublisherCollection<IReadOnlyPublisherRole> ChildPublishers => InnerPublisher.ChildPublishers;
 
     /// <inheritdoc/>
-    IReadOnlyPublisherCollection IReadOnlyPublisher<IReadOnlyPublisherCollection>.ParentPublishers => (IReadOnlyPublisherCollection)InnerPublisher.ParentPublishers;
+    IReadOnlyPublisherRoleCollection IReadOnlyPublisher<IReadOnlyPublisherRoleCollection>.ParentPublishers => (IReadOnlyPublisherRoleCollection)InnerPublisher.ParentPublishers;
 
     /// <inheritdoc/>
-    IReadOnlyPublisherCollection IReadOnlyPublisher<IReadOnlyPublisherCollection>.ChildPublishers => (IReadOnlyPublisherCollection)InnerPublisher.ChildPublishers;
+    IReadOnlyPublisherRoleCollection IReadOnlyPublisher<IReadOnlyPublisherRoleCollection>.ChildPublishers => (IReadOnlyPublisherRoleCollection)InnerPublisher.ChildPublishers;
 
     /// <inheritdoc/>
     public event EventHandler<string>? NameUpdated;

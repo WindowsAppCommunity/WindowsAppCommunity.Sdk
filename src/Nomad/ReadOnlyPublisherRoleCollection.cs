@@ -16,7 +16,7 @@ public class ReadOnlyPublisherRoleCollection : IReadOnlyPublisherRoleCollection,
     public required string Id { get; init; }
 
     /// <inheritdoc/>
-    public required IPublisherRoleCollection Inner { get; init; }
+    public required IPublisherRoleCollection Inner { get; set; }
 
     /// <summary>
     /// The client to use for communicating with IPFS.

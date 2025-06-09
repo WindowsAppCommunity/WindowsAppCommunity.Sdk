@@ -40,10 +40,10 @@ public class ReadOnlyPublisherRole : IReadOnlyPublisherRole
     public string Id => InnerPublisher.Id;
 
     /// <inheritdoc/>
-    public IReadOnlyPublisherCollection ParentPublishers => InnerPublisher.ParentPublishers;
+    public IReadOnlyPublisherRoleCollection ParentPublishers => InnerPublisher.ParentPublishers;
 
     /// <inheritdoc/>
-    public IReadOnlyPublisherCollection ChildPublishers => InnerPublisher.ChildPublishers;
+    public IReadOnlyPublisherRoleCollection ChildPublishers => InnerPublisher.ChildPublishers;
 
     /// <inheritdoc/>
     public string? AccentColor => InnerPublisher.AccentColor;
