@@ -197,13 +197,12 @@ public interface IReadOnlyConnection
 }
 ```
 
-## Complete Interface Dependency Graphs
+## Complete Interface Inheritance Hierarchies
 
 ### IReadOnlyUser Interface Hierarchy
 
 ```
-IReadOnlyUser : IReadOnlyEntity, IReadOnlyPublisherRoleCollection, IReadOnlyProjectRoleCollection, IHasId
-│
+IReadOnlyUser
 ├── IReadOnlyEntity
 │   ├── IReadOnlyConnectionsCollection
 │   │   └── IHasId
@@ -212,48 +211,20 @@ IReadOnlyUser : IReadOnlyEntity, IReadOnlyPublisherRoleCollection, IReadOnlyProj
 │   ├── IReadOnlyImagesCollection
 │   │   └── IHasId
 │   └── IHasId
-│
 ├── IReadOnlyPublisherRoleCollection
 │   └── IReadOnlyPublisherCollection<IReadOnlyPublisherRole>
-│       ├── IReadOnlyPublisherRole : IReadOnlyPublisher
-│       │   └── IReadOnlyPublisher : IReadOnlyPublisher<IReadOnlyPublisherRoleCollection>
-│       │       └── IReadOnlyPublisher<TPublisherCollection> : IReadOnlyEntity, IReadOnlyAccentColor, IReadOnlyUserRoleCollection, IReadOnlyProjectCollection, IHasId
-│       │           ├── IReadOnlyEntity (see above)
-│       │           ├── IReadOnlyAccentColor
-│       │           │   └── IHasId
-│       │           ├── IReadOnlyUserRoleCollection
-│       │           │   └── IReadOnlyUserCollection<IReadOnlyUserRole>
-│       │           │       ├── IReadOnlyUserRole : IReadOnlyUser (circular reference)
-│       │           │       └── IHasId
-│       │           ├── IReadOnlyProjectCollection
-│       │           │   └── IHasId
-│       │           └── IHasId
 │       └── IHasId
-│
 ├── IReadOnlyProjectRoleCollection
 │   └── IReadOnlyProjectCollection<IReadOnlyProjectRole>
-│       ├── IReadOnlyProjectRole : IReadOnlyProject
-│       │   └── IReadOnlyProject : IReadOnlyProject<IReadOnlyProjectCollection>
-│       │       └── IReadOnlyProject<TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection, IHasId
-│       │           ├── IReadOnlyEntity (see above)
-│       │           ├── IReadOnlyImagesCollection (see above)
-│       │           ├── IReadOnlyUserRoleCollection (see above)
-│       │           ├── IReadOnlyAccentColor (see above)
-│       │           ├── IReadOnlyFeaturesCollection
-│       │           │   └── IHasId
-│       │           └── IHasId
 │       └── IHasId
-│
 └── IHasId
 ```
 
 ### IReadOnlyProject Interface Hierarchy
 
 ```
-IReadOnlyProject : IReadOnlyProject<IReadOnlyProjectCollection>
-│
-└── IReadOnlyProject<TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection, IHasId
-    │
+IReadOnlyProject
+└── IReadOnlyProject<TDependencyCollection>
     ├── IReadOnlyEntity
     │   ├── IReadOnlyConnectionsCollection
     │   │   └── IHasId
@@ -262,45 +233,23 @@ IReadOnlyProject : IReadOnlyProject<IReadOnlyProjectCollection>
     │   ├── IReadOnlyImagesCollection
     │   │   └── IHasId
     │   └── IHasId
-    │
-    ├── IReadOnlyImagesCollection (additional images beyond IReadOnlyEntity)
+    ├── IReadOnlyImagesCollection
     │   └── IHasId
-    │
     ├── IReadOnlyUserRoleCollection
     │   └── IReadOnlyUserCollection<IReadOnlyUserRole>
-    │       ├── IReadOnlyUserRole : IReadOnlyUser
-    │       │   └── IReadOnlyUser : IReadOnlyEntity, IReadOnlyPublisherRoleCollection, IReadOnlyProjectRoleCollection, IHasId
-    │       │       ├── IReadOnlyEntity (see above)
-    │       │       ├── IReadOnlyPublisherRoleCollection
-    │       │       │   └── IReadOnlyPublisherCollection<IReadOnlyPublisherRole>
-    │       │       │       └── IHasId
-    │       │       ├── IReadOnlyProjectRoleCollection
-    │       │       │   └── IReadOnlyProjectCollection<IReadOnlyProjectRole>
-    │       │       │       └── IHasId
-    │       │       └── IHasId
     │       └── IHasId
-    │
     ├── IReadOnlyAccentColor
     │   └── IHasId
-    │
     ├── IReadOnlyFeaturesCollection
     │   └── IHasId
-    │
-    ├── Dependencies (TDependencyCollection : IReadOnlyProjectCollection<IReadOnlyProject>)
-    │   └── IReadOnlyProjectCollection<IReadOnlyProject>
-    │       ├── IReadOnlyProject (circular reference)
-    │       └── IHasId
-    │
     └── IHasId
 ```
 
 ### IReadOnlyPublisher Interface Hierarchy
 
 ```
-IReadOnlyPublisher : IReadOnlyPublisher<IReadOnlyPublisherRoleCollection>
-│
-└── IReadOnlyPublisher<TPublisherCollection> : IReadOnlyEntity, IReadOnlyAccentColor, IReadOnlyUserRoleCollection, IReadOnlyProjectCollection, IHasId
-    │
+IReadOnlyPublisher
+└── IReadOnlyPublisher<TPublisherCollection>
     ├── IReadOnlyEntity
     │   ├── IReadOnlyConnectionsCollection
     │   │   └── IHasId
@@ -309,40 +258,13 @@ IReadOnlyPublisher : IReadOnlyPublisher<IReadOnlyPublisherRoleCollection>
     │   ├── IReadOnlyImagesCollection
     │   │   └── IHasId
     │   └── IHasId
-    │
     ├── IReadOnlyAccentColor
     │   └── IHasId
-    │
     ├── IReadOnlyUserRoleCollection
     │   └── IReadOnlyUserCollection<IReadOnlyUserRole>
-    │       ├── IReadOnlyUserRole : IReadOnlyUser
-    │       │   └── IReadOnlyUser : IReadOnlyEntity, IReadOnlyPublisherRoleCollection, IReadOnlyProjectRoleCollection, IHasId
-    │       │       ├── IReadOnlyEntity (see above)
-    │       │       ├── IReadOnlyPublisherRoleCollection (circular reference)
-    │       │       ├── IReadOnlyProjectRoleCollection
-    │       │       │   └── IReadOnlyProjectCollection<IReadOnlyProjectRole>
-    │       │       │       └── IHasId
-    │       │       └── IHasId
     │       └── IHasId
-    │
     ├── IReadOnlyProjectCollection
-    │   ├── IReadOnlyProject : IReadOnlyProject<IReadOnlyProjectCollection>
-    │   │   └── IReadOnlyProject<TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection, IHasId
-    │   │       ├── IReadOnlyEntity (see above)
-    │   │       ├── IReadOnlyImagesCollection (see above)
-    │   │       ├── IReadOnlyUserRoleCollection (see above)
-    │   │       ├── IReadOnlyAccentColor (see above)
-    │   │       ├── IReadOnlyFeaturesCollection
-    │   │       │   └── IHasId
-    │   │       └── IHasId
     │   └── IHasId
-    │
-    ├── Publisher Hierarchy Collections (TPublisherCollection : IReadOnlyPublisherRoleCollection)
-    │   └── IReadOnlyPublisherRoleCollection
-    │       └── IReadOnlyPublisherCollection<IReadOnlyPublisherRole>
-    │           ├── IReadOnlyPublisherRole : IReadOnlyPublisher (circular reference)
-    │           └── IHasId
-    │
     └── IHasId
 ```
 
