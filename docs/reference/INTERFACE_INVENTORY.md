@@ -1,6 +1,6 @@
 # Interface Graph Inventory for WindowsAppCommunity.Sdk
 
-This document provides a comprehensive inventory of the interface hierarchy for the three main entities in the WindowsAppCommunity.Sdk: **Publisher**, **Project**, and **User**. This mapping is intended to help with blog generator development by clearly defining the type relationships and data access patterns.
+This document provides a comprehensive inventory of the interface hierarchy for the three main entities in the WindowsAppCommunity.Sdk: **Publisher**, **Project**, and **User**. This mapping helps developers understand the type relationships and data access patterns.
 
 ## Core Entity Interfaces
 
@@ -197,7 +197,7 @@ public interface IReadOnlyConnection
 }
 ```
 
-## Data Access Patterns for Blog Generator
+## Data Access Patterns
 
 ### For User Profiles
 1. **Basic Info**: `IReadOnlyEntity` → name, description, extendedDescription
@@ -233,34 +233,28 @@ public interface IReadOnlyConnection
 
 ```
 IHasId (base interface with Id property)
+│
 ├── IReadOnlyEntity
 │   ├── IReadOnlyConnectionsCollection
 │   ├── IReadOnlyLinksCollection  
 │   └── IReadOnlyImagesCollection
+│
 ├── IReadOnlyAccentColor
+│
 ├── IReadOnlyFeaturesCollection
-├── IReadOnlyUserCollection<T>
-│   └── IReadOnlyUserRoleCollection
-├── IReadOnlyProjectCollection<T>
-│   └── IReadOnlyProjectRoleCollection
-├── IReadOnlyPublisherCollection<T>
-│   └── IReadOnlyPublisherRoleCollection
-├── IReadOnlyUser
-│   └── IReadOnlyUserRole
-├── IReadOnlyProject<T>
-│   └── IReadOnlyProjectRole
-└── IReadOnlyPublisher<T>
-    └── IReadOnlyPublisherRole
+│
+├── Collection Interfaces:
+│   ├── IReadOnlyUserCollection<T>
+│   │   └── IReadOnlyUserRoleCollection
+│   ├── IReadOnlyProjectCollection<T>
+│   │   └── IReadOnlyProjectRoleCollection
+│   └── IReadOnlyPublisherCollection<T>
+│       └── IReadOnlyPublisherRoleCollection
+│
+└── Main Entity Interfaces:
+    ├── IReadOnlyUser : IReadOnlyEntity, IReadOnlyPublisherRoleCollection, IReadOnlyProjectRoleCollection
+    ├── IReadOnlyProject<T> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection
+    └── IReadOnlyPublisher<T> : IReadOnlyEntity, IReadOnlyAccentColor, IReadOnlyUserRoleCollection, IReadOnlyProjectCollection
 ```
 
-## Recommendations for Blog Generator Implementation
-
-1. **Start with Core Entities**: Implement converters for `IReadOnlyUser`, `IReadOnlyPublisher`, and `IReadOnlyProject` first
-2. **Implement Supporting Collections**: Handle each collection interface as a separate template component
-3. **Handle Async Data**: Many collections use `IAsyncEnumerable<T>` - ensure proper async handling in templates
-4. **Link Resolution**: Pre-resolve relationships (like publisher for projects) to avoid async calls in templates
-5. **Role Handling**: Create specialized templates for role-based views vs direct entity views
-6. **Image Processing**: Handle `IFile` objects from `IReadOnlyImagesCollection` for proper image rendering
-7. **Connection Values**: Cache `IReadOnlyConnection.GetValueAsync()` results before template rendering
-
-This interface inventory provides the foundation for systematically implementing blog generation for each entity type while maintaining clear separation of concerns.
+This interface inventory provides a comprehensive reference for understanding the type hierarchy and relationships within the WindowsAppCommunity.Sdk.
