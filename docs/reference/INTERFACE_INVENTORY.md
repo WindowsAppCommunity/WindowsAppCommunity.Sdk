@@ -197,64 +197,120 @@ public interface IReadOnlyConnection
 }
 ```
 
-## Data Access Patterns
+## Complete Interface Dependency Graphs
 
-### For User Profiles
-1. **Basic Info**: `IReadOnlyEntity` → name, description, extendedDescription
-2. **Visual Elements**: `IReadOnlyImagesCollection` → profile images
-3. **External Links**: `IReadOnlyLinksCollection` → social/external profiles
-4. **App Connections**: `IReadOnlyConnectionsCollection` → connected applications
-5. **Project Involvement**: `IReadOnlyProjectRoleCollection` → projects and roles
-6. **Publisher Involvement**: `IReadOnlyPublisherRoleCollection` → publishers and roles
-
-### For Publisher Profiles
-1. **Basic Info**: `IReadOnlyEntity` → name, description, extendedDescription
-2. **Branding**: `IReadOnlyAccentColor` → brand color
-3. **Visual Elements**: `IReadOnlyImagesCollection` → logos, banners
-4. **External Links**: `IReadOnlyLinksCollection` → websites, social media
-5. **App Connections**: `IReadOnlyConnectionsCollection` → connected applications
-6. **Team Members**: `IReadOnlyUserRoleCollection` → users and their roles
-7. **Published Projects**: `IReadOnlyProjectCollection` → all projects under publisher
-8. **Publisher Hierarchy**: `ParentPublishers`, `ChildPublishers` → organizational structure
-
-### For Project Profiles
-1. **Basic Info**: `IReadOnlyEntity` → name, description, extendedDescription
-2. **Categorization**: `Category` → app store category
-3. **Branding**: `IReadOnlyAccentColor` → project theme color
-4. **Visual Elements**: `IReadOnlyImagesCollection` → screenshots, icons
-5. **External Links**: `IReadOnlyLinksCollection` → project website, documentation
-6. **App Connections**: `IReadOnlyConnectionsCollection` → integrations
-7. **Features**: `IReadOnlyFeaturesCollection` → feature list
-8. **Team Members**: `IReadOnlyUserRoleCollection` → contributors and roles
-9. **Dependencies**: `Dependencies` → other projects this depends on
-10. **Publisher**: `GetPublisherAsync()` → owning publisher
-
-## Interface Dependency Graph
+### IReadOnlyUser Interface Hierarchy
 
 ```
-IHasId (base interface with Id property)
+IHasId (OwlCore.ComponentModel)
 │
 ├── IReadOnlyEntity
-│   ├── IReadOnlyConnectionsCollection
-│   ├── IReadOnlyLinksCollection  
-│   └── IReadOnlyImagesCollection
+│   ├── IReadOnlyConnectionsCollection : IHasId
+│   ├── IReadOnlyLinksCollection : IHasId
+│   └── IReadOnlyImagesCollection : IHasId
 │
-├── IReadOnlyAccentColor
+├── IReadOnlyPublisherRoleCollection : IReadOnlyPublisherCollection<IReadOnlyPublisherRole>
+│   └── IReadOnlyPublisherCollection<IReadOnlyPublisherRole> : IHasId
+│       └── IReadOnlyPublisherRole : IReadOnlyPublisher
+│           └── IReadOnlyPublisher : IReadOnlyPublisher<IReadOnlyPublisherRoleCollection>
+│               └── IReadOnlyPublisher<TPublisherCollection> : IReadOnlyEntity, IReadOnlyAccentColor, IReadOnlyUserRoleCollection, IReadOnlyProjectCollection, IHasId
+│                   ├── IReadOnlyEntity (see above)
+│                   ├── IReadOnlyAccentColor : IHasId
+│                   ├── IReadOnlyUserRoleCollection : IReadOnlyUserCollection<IReadOnlyUserRole>
+│                   │   └── IReadOnlyUserCollection<IReadOnlyUserRole> : IHasId
+│                   │       └── IReadOnlyUserRole : IReadOnlyUser
+│                   └── IReadOnlyProjectCollection : IReadOnlyProjectCollection<IReadOnlyProject>
+│                       └── IReadOnlyProjectCollection<IReadOnlyProject> : IHasId
 │
-├── IReadOnlyFeaturesCollection
+└── IReadOnlyProjectRoleCollection : IReadOnlyProjectCollection<IReadOnlyProjectRole>
+    └── IReadOnlyProjectCollection<IReadOnlyProjectRole> : IHasId
+        └── IReadOnlyProjectRole : IReadOnlyProject
+            └── IReadOnlyProject : IReadOnlyProject<IReadOnlyProjectCollection>
+                └── IReadOnlyProject<TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection, IHasId
+                    ├── IReadOnlyEntity (see above)
+                    ├── IReadOnlyImagesCollection : IHasId (see above)
+                    ├── IReadOnlyUserRoleCollection (see above)
+                    ├── IReadOnlyAccentColor : IHasId (see above)
+                    └── IReadOnlyFeaturesCollection : IHasId
+
+Final IReadOnlyUser inheritance:
+IReadOnlyUser : IReadOnlyEntity, IReadOnlyPublisherRoleCollection, IReadOnlyProjectRoleCollection, IHasId
+```
+
+### IReadOnlyProject Interface Hierarchy
+
+```
+IHasId (OwlCore.ComponentModel)
 │
-├── Collection Interfaces:
-│   ├── IReadOnlyUserCollection<T>
-│   │   └── IReadOnlyUserRoleCollection
-│   ├── IReadOnlyProjectCollection<T>
-│   │   └── IReadOnlyProjectRoleCollection
-│   └── IReadOnlyPublisherCollection<T>
-│       └── IReadOnlyPublisherRoleCollection
+├── IReadOnlyEntity
+│   ├── IReadOnlyConnectionsCollection : IHasId
+│   ├── IReadOnlyLinksCollection : IHasId
+│   └── IReadOnlyImagesCollection : IHasId
 │
-└── Main Entity Interfaces:
-    ├── IReadOnlyUser : IReadOnlyEntity, IReadOnlyPublisherRoleCollection, IReadOnlyProjectRoleCollection
-    ├── IReadOnlyProject<T> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection
-    └── IReadOnlyPublisher<T> : IReadOnlyEntity, IReadOnlyAccentColor, IReadOnlyUserRoleCollection, IReadOnlyProjectCollection
+├── IReadOnlyImagesCollection : IHasId (additional images beyond IReadOnlyEntity)
+│
+├── IReadOnlyUserRoleCollection : IReadOnlyUserCollection<IReadOnlyUserRole>
+│   └── IReadOnlyUserCollection<IReadOnlyUserRole> : IHasId
+│       └── IReadOnlyUserRole : IReadOnlyUser
+│           └── IReadOnlyUser : IReadOnlyEntity, IReadOnlyPublisherRoleCollection, IReadOnlyProjectRoleCollection, IHasId
+│               ├── IReadOnlyEntity (see above)
+│               ├── IReadOnlyPublisherRoleCollection : IReadOnlyPublisherCollection<IReadOnlyPublisherRole>
+│               │   └── IReadOnlyPublisherCollection<IReadOnlyPublisherRole> : IHasId
+│               └── IReadOnlyProjectRoleCollection : IReadOnlyProjectCollection<IReadOnlyProjectRole>
+│                   └── IReadOnlyProjectCollection<IReadOnlyProjectRole> : IHasId
+│
+├── IReadOnlyAccentColor : IHasId
+│
+├── IReadOnlyFeaturesCollection : IHasId
+│
+└── Dependencies (TDependencyCollection : IReadOnlyProjectCollection<IReadOnlyProject>)
+    └── IReadOnlyProjectCollection<IReadOnlyProject> : IHasId
+
+Final IReadOnlyProject inheritance:
+IReadOnlyProject : IReadOnlyProject<IReadOnlyProjectCollection>
+IReadOnlyProject<TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection, IHasId
+```
+
+### IReadOnlyPublisher Interface Hierarchy
+
+```
+IHasId (OwlCore.ComponentModel)
+│
+├── IReadOnlyEntity
+│   ├── IReadOnlyConnectionsCollection : IHasId
+│   ├── IReadOnlyLinksCollection : IHasId
+│   └── IReadOnlyImagesCollection : IHasId
+│
+├── IReadOnlyAccentColor : IHasId
+│
+├── IReadOnlyUserRoleCollection : IReadOnlyUserCollection<IReadOnlyUserRole>
+│   └── IReadOnlyUserCollection<IReadOnlyUserRole> : IHasId
+│       └── IReadOnlyUserRole : IReadOnlyUser
+│           └── IReadOnlyUser : IReadOnlyEntity, IReadOnlyPublisherRoleCollection, IReadOnlyProjectRoleCollection, IHasId
+│               ├── IReadOnlyEntity (see above)
+│               ├── IReadOnlyPublisherRoleCollection : IReadOnlyPublisherCollection<IReadOnlyPublisherRole>
+│               │   └── IReadOnlyPublisherCollection<IReadOnlyPublisherRole> : IHasId
+│               └── IReadOnlyProjectRoleCollection : IReadOnlyProjectCollection<IReadOnlyProjectRole>
+│                   └── IReadOnlyProjectCollection<IReadOnlyProjectRole> : IHasId
+│
+├── IReadOnlyProjectCollection : IReadOnlyProjectCollection<IReadOnlyProject>
+│   └── IReadOnlyProjectCollection<IReadOnlyProject> : IHasId
+│       └── IReadOnlyProject : IReadOnlyProject<IReadOnlyProjectCollection>
+│           └── IReadOnlyProject<TDependencyCollection> : IReadOnlyEntity, IReadOnlyImagesCollection, IReadOnlyUserRoleCollection, IReadOnlyAccentColor, IReadOnlyFeaturesCollection, IHasId
+│               ├── IReadOnlyEntity (see above)
+│               ├── IReadOnlyImagesCollection : IHasId (see above)
+│               ├── IReadOnlyUserRoleCollection (see above)
+│               ├── IReadOnlyAccentColor : IHasId (see above)
+│               └── IReadOnlyFeaturesCollection : IHasId
+│
+└── Publisher Hierarchy Collections (TPublisherCollection : IReadOnlyPublisherRoleCollection)
+    └── IReadOnlyPublisherRoleCollection : IReadOnlyPublisherCollection<IReadOnlyPublisherRole>
+        └── IReadOnlyPublisherCollection<IReadOnlyPublisherRole> : IHasId
+            └── IReadOnlyPublisherRole : IReadOnlyPublisher
+
+Final IReadOnlyPublisher inheritance:
+IReadOnlyPublisher : IReadOnlyPublisher<IReadOnlyPublisherRoleCollection>
+IReadOnlyPublisher<TPublisherCollection> : IReadOnlyEntity, IReadOnlyAccentColor, IReadOnlyUserRoleCollection, IReadOnlyProjectCollection, IHasId
 ```
 
 This interface inventory provides a comprehensive reference for understanding the type hierarchy and relationships within the WindowsAppCommunity.Sdk.
