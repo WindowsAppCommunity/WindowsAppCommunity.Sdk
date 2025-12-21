@@ -13,10 +13,10 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <para/>
 /// DI may not be able to construct the repositories due to the circular dependencies, but they can be constructed via this class.
 /// </remarks>
-public class RepositoryContainer
+public class WacEntityRepositoryGroup
 {
     /// <summary>
-    /// Creates a new instance of the <see cref="RepositoryContainer"/> class.
+    /// Creates a new instance of the <see cref="WacEntityRepositoryGroup"/> class.
     /// </summary>
     /// <param name="kuboOptions">The options to use when publishing or retrieving content via Kubo.</param>
     /// <param name="client">The Kubo client to use for API calls to IPFS.</param>
@@ -24,7 +24,7 @@ public class RepositoryContainer
     /// <param name="managedUserConfigs">The managed collection of user configurations.</param>
     /// <param name="managedProjectConfigs">The managed collection of project configurations.</param>
     /// <param name="managedPublisherConfigs">The managed collection of publisher configurations.</param>
-    public RepositoryContainer(IKuboOptions kuboOptions, ICoreApi client, ICollection<Key> managedKeys, ICollection<NomadKuboEventStreamHandlerConfig<Models.User>> managedUserConfigs, ICollection<NomadKuboEventStreamHandlerConfig<Models.Project>> managedProjectConfigs, ICollection<NomadKuboEventStreamHandlerConfig<Models.Publisher>> managedPublisherConfigs)
+    public WacEntityRepositoryGroup(IKuboOptions kuboOptions, ICoreApi client, ICollection<Key> managedKeys, ICollection<NomadKuboEventStreamHandlerConfig<Models.User>> managedUserConfigs, ICollection<NomadKuboEventStreamHandlerConfig<Models.Project>> managedProjectConfigs, ICollection<NomadKuboEventStreamHandlerConfig<Models.Publisher>> managedPublisherConfigs)
     {
         var userRepository = new UserRepository()
         {
