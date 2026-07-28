@@ -43,7 +43,7 @@ public partial class ProjectTests
 
         var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
         var managedKeys = new List<Key>(managedKeysEnumerable.Select(k => new Key(k)));
-        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
+        WacEntityRepositoryGroup repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
 
         Guard.IsNotNull(repositoryContainer.ProjectRepository);
         var project = await repositoryContainer.ProjectRepository.CreateAsync(new("Test"), cancellationToken);
@@ -95,7 +95,7 @@ public partial class ProjectTests
         // Read project from secondary kubo client
         var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
         var managedKeys2 = new List<Key>(managedKeysEnumerable2.Select(k => new Key(k)));
-        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2, [], [], []);
+        WacEntityRepositoryGroup repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2, [], [], []);
         Guard.IsNotNull(repositoryContainer2.ProjectRepository);
 
         var project1 = await repositoryContainer2.ProjectRepository.GetAsync(project.Id, cancellationToken);
@@ -151,7 +151,7 @@ public partial class ProjectTests
 
         var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
         var managedKeys = new List<Key>(managedKeysEnumerable.Select(k => new Key(k)));
-        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
+        WacEntityRepositoryGroup repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
 
         Guard.IsNotNull(repositoryContainer.ProjectRepository);
 
@@ -182,7 +182,7 @@ public partial class ProjectTests
         // Read project from secondary kubo client
         var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
         var managedKeys2 = new List<Key>(managedKeysEnumerable2.Select(k => new Key(k)));
-        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2, [], [], []);
+        WacEntityRepositoryGroup repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2, [], [], []);
         Guard.IsNotNull(repositoryContainer2.ProjectRepository);
 
         var project1 = await repositoryContainer2.ProjectRepository.GetAsync(project.Id, cancellationToken);
@@ -230,7 +230,7 @@ public partial class ProjectTests
         var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
         var managedKeys = new List<Key>(managedKeysEnumerable.Select(k => new Key(k)));
 
-        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
+        WacEntityRepositoryGroup repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
 
         Guard.IsNotNull(repositoryContainer.ProjectRepository);
 
@@ -258,7 +258,7 @@ public partial class ProjectTests
         // Read project from secondary kubo client
         var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
         var managedKeys2 = new List<Key>(managedKeysEnumerable2.Select(k => new Key(k)));
-        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2, [], [], []);
+        WacEntityRepositoryGroup repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2, [], [], []);
         Guard.IsNotNull(repositoryContainer2.ProjectRepository);
 
         var project1 = await repositoryContainer2.ProjectRepository.GetAsync(project.Id, cancellationToken);
@@ -307,7 +307,7 @@ public partial class ProjectTests
 
         var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
         var managedKeys = new List<Key>(managedKeysEnumerable.Select(k => new Key(k)));
-        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
+        WacEntityRepositoryGroup repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
 
         Guard.IsNotNull(repositoryContainer.ProjectRepository);
         var project = await repositoryContainer.ProjectRepository.CreateAsync(new("Test"), cancellationToken);
@@ -356,7 +356,7 @@ public partial class ProjectTests
         // Read project from secondary kubo client
         var managedKeysEnumerable2 = await kubo2.Client.Key.ListAsync(cancellationToken);
         var managedKeys2 = new List<Key>(managedKeysEnumerable2.Select(k => new Key(k)));
-        RepositoryContainer repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2, [], [], []);
+        WacEntityRepositoryGroup repositoryContainer2 = new(kuboOptions, kubo2.Client, managedKeys2, [], [], []);
         Guard.IsNotNull(repositoryContainer2.ProjectRepository);
     
         var project1 = await repositoryContainer2.ProjectRepository.GetAsync(project.Id, cancellationToken);

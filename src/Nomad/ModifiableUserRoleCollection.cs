@@ -6,6 +6,7 @@ using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
 using CommunityToolkit.Diagnostics;
 using WindowsAppCommunity.Sdk.Models;
+using OwlCore.ComponentModel;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
 
@@ -23,7 +24,7 @@ public class ModifiableUserRoleCollection : NomadKuboEventStreamHandler<ValueUpd
     /// <summary>
     /// The repository to use for getting modifiable or readonly user instances.
     /// </summary>
-    public required INomadKuboRepositoryBase<ModifiableUser, IReadOnlyUser> UserRepository { get; init; }
+    public required IRepositoryBase<ModifiableUser, IReadOnlyUser> UserRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyUserRole[]>? UsersAdded;

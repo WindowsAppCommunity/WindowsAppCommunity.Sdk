@@ -27,7 +27,7 @@ public class ModifiablePublisher : NomadKuboEventStreamHandler<ValueUpdateEvent>
     /// <param name="client">The client used to interact with the ipfs network.</param>
     /// <param name="kuboOptions">The options used to read and write data to and from Kubo.</param>
     /// <returns>A new instance of <see cref="ModifiablePublisher"/>.</returns>
-    public static ModifiablePublisher FromHandlerConfig(NomadKuboEventStreamHandlerConfig<Publisher> handlerConfig, INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> projectDependencyRepository, INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> publisherRepository, INomadKuboRepositoryBase<ModifiableUser, IReadOnlyUser> userRepository, ICoreApi client, IKuboOptions kuboOptions)
+    public static ModifiablePublisher FromHandlerConfig(NomadKuboEventStreamHandlerConfig<Publisher> handlerConfig, IRepositoryBase<ModifiableProject, IReadOnlyProject> projectDependencyRepository, IRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> publisherRepository, IRepositoryBase<ModifiableUser, IReadOnlyUser> userRepository, ICoreApi client, IKuboOptions kuboOptions)
     {
         Guard.IsNotNull(handlerConfig.RoamingValue);
         Guard.IsNotNull(handlerConfig.RoamingKey);

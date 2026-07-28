@@ -29,7 +29,7 @@ public class ReadOnlyProjectCollection : IReadOnlyProjectCollection, IDelegable<
     /// <summary>
     /// The repository used to get and create project instances.
     /// </summary>
-    public required INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectDependencyRepository { get; init; }
+    public required IRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectDependencyRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyProject[]>? ProjectsAdded;

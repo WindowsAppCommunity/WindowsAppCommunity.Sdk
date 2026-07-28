@@ -26,7 +26,7 @@ public class ReadOnlyUserRoleCollection : IReadOnlyUserRoleCollection, IDelegabl
     /// <summary>
     /// The repository to use for getting modifiable or readonly user instances.
     /// </summary>
-    public required INomadKuboRepositoryBase<ModifiableUser, IReadOnlyUser> UserRepository { get; init; }
+    public required IRepositoryBase<ModifiableUser, IReadOnlyUser> UserRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyUserRole[]>? UsersAdded;

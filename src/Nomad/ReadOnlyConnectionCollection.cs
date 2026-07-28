@@ -10,7 +10,7 @@ namespace WindowsAppCommunity.Sdk.Nomad;
 /// <summary>
 /// Represents a read-only collection of connections.
 /// </summary>
-public class ReadOnlyConnectionCollection : IReadOnlyConnectionsCollection, IDelegable<IConnections>, IReadOnlyNomadKuboRegistry<IReadOnlyConnection>
+public class ReadOnlyConnectionCollection : IReadOnlyConnectionsCollection, IDelegable<IConnections>, IReadOnlyRegistry<IReadOnlyConnection>
 {
     /// <inheritdoc />
     public required string Id { get; init; }

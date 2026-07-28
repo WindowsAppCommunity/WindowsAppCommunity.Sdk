@@ -5,6 +5,7 @@ using Ipfs;
 using OwlCore.Nomad;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
+using OwlCore.ComponentModel;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
 
@@ -34,7 +35,7 @@ public class ModifiablePublisherCollection : NomadKuboEventStreamHandler<ValueUp
     /// <summary>
     /// The repository to use for getting modifiable or readonly publisher instances.
     /// </summary>
-    public required INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> PublisherRepository { get; init; }
+    public required IRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> PublisherRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyPublisher[]>? PublishersAdded;

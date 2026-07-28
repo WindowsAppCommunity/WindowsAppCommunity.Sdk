@@ -9,7 +9,7 @@ using WindowsAppCommunity.Sdk.Models;
 namespace WindowsAppCommunity.Sdk.Nomad;
 
 /// <inheritdoc cref="IReadOnlyLinksCollection" />
-public class ReadOnlyLinksCollection : IReadOnlyLinksCollection, IDelegable<ILinkCollection>, IReadOnlyNomadKuboRegistry<Link>
+public class ReadOnlyLinksCollection : IReadOnlyLinksCollection, IDelegable<ILinkCollection>, IReadOnlyRegistry<Link>
 {
     /// <inheritdoc />
     public required string Id { get; init; }

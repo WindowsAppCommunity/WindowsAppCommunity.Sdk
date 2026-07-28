@@ -26,7 +26,7 @@ public class ReadOnlyProjectRoleCollection : IReadOnlyProjectRoleCollection, IDe
     /// <summary>
     /// The repository to use for getting modifiable or readonly project instances.
     /// </summary>
-    public required INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectRepository { get; init; }
+    public required IRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectRepository { get; init; }
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyProjectRole[]>? ProjectsAdded;

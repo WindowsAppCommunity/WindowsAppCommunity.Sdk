@@ -11,7 +11,7 @@ using WindowsAppCommunity.Sdk.Models;
 namespace WindowsAppCommunity.Sdk.Nomad;
 
 /// <inheritdoc cref="IReadOnlyImagesCollection" />
-public class ReadOnlyImagesCollection : IReadOnlyImagesCollection, IDelegable<IImages>, IReadOnlyNomadKuboRegistry<IFile>
+public class ReadOnlyImagesCollection : IReadOnlyImagesCollection, IDelegable<IImages>, IReadOnlyRegistry<IFile>
 {
     /// <inheritdoc />
     public required string Id { get; init; }

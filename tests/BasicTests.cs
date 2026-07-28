@@ -29,7 +29,7 @@ public partial class BasicTests
         var managedKeysEnumerable = await kubo.Client.Key.ListAsync(cancellationToken);
         var managedKeys = new List<Key>(managedKeysEnumerable.Select(k => new Key(k)));
 
-        RepositoryContainer repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
+        WacEntityRepositoryGroup repositoryContainer = new(kuboOptions, kubo.Client, managedKeys, [], [], []);
 
         Guard.IsNotNull(repositoryContainer.ProjectRepository);
         Guard.IsNotNull(repositoryContainer.PublisherRepository);

@@ -3,6 +3,7 @@ using Ipfs;
 using OwlCore.Nomad.Kubo;
 using OwlCore.Nomad.Kubo.Events;
 using WindowsAppCommunity.Sdk.Models;
+using OwlCore.ComponentModel;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
 
@@ -28,12 +29,12 @@ public class UserRepository : NomadKuboRepository<ModifiableUser, IReadOnlyUser,
     /// <summary>
     /// The repository to use for returning modifiable or readonly projects.
     /// </summary>
-    public required INomadKuboRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectRepository { get; set; }
+    public required IRepositoryBase<ModifiableProject, IReadOnlyProject> ProjectRepository { get; set; }
 
     /// <summary>
     /// The repository to use for returning modifiable or readonly publishers.
     /// </summary>
-    public required INomadKuboRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> PublisherRepository { get; set; }
+    public required IRepositoryBase<ModifiablePublisher, IReadOnlyPublisher> PublisherRepository { get; set; }
 
     /// <inheritdoc/> 
     public override Task<(string LocalKeyName, string RoamingKeyName)?> GetExistingKeyNamesAsync(string roamingId, CancellationToken cancellationToken)

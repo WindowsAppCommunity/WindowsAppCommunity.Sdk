@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using OwlCore.Storage;
+using OwlCore.ComponentModel;
 
 namespace WindowsAppCommunity.Sdk.Nomad;
 
